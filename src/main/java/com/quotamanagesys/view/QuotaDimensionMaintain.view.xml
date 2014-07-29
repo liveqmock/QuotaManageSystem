@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaDimensionOne">
+      <Property name="creationType">com.quotamanagesys.model.QuotaDimensionOne</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="dimensionName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaDimensionTwo">
+      <Property name="creationType">com.quotamanagesys.model.QuotaDimensionTwo</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="dimensionName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaDimensionOne">
+      <Property name="dataType">[QuotaDimensionOne]</Property>
+      <Property name="dataProvider">quotaDimensionOneDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaDimensionTwo">
+      <Property name="dataType">[QuotaDimensionTwo]</Property>
+      <Property name="parameter"></Property>
+      <Property name="dataProvider">quotaDimensionTwoDao#getQuotaDimensionTwosByDimensionOne</Property>
+    </DataSet>
+    <SplitPanel>
+      <Property name="direction">right</Property>
+      <Property name="position">50%</Property>
+      <MainControl>
+        <Container>
+          <ToolBar>
+            <DataPilot>
+              <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaDimensionOne.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaDimensionOne&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgQuotaDimensionOne = view.get(&quot;#dgQuotaDimensionOne&quot;);&#xD;
+		var selection = dgQuotaDimensionOne.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+              <Property name="itemCodes">pages,+,-,x</Property>
+              <Property name="dataSet">dsQuotaDimensionOne</Property>
+            </DataPilot>
+            <Separator/>
+            <ToolBarButton>
+              <Property name="caption">保存</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+              <Property name="action">uaQuotaDimensionOne</Property>
+            </ToolBarButton>
+          </ToolBar>
+          <DataGrid id="dgQuotaDimensionOne">
+            <ClientEvent name="onClick">var dsQuotaDimensionTwo=view.get(&quot;#dsQuotaDimensionTwo&quot;);&#xD;
+var dgQuotaDimensionOne=view.get(&quot;#dgQuotaDimensionOne&quot;);&#xD;
+var dgQuotaDimensionTwo=view.get(&quot;#dgQuotaDimensionTwo&quot;);&#xD;
+var currentDimensionOne=dgQuotaDimensionOne.getCurrentItem();&#xD;
+var quotaDimensionOneId=currentDimensionOne.get(&quot;id&quot;);&#xD;
+&#xD;
+dsQuotaDimensionTwo.set(&quot;parameter&quot;,{quotaDimensionOneId:quotaDimensionOneId}).flushAsync();&#xD;
+dgQuotaDimensionTwo.refresh();</ClientEvent>
+            <Property name="dataSet">dsQuotaDimensionOne</Property>
+            <Property name="dataType">QuotaDimensionOne</Property>
+            <Property name="selectionMode">multiRows</Property>
+            <IndicatorColumn/>
+            <RowSelectorColumn/>
+            <DataColumn name="id">
+              <Property name="property">id</Property>
+              <Property name="visible">false</Property>
+            </DataColumn>
+            <DataColumn name="dimensionName">
+              <Property name="property">dimensionName</Property>
+              <Property name="caption">一级维度</Property>
+            </DataColumn>
+          </DataGrid>
+          <UpdateAction id="uaQuotaDimensionOne">
+            <Property name="dataResolver">quotaDimensionOneDao#saveQuotaDimensionOnes</Property>
+            <UpdateItem>
+              <Property name="dataSet">dsQuotaDimensionOne</Property>
+            </UpdateItem>
+          </UpdateAction>
+        </Container>
+      </MainControl>
+      <SideControl>
+        <Container>
+          <ToolBar>
+            <DataPilot>
+              <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaDimensionTwo.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaDimensionTwo&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgQuotaDimensionTwo = view.get(&quot;#dgQuotaDimensionTwo&quot;);&#xD;
+		var selection = dgQuotaDimensionTwo.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+              <Property name="itemCodes">pages,+,-,x</Property>
+              <Property name="dataSet">dsQuotaDimensionTwo</Property>
+            </DataPilot>
+            <Separator/>
+            <ToolBarButton>
+              <ClientEvent name="onClick">var uaQuotaDimensionTwo=view.get(&quot;#uaQuotaDimensionTwo&quot;);&#xD;
+var dgQuotaDimensionOne=view.get(&quot;#dgQuotaDimensionOne&quot;);&#xD;
+var currentDimensionOne=dgQuotaDimensionOne.getCurrentItem();&#xD;
+var quotaDimensionOneId=currentDimensionOne.get(&quot;id&quot;);&#xD;
+&#xD;
+uaQuotaDimensionTwo.set(&quot;parameter&quot;,{quotaDimensionOneId:quotaDimensionOneId}).execute(&#xD;
+{&#xD;
+	callback : function(success, obj){&#xD;
+		if (success){&#xD;
+		    dgQuotaDimensionTwo.refresh();&#xD;
+        }&#xD;
+		else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj);&#xD;
+		}&#xD;
+	}&#xD;
+}&#xD;
+);&#xD;
+</ClientEvent>
+              <Property name="caption">保存</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+            </ToolBarButton>
+          </ToolBar>
+          <DataGrid id="dgQuotaDimensionTwo">
+            <Property name="dataSet">dsQuotaDimensionTwo</Property>
+            <Property name="dataType">QuotaDimensionTwo</Property>
+            <Property name="selectionMode">multiRows</Property>
+            <IndicatorColumn/>
+            <RowSelectorColumn/>
+            <DataColumn name="id">
+              <Property name="property">id</Property>
+              <Property name="visible">false</Property>
+            </DataColumn>
+            <DataColumn name="dimensionName">
+              <Property name="property">dimensionName</Property>
+              <Property name="caption">二级维度</Property>
+            </DataColumn>
+          </DataGrid>
+          <UpdateAction id="uaQuotaDimensionTwo">
+            <Property name="dataResolver">quotaDimensionTwoDao#saveQuotaDimensionTwos</Property>
+            <UpdateItem>
+              <Property name="dataSet">dsQuotaDimensionTwo</Property>
+            </UpdateItem>
+          </UpdateAction>
+        </Container>
+      </SideControl>
+    </SplitPanel>
+  </View>
+</ViewConfig>

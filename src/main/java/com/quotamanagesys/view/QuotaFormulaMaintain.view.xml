@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaFormula">
+      <Property name="creationType">com.quotamanagesys.model.QuotaFormula</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="formula">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="remark">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="type">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaFormula">
+      <Property name="dataType">[QuotaFormula]</Property>
+      <Property name="dataProvider">quotaFormulaDao#getAll</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot>
+        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormula.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaFormula&quot;);&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		var dgQuotaFormula=view.get(&quot;#dgQuotaFormula&quot;);&#xD;
+		var selection=dgQuotaFormula.get(&quot;selection&quot;);&#xD;
+		if(selection&amp;&amp;selection.length){&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){	&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+		&#xD;
+			arg.processDefault=false;&#xD;
+		}else{&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}&#xD;
+		break;&#xD;
+	}&#xD;
+}&#xD;
+</ClientEvent>
+        <Property name="dataSet">dsQuotaFormula</Property>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+      <Separator/>
+      <ToolBarButton>
+        <Property name="caption">保存</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        <Property name="action">uaQuotaFormula</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgQuotaFormula">
+      <Property name="dataSet">dsQuotaFormula</Property>
+      <Property name="dataType">QuotaFormula</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <Property name="stretchColumnsMode">off</Property>
+      <IndicatorColumn/>
+      <RowSelectorColumn/>
+      <DataColumn name="id">
+        <Property name="property">id</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="caption">公式名称</Property>
+        <Property name="width">250</Property>
+      </DataColumn>
+      <DataColumn name="formula">
+        <Property name="property">formula</Property>
+        <Property name="caption">公式</Property>
+        <Property name="width">250</Property>
+        <Editor>
+          <TextArea>
+            <Property name="width">400</Property>
+            <Property name="height">75</Property>
+          </TextArea>
+        </Editor>
+      </DataColumn>
+      <DataColumn name="type">
+        <Property name="property">type</Property>
+        <Property name="caption">公式种类</Property>
+        <Property name="width">90</Property>
+        <Property name="trigger">lddQuotaFormulaType</Property>
+      </DataColumn>
+      <DataColumn name="remark">
+        <Property name="property">remark</Property>
+        <Property name="caption">备注</Property>
+        <Property name="width">300</Property>
+        <Editor>
+          <TextArea>
+            <Property name="width">400</Property>
+            <Property name="height">75</Property>
+          </TextArea>
+        </Editor>
+      </DataColumn>
+    </DataGrid>
+    <UpdateAction id="uaQuotaFormula">
+      <Property name="executingMessage">正在保存...</Property>
+      <Property name="successMessage">保存成功!</Property>
+      <Property name="dataResolver">quotaFormulaDao#saveQuotaFormulas</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsQuotaFormula</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <ListDropDown id="lddQuotaFormulaType">
+      <Property name="items">亮灯公式,进度公式</Property>
+    </ListDropDown>
+  </View>
+</ViewConfig>

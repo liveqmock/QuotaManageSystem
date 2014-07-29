@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaLevel">
+      <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaLevel">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaLevel">
+      <Property name="dataType">[QuotaLevel]</Property>
+      <Property name="dataProvider">quotaLevelDao#getAll</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot>
+        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaLevel.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaLevel&quot;);&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		var dgQuotaLevel=view.get(&quot;#dgQuotaLevel&quot;);&#xD;
+		var selection=dgQuotaLevel.get(&quot;selection&quot;);&#xD;
+		if(selection&amp;&amp;selection.length){&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){	&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+		&#xD;
+			arg.processDefault=false;&#xD;
+		}else{&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}&#xD;
+		break;&#xD;
+	}&#xD;
+}&#xD;
+</ClientEvent>
+        <Property name="dataSet">dsQuotaLevel</Property>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+      <Separator/>
+      <ToolBarButton>
+        <Property name="caption">保存</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        <Property name="action">uaQuotaLevel</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgQuotaLevel">
+      <Property name="dataSet">dsQuotaLevel</Property>
+      <Property name="dataType">QuotaLevel</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <Property name="stretchColumnsMode">off</Property>
+      <IndicatorColumn/>
+      <RowSelectorColumn/>
+      <DataColumn name="id">
+        <Property name="property">id</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn name="quotaLevel">
+        <Property name="property">quotaLevel</Property>
+        <Property name="width">300</Property>
+        <Property name="caption">指标级别</Property>
+      </DataColumn>
+    </DataGrid>
+    <UpdateAction id="uaQuotaLevel">
+      <Property name="dataResolver">quotaLevelDao#saveQuotaLevels</Property>
+      <Property name="executingMessage">正在保存...</Property>
+      <Property name="successMessage">保存成功!</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsQuotaLevel</Property>
+      </UpdateItem>
+    </UpdateAction>
+  </View>
+</ViewConfig>

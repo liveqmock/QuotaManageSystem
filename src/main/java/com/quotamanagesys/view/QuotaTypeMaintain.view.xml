@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaType">
+      <Property name="creationType">com.quotamanagesys.model.QuotaType</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaTypeName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaProfession">
+        <Property name="dataType">QuotaProfession</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaLevel">
+        <Property name="dataType">QuotaLevel</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaUnit">
+        <Property name="dataType">QuotaUnit</Property>
+      </PropertyDef>
+      <PropertyDef name="digit">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="rate">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="manageDept">
+        <Property name="dataType">Department</Property>
+      </PropertyDef>
+      <PropertyDef name="inUsed">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaProfession">
+      <Property name="creationType">com.quotamanagesys.model.QuotaProfession</Property>
+      <Property name="defaultDisplayProperty">profession</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="profession">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaUnit">
+      <Property name="creationType">com.quotamanagesys.model.QuotaUnit</Property>
+      <Property name="defaultDisplayProperty">quotaUnit</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaUnit">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaLevel">
+      <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
+      <Property name="defaultDisplayProperty">quotaLevel</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaLevel">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="Department">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="parentId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaType">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaProfession">
+      <Property name="dataType">[QuotaProfession]</Property>
+      <Property name="dataProvider">quotaProfessionDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaUnit">
+      <Property name="dataType">[QuotaUnit]</Property>
+      <Property name="dataProvider">quotaUnitDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaLevel">
+      <Property name="dataType">[QuotaLevel]</Property>
+      <Property name="dataProvider">quotaLevelDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsDepartment">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">departmentDao#getAll</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot>
+        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaType&quot;).getData();&#xD;
+var action = view.get(&quot;#uaQuotaType&quot;);&#xD;
+var dlgQuotaType=view.get(&quot;#dlgQuotaType&quot;);&#xD;
+&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		datas.insert();&#xD;
+		dlgQuotaType.show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		var dgQuotaType=view.get(&quot;#dgQuotaType&quot;);&#xD;
+		var selection=dgQuotaType.get(&quot;selection&quot;);&#xD;
+		if(selection&amp;&amp;selection.length){&#xD;
+			dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){	&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+		&#xD;
+			arg.processDefault=false;&#xD;
+		}else{&#xD;
+			message = &quot;未选中任何数据！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+        <Property name="dataSet">dsQuotaType</Property>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var datas = view.get(&quot;#dsQuotaType&quot;).getData();&#xD;
+if(datas.current){&#xD;
+	view.get(&quot;#dlgQuotaType&quot;).show();&#xD;
+}else{&#xD;
+	dorado.MessageBox.alert(&quot;当前表没有信息可供编辑!&quot;);&#xD;
+}</ClientEvent>
+        <Property name="caption">编辑</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -200px 0px</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgQuotaType">
+      <Property name="dataSet">dsQuotaType</Property>
+      <Property name="dataType">QuotaType</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <Property name="readOnly">true</Property>
+      <Property name="stretchColumnsMode">off</Property>
+      <IndicatorColumn/>
+      <RowSelectorColumn/>
+      <DataColumn name="id">
+        <Property name="property">id</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn name="quotaTypeName">
+        <Property name="property">quotaTypeName</Property>
+        <Property name="caption">指标种类名称</Property>
+        <Property name="width">360</Property>
+      </DataColumn>
+      <DataColumn name="quotaProfession">
+        <Property name="property">quotaProfession</Property>
+        <Property name="trigger">dsddQuotaProfession</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn>
+        <Property name="property">quotaProfession.profession</Property>
+        <Property name="name">profession</Property>
+        <Property name="readOnly">true</Property>
+        <Property name="caption">指标专业</Property>
+        <Property name="width">180</Property>
+        <Property name="align">center</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn name="quotaLevel">
+        <Property name="property">quotaLevel</Property>
+        <Property name="trigger">dsddQuotaLevel</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn>
+        <Property name="name">level</Property>
+        <Property name="property">quotaLevel.quotaLevel</Property>
+        <Property name="readOnly">true</Property>
+        <Property name="caption">指标级别</Property>
+        <Property name="width">180</Property>
+        <Property name="align">center</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn name="quotaUnit">
+        <Property name="property">quotaUnit</Property>
+        <Property name="trigger">dsddQuotaUnit</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn>
+        <Property name="name">unit</Property>
+        <Property name="property">quotaUnit.quotaUnit</Property>
+        <Property name="readOnly">true</Property>
+        <Property name="caption">计量单位</Property>
+        <Property name="width">90</Property>
+        <Property name="align">center</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn name="digit">
+        <Property name="property">digit</Property>
+        <Property name="caption">小数位数</Property>
+        <Property name="width">90</Property>
+        <Property name="align">center</Property>
+        <Editor>
+          <NumberSpinner/>
+        </Editor>
+      </DataColumn>
+      <DataColumn name="rate">
+        <Property name="property">rate</Property>
+        <Property name="trigger">lddRate</Property>
+        <Property name="caption">考核频率</Property>
+        <Property name="width">90</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="manageDept">
+        <Property name="property">manageDept</Property>
+        <Property name="trigger">dsddDepartment</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn>
+        <Property name="name">department</Property>
+        <Property name="property">manageDept.name</Property>
+        <Property name="readOnly">true</Property>
+        <Property name="caption">管理部门</Property>
+        <Property name="width">180</Property>
+        <Property name="align">center</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn name="inUsed">
+        <Property name="property">inUsed</Property>
+        <Property name="caption">是否在用</Property>
+        <Property name="width">90</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+    </DataGrid>
+    <UpdateAction id="uaQuotaType">
+      <Property name="dataResolver">quotaTypeDao#saveQuotaTypes</Property>
+      <Property name="executingMessage">正在保存...</Property>
+      <Property name="successMessage">保存成功!</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsQuotaType</Property>
+      </UpdateItem>
+    </UpdateAction>
+    <DataSetDropDown id="dsddQuotaProfession">
+      <Property name="dataSet">dsQuotaProfession</Property>
+      <DataColumn>
+        <Property name="name">profession</Property>
+        <Property name="property">profession</Property>
+        <Property name="caption">指标专业</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddQuotaUnit">
+      <Property name="dataSet">dsQuotaUnit</Property>
+      <DataColumn>
+        <Property name="name">quotaUnit</Property>
+        <Property name="property">quotaUnit</Property>
+        <Property name="caption">指标计量单位</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddQuotaLevel">
+      <Property name="dataSet">dsQuotaLevel</Property>
+      <DataColumn>
+        <Property name="name">quotaLevel</Property>
+        <Property name="property">quotaLevel</Property>
+        <Property name="caption">指标级别</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddDepartment">
+      <Property name="dataSet">dsDepartment</Property>
+      <DataColumn>
+        <Property name="name">name</Property>
+        <Property name="property">name</Property>
+        <Property name="caption">指标管理部门</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <ListDropDown id="lddRate">
+      <Property name="items">
+        <Collection>
+          <Value>年度</Value>
+          <Value>季度</Value>
+          <Value>月度</Value>
+        </Collection>
+      </Property>
+    </ListDropDown>
+    <Dialog id="dlgQuotaType">
+      <Property name="caption">指标种类编辑</Property>
+      <Property name="width">800</Property>
+      <Property name="height">260</Property>
+      <Property name="closeable">false</Property>
+      <Property name="closeAction">close</Property>
+      <Buttons/>
+      <Children>
+        <ToolBar>
+          <ToolBarButton>
+            <ClientEvent name="onClick">var dgQuotaType=view.get(&quot;#dgQuotaType&quot;);&#xD;
+var dsQuotaType=view.get(&quot;#dsQuotaType&quot;);&#xD;
+var uaQuotaType=view.get(&quot;#uaQuotaType&quot;);&#xD;
+var dlgQuotaType=view.get(&quot;#dlgQuotaType&quot;)&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaType.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaType.flushAsync();&#xD;
+			dgQuotaType.refresh();&#xD;
+			dlgQuotaType.hide();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});&#xD;
+</ClientEvent>
+            <Property name="caption">确定</Property>
+            <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+          </ToolBarButton>
+          <ToolBarButton>
+            <ClientEvent name="onClick">var data=view.get(&quot;#dsQuotaType&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgQuotaType&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+            <Property name="caption">取消</Property>
+            <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+          </ToolBarButton>
+        </ToolBar>
+        <AutoForm id="afQuotaType">
+          <Property name="cols">*,*</Property>
+          <Property name="dataSet">dsQuotaType</Property>
+          <Property name="dataPath">#</Property>
+          <Property name="dataType">QuotaType</Property>
+          <AutoFormElement>
+            <Property name="name">quotaTypeName</Property>
+            <Property name="property">quotaTypeName</Property>
+            <Property name="label">指标类别名称</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">quotaProfession</Property>
+            <Property name="property">quotaProfession</Property>
+            <Property name="trigger">dsddQuotaProfession</Property>
+            <Property name="label">指标专业</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">quotaLevel</Property>
+            <Property name="property">quotaLevel</Property>
+            <Property name="trigger">dsddQuotaLevel</Property>
+            <Property name="label">指标级别</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">quotaUnit</Property>
+            <Property name="property">quotaUnit</Property>
+            <Property name="trigger">dsddQuotaUnit</Property>
+            <Property name="label">计量单位</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">digit</Property>
+            <Property name="property">digit</Property>
+            <Property name="label">小数位数</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">rate</Property>
+            <Property name="property">rate</Property>
+            <Property name="trigger">lddRate</Property>
+            <Property name="label">考核频率</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">manageDept</Property>
+            <Property name="property">manageDept</Property>
+            <Property name="trigger">dsddDepartment</Property>
+            <Property name="label">管理部门</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">inUsed</Property>
+            <Property name="property">inUsed</Property>
+            <Property name="label">是否在用</Property>
+            <Editor>
+              <CheckBox/>
+            </Editor>
+          </AutoFormElement>
+        </AutoForm>
+      </Children>
+      <Tools/>
+    </Dialog>
+  </View>
+</ViewConfig>
