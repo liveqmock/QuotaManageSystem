@@ -94,7 +94,12 @@ public class QuotaItemDao extends HibernateDao {
 				if (state.equals(EntityState.NEW)) {
 					session.save(quotaItem);
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaItem);
+					QuotaItem thisQuotaItem=getQuotaItem(quotaItem.getId());
+					thisQuotaItem.setTargetValue(quotaItem.getTargetValue());
+					if (quotaItem.getFinishValue()!=null) {
+						thisQuotaItem.setFinishValue(quotaItem.getFinishValue());
+					}
+					session.merge(thisQuotaItem);
 				}else if (state.equals(EntityState.DELETED)) {
 					session.delete(quotaItem);
 				}

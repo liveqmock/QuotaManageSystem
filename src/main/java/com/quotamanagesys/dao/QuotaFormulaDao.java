@@ -3,6 +3,8 @@ package com.quotamanagesys.dao;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -14,9 +16,13 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.QuotaFormula;
+import com.quotamanagesys.model.QuotaFormulaResult;
 
 @Component
 public class QuotaFormulaDao extends HibernateDao {
+	
+	@Resource
+	QuotaFormulaResultDao quotaFormulaResultDao;
 
 	@DataProvider
 	public Collection<QuotaFormula> getAll(){
@@ -26,8 +32,8 @@ public class QuotaFormulaDao extends HibernateDao {
 	}
 	
 	@DataProvider
-	public Collection<QuotaFormula> getQuotaFormulasByType(String type){
-		String hqlString="from "+QuotaFormula.class.getName()+" where type='"+type+"'";
+	public Collection<QuotaFormula> getQuotaFormulasByResult(String quotaFormulaResultId){
+		String hqlString="from "+QuotaFormula.class.getName()+" where quotaFormulaResult.id='"+quotaFormulaResultId+"'";
 		Collection<QuotaFormula> quotaFormulas=this.query(hqlString);
 		return quotaFormulas;
 	}
@@ -42,26 +48,30 @@ public class QuotaFormulaDao extends HibernateDao {
 			return null;
 		}
 	}
-	
+
 	@DataResolver
-	public void saveQuotaFormulas(Collection<QuotaFormula> quotaFormulas){
+	public void saveQuotaFormulas(Collection<QuotaFormula> quotaFormulas,String quotaFormulaResultId){
 		Session session=this.getSessionFactory().openSession();
-		for (QuotaFormula quotaFormula : quotaFormulas) {
-			try {
+		QuotaFormulaResult quotaFormulaResult=quotaFormulaResultDao.getFormulaResult(quotaFormulaResultId);
+		try {
+			for (QuotaFormula quotaFormula : quotaFormulas) {
 				EntityState state=EntityUtils.getState(quotaFormula);
 				if (state.equals(EntityState.NEW)) {
+					quotaFormula.setQuotaFormulaResult(quotaFormulaResult);
 					session.save(quotaFormula);
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaFormula);
+					quotaFormula.setQuotaFormulaResult(quotaFormulaResult);
+					session.merge(quotaFormula);
 				}else if (state.equals(EntityState.DELETED)) {
+					quotaFormula.setQuotaFormulaResult(null);
 					session.delete(quotaFormula);
 				}
-			} catch (Exception e) {
-				System.out.print(e.toString());
-			}finally{
-				session.flush();
-				session.close();
 			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
 		}
 	}
 	

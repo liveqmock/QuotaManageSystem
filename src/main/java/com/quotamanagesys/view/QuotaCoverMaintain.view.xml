@@ -50,9 +50,23 @@ switch (arg.code) {&#xD;
       </DataPilot>
       <Separator/>
       <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaCover=view.get(&quot;#dgQuotaCover&quot;);&#xD;
+var dsQuotaCover=view.get(&quot;#dsQuotaCover&quot;);&#xD;
+var uaQuotaCover=view.get(&quot;#uaQuotaCover&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaCover.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaCover.flush();&#xD;
+			dgQuotaCover.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
         <Property name="caption">保存</Property>
         <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        <Property name="action">uaQuotaCover</Property>
       </ToolBarButton>
     </ToolBar>
     <DataGrid id="dgQuotaCover">

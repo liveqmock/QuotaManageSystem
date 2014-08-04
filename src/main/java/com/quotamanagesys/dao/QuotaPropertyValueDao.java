@@ -1,9 +1,7 @@
 package com.quotamanagesys.dao;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -17,15 +15,14 @@ import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
-import com.quotamanagesys.model.QuotaItemMonth;
-import com.quotamanagesys.model.QuotaProperty;
+import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaPropertyValue;
 
 @Component
 public class QuotaPropertyValueDao extends HibernateDao {
 
 	@Resource
-	QuotaItemMonthDao quotaItemMonthDao;
+	QuotaItemCreatorDao quotaItemCreatorDao;
 	
 	@DataProvider
 	public Collection<QuotaPropertyValue> getAll(){
@@ -61,16 +58,21 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	
 	
 	@DataResolver
-	public void saveQuotaPropertyValues(Collection<QuotaPropertyValue> quotaPropertyValues){
+	public void saveQuotaPropertyValues(Collection<QuotaPropertyValue> quotaPropertyValues,String quotaItemCreatorId){
 		Session session=this.getSessionFactory().openSession();
+		QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
 		try {
 			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
 				EntityState state=EntityUtils.getState(quotaPropertyValue);
 				if (state.equals(EntityState.NEW)) {
+					quotaPropertyValue.setQuotaItemCreator(quotaItemCreator);
 					session.save(quotaPropertyValue);
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaPropertyValue);
+					quotaPropertyValue.setQuotaItemCreator(quotaItemCreator);
+					session.merge(quotaPropertyValue);
 				}else if (state.equals(EntityState.DELETED)) {
+					quotaPropertyValue.setQuotaItemCreator(null);
+					quotaPropertyValue.setQuotaProperty(null);
 					session.delete(quotaPropertyValue);
 				}
 			}

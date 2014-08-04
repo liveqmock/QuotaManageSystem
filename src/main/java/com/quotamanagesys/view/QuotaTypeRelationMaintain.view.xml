@@ -137,6 +137,7 @@ var dsQuotaType=view.get(&quot;#dsQuotaType&quot;);&#xD;
 dsQuotaType.set(&quot;parameter&quot;,{quotaTypeRelationId:quotaTypeRelationId}).flushAsync();</ClientEvent>
                 <Property name="dataSet">dsQuotaTypeRelation</Property>
                 <Property name="readOnly">true</Property>
+                <Property name="dynaRowHeight">true</Property>
                 <DataColumn name="id">
                   <Property name="property">id</Property>
                   <Property name="visible">false</Property>
@@ -144,6 +145,7 @@ dsQuotaType.set(&quot;parameter&quot;,{quotaTypeRelationId:quotaTypeRelationId})
                 <DataColumn name="mainQuotaType">
                   <Property name="property">mainQuotaType.quotaTypeName</Property>
                   <Property name="caption">指标种类名称</Property>
+                  <Property name="wrappable">true</Property>
                 </DataColumn>
                 <DataColumn>
                   <Property name="property">mainQuotaType.quotaProfession.profession</Property>
@@ -250,6 +252,7 @@ uaSubQuotaType.execute({&#xD;
                 <Property name="dataSet">dsQuotaType</Property>
                 <Property name="selectionMode">multiRows</Property>
                 <Property name="readOnly">true</Property>
+                <Property name="dynaRowHeight">true</Property>
                 <IndicatorColumn/>
                 <RowSelectorColumn/>
                 <DataColumn name="id">
@@ -260,6 +263,7 @@ uaSubQuotaType.execute({&#xD;
                   <Property name="property">quotaTypeName</Property>
                   <Property name="caption">指标种类名称</Property>
                   <Property name="align">center</Property>
+                  <Property name="wrappable">true</Property>
                 </DataColumn>
                 <DataColumn name="quotaProfession">
                   <Property name="property">quotaProfession.profession</Property>

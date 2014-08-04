@@ -161,6 +161,7 @@ if(datas.current){&#xD;
       <Property name="selectionMode">multiRows</Property>
       <Property name="readOnly">true</Property>
       <Property name="stretchColumnsMode">off</Property>
+      <Property name="dynaRowHeight">true</Property>
       <IndicatorColumn/>
       <RowSelectorColumn/>
       <DataColumn name="id">
@@ -171,6 +172,7 @@ if(datas.current){&#xD;
         <Property name="property">quotaTypeName</Property>
         <Property name="caption">指标种类名称</Property>
         <Property name="width">360</Property>
+        <Property name="wrappable">true</Property>
       </DataColumn>
       <DataColumn name="quotaProfession">
         <Property name="property">quotaProfession</Property>

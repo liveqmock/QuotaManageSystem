@@ -31,8 +31,6 @@ public class QuotaItem implements Serializable{
 	private int quarter;//指标季度
 	@Column(name="MONTH")
 	private int month;//指标月度
-	@Column(name="NAME")
-	private String name;//指标名称
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="QUOTA_ITEM_CREATOR_ID")
 	private QuotaItemCreator quotaItemCreator;//指标生成器
@@ -64,12 +62,6 @@ public class QuotaItem implements Serializable{
 	}
 	public void setMonth(int month) {
 		this.month = month;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public QuotaItemCreator getQuotaItemCreator() {
 		return quotaItemCreator;

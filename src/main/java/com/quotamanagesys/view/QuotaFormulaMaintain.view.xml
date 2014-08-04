@@ -14,10 +14,20 @@
       <PropertyDef name="formula">
         <Property name="dataType">String</Property>
       </PropertyDef>
+      <PropertyDef name="quotaFormulaResult">
+        <Property name="dataType">QuotaFormulaResult</Property>
+      </PropertyDef>
       <PropertyDef name="remark">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="type">
+    </DataType>
+    <DataType name="QuotaFormulaResult">
+      <Property name="creationType">com.quotamanagesys.model.QuotaFormulaResult</Property>
+      <Property name="defaultDisplayProperty">resultName</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="resultName">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
@@ -25,11 +35,19 @@
   <View>
     <DataSet id="dsQuotaFormula">
       <Property name="dataType">[QuotaFormula]</Property>
-      <Property name="dataProvider">quotaFormulaDao#getAll</Property>
+      <Property name="dataProvider">quotaFormulaDao#getQuotaFormulasByResult</Property>
     </DataSet>
-    <ToolBar>
-      <DataPilot>
-        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormula.data&quot;);&#xD;
+    <DataSet id="dsQuotaFormulaResult">
+      <Property name="dataType">[QuotaFormulaResult]</Property>
+      <Property name="dataProvider">quotaFormulaResultDao#getAll</Property>
+    </DataSet>
+    <SplitPanel>
+      <Property name="position">200</Property>
+      <MainControl>
+        <Container>
+          <ToolBar>
+            <DataPilot>
+              <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormula.data&quot;);&#xD;
 var action = view.get(&quot;#uaQuotaFormula&quot;);&#xD;
 switch(arg.code){&#xD;
 	case &quot;+&quot;:{&#xD;
@@ -46,7 +64,6 @@ switch(arg.code){&#xD;
 				//datas.remove(selection);&#xD;
 				action.execute();&#xD;
 			});&#xD;
-		&#xD;
 			arg.processDefault=false;&#xD;
 		}else{&#xD;
 			message = &quot;未选中任何记录！&quot;;&#xD;
@@ -56,71 +73,112 @@ switch(arg.code){&#xD;
 	}&#xD;
 }&#xD;
 </ClientEvent>
-        <Property name="dataSet">dsQuotaFormula</Property>
-        <Property name="itemCodes">pages,+,-,x</Property>
-      </DataPilot>
-      <Separator/>
-      <ToolBarButton>
-        <Property name="caption">保存</Property>
-        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        <Property name="action">uaQuotaFormula</Property>
-      </ToolBarButton>
-    </ToolBar>
-    <DataGrid id="dgQuotaFormula">
-      <Property name="dataSet">dsQuotaFormula</Property>
-      <Property name="dataType">QuotaFormula</Property>
-      <Property name="selectionMode">multiRows</Property>
-      <Property name="stretchColumnsMode">off</Property>
-      <IndicatorColumn/>
-      <RowSelectorColumn/>
-      <DataColumn name="id">
-        <Property name="property">id</Property>
-        <Property name="visible">false</Property>
-      </DataColumn>
-      <DataColumn name="name">
-        <Property name="property">name</Property>
-        <Property name="caption">公式名称</Property>
-        <Property name="width">250</Property>
-      </DataColumn>
-      <DataColumn name="formula">
-        <Property name="property">formula</Property>
-        <Property name="caption">公式</Property>
-        <Property name="width">250</Property>
-        <Editor>
-          <TextArea>
-            <Property name="width">400</Property>
-            <Property name="height">75</Property>
-          </TextArea>
-        </Editor>
-      </DataColumn>
-      <DataColumn name="type">
-        <Property name="property">type</Property>
-        <Property name="caption">公式种类</Property>
-        <Property name="width">90</Property>
-        <Property name="trigger">lddQuotaFormulaType</Property>
-      </DataColumn>
-      <DataColumn name="remark">
-        <Property name="property">remark</Property>
-        <Property name="caption">备注</Property>
-        <Property name="width">300</Property>
-        <Editor>
-          <TextArea>
-            <Property name="width">400</Property>
-            <Property name="height">75</Property>
-          </TextArea>
-        </Editor>
-      </DataColumn>
-    </DataGrid>
-    <UpdateAction id="uaQuotaFormula">
-      <Property name="executingMessage">正在保存...</Property>
-      <Property name="successMessage">保存成功!</Property>
-      <Property name="dataResolver">quotaFormulaDao#saveQuotaFormulas</Property>
-      <UpdateItem>
-        <Property name="dataSet">dsQuotaFormula</Property>
-      </UpdateItem>
-    </UpdateAction>
-    <ListDropDown id="lddQuotaFormulaType">
-      <Property name="items">亮灯公式,进度公式</Property>
-    </ListDropDown>
+              <Property name="dataSet">dsQuotaFormula</Property>
+              <Property name="itemCodes">pages,+,-,x</Property>
+            </DataPilot>
+            <Separator/>
+            <ToolBarButton>
+              <ClientEvent name="onClick">var dgQuotaFormula=view.get(&quot;#dgQuotaFormula&quot;);&#xD;
+var dsQuotaFormula=view.get(&quot;#dsQuotaFormula&quot;);&#xD;
+var uaQuotaFormula=view.get(&quot;#uaQuotaFormula&quot;);&#xD;
+var dtrQuotaFormulaResult=view.get(&quot;#dtrQuotaFormulaResult&quot;);&#xD;
+var currentQuotaFormulaResult=dtrQuotaFormulaResult.get(&quot;currentEntity&quot;);&#xD;
+var quotaFormulaResultId=currentQuotaFormulaResult.get(&quot;id&quot;);&#xD;
+&#xD;
+uaQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResultId}).execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaFormula.flush();&#xD;
+			dgQuotaFormula.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+              <Property name="caption">保存</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+              <Property name="action">uaQuotaFormula</Property>
+            </ToolBarButton>
+          </ToolBar>
+          <DataGrid id="dgQuotaFormula">
+            <Property name="dataSet">dsQuotaFormula</Property>
+            <Property name="dataType">QuotaFormula</Property>
+            <Property name="selectionMode">multiRows</Property>
+            <Property name="stretchColumnsMode">off</Property>
+            <Property name="dynaRowHeight">true</Property>
+            <IndicatorColumn/>
+            <RowSelectorColumn/>
+            <DataColumn name="id">
+              <Property name="property">id</Property>
+              <Property name="visible">false</Property>
+              <Property name="readOnly">true</Property>
+            </DataColumn>
+            <DataColumn name="name">
+              <Property name="property">name</Property>
+              <Property name="width">260</Property>
+              <Property name="caption">公式名称</Property>
+              <Property name="wrappable">true</Property>
+              <Editor>
+                <TextArea>
+                  <Property name="height">100</Property>
+                </TextArea>
+              </Editor>
+            </DataColumn>
+            <DataColumn name="formula">
+              <Property name="property">formula</Property>
+              <Property name="caption">公式</Property>
+              <Property name="width">280</Property>
+              <Property name="wrappable">true</Property>
+              <Editor>
+                <TextArea>
+                  <Property name="height">100</Property>
+                </TextArea>
+              </Editor>
+            </DataColumn>
+            <DataColumn name="quotaFormulaResult">
+              <Property name="property">quotaFormulaResult</Property>
+              <Property name="visible">false</Property>
+              <Property name="readOnly">true</Property>
+            </DataColumn>
+            <DataColumn name="remark">
+              <Property name="property">remark</Property>
+              <Property name="caption">备注</Property>
+              <Property name="width">300</Property>
+              <Property name="wrappable">true</Property>
+              <Editor>
+                <TextArea>
+                  <Property name="height">100</Property>
+                </TextArea>
+              </Editor>
+            </DataColumn>
+          </DataGrid>
+          <UpdateAction id="uaQuotaFormula">
+            <Property name="executingMessage">正在保存...</Property>
+            <Property name="successMessage">保存成功!</Property>
+            <Property name="dataResolver">quotaFormulaDao#saveQuotaFormulas</Property>
+            <UpdateItem>
+              <Property name="dataSet">dsQuotaFormula</Property>
+            </UpdateItem>
+          </UpdateAction>
+        </Container>
+      </MainControl>
+      <SideControl>
+        <DataTree id="dtrQuotaFormulaResult">
+          <ClientEvent name="onClick">var dtrQuotaFormulaResult=view.get(&quot;#dtrQuotaFormulaResult&quot;);&#xD;
+var currentQuotaFormulaResult=dtrQuotaFormulaResult.get(&quot;currentEntity&quot;);&#xD;
+var quotaFormulaResultId=currentQuotaFormulaResult.get(&quot;id&quot;);&#xD;
+var dsQuotaFormula=view.get(&quot;#dsQuotaFormula&quot;);&#xD;
+&#xD;
+dsQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResultId}).flushAsync();</ClientEvent>
+          <Property name="dataSet">dsQuotaFormulaResult</Property>
+          <Property name="allowNoCurrent">true</Property>
+          <BindingConfigs>
+            <BindingConfig>
+              <Property name="name">quotaFormulaResult</Property>
+              <Property name="labelProperty">resultName</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -0px -200px</Property>
+            </BindingConfig>
+          </BindingConfigs>
+        </DataTree>
+      </SideControl>
+    </SplitPanel>
   </View>
 </ViewConfig>

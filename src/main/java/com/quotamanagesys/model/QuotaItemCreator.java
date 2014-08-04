@@ -10,9 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -49,6 +49,9 @@ public class QuotaItemCreator implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="DIMENSION_TWO_ID")
 	private QuotaDimensionTwo quotaDimensionTwo;//二维
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = QuotaFormula.class, cascade = CascadeType.ALL)
+	@JoinTable(name = "FORMULA_QUOTA_ITEM_CREATOR_MAP", joinColumns = { @JoinColumn(name = "QUOTA_ITEM_CREATOR_ID") }, inverseJoinColumns = { @JoinColumn(name = "QUOTA_FORMULA_ID") })
+	private Set<QuotaFormula> quotaFormulas;//关联的计算公式
 	
 	public String getId() {
 		return id;
@@ -97,5 +100,11 @@ public class QuotaItemCreator implements Serializable{
 	}
 	public void setQuotaDimensionTwo(QuotaDimensionTwo quotaDimensionTwo) {
 		this.quotaDimensionTwo = quotaDimensionTwo;
+	}
+	public Set<QuotaFormula> getQuotaFormulas() {
+		return quotaFormulas;
+	}
+	public void setQuotaFormulas(Set<QuotaFormula> quotaFormulas) {
+		this.quotaFormulas = quotaFormulas;
 	}
 }

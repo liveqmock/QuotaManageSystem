@@ -1,5 +1,6 @@
 package com.quotamanagesys.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
+import com.quotamanagesys.model.QuotaType;
 
 @Component
 public class QuotaItemCreatorDao extends HibernateDao {
@@ -30,6 +32,8 @@ public class QuotaItemCreatorDao extends HibernateDao {
 	QuotaPropertyValueDao quotaPropertyValueDao;
 	@Resource
 	QuotaItemDao quotaItemDao;
+	@Resource
+	QuotaTypeDao quotaTypeDao;
 
 	@DataProvider
 	public Collection<QuotaItemCreator> getAll() {
@@ -140,16 +144,25 @@ public class QuotaItemCreatorDao extends HibernateDao {
 	}
 
 	@DataResolver
-	public void saveQuotaItemCreators(
-			Collection<QuotaItemCreator> quotaItemCreators) {
+	public void saveQuotaItemCreators(Collection<QuotaItemCreator> quotaItemCreators) {
 		Session session = this.getSessionFactory().openSession();
 		try {
 			for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
 				EntityState state = EntityUtils.getState(quotaItemCreator);
 				if (state.equals(EntityState.NEW)) {
+					QuotaType quotaType=quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
+					quotaItemCreator.setName(quotaType.getQuotaTypeName());
+					quotaItemCreator.setQuotaType(quotaType);
 					session.merge(quotaItemCreator);
 				} else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaItemCreator);
+					QuotaType quotaType=quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
+					String oldName=this.getQuotaItemCreator(quotaItemCreator.getId()).getName();
+					String newName=quotaType.getQuotaTypeName();
+					if (!oldName.equals(newName)) {
+						quotaItemCreator.setName(newName);
+					}
+					quotaItemCreator.setQuotaType(quotaType);
+					session.merge(quotaItemCreator);
 				} else if (state.equals(EntityState.DELETED)) {
 					session.delete(quotaItemCreator);
 				}
