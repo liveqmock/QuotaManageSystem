@@ -3,12 +3,14 @@ package com.quotamanagesys.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
@@ -17,8 +19,11 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.quotamanagesys.model.QuotaFormula;
 import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
+import com.quotamanagesys.model.QuotaProperty;
+import com.quotamanagesys.model.QuotaPropertyValue;
 import com.quotamanagesys.model.QuotaType;
 
 @Component
@@ -30,6 +35,10 @@ public class QuotaItemCreatorDao extends HibernateDao {
 	QuotaDimensionTwoDao quotaDimensionTwoDao;
 	@Resource
 	QuotaPropertyValueDao quotaPropertyValueDao;
+	@Resource
+	QuotaFormulaDao quotaFormulaDao;
+	@Resource
+	QuotaPropertyDao quotaPropertyDao;
 	@Resource
 	QuotaItemDao quotaItemDao;
 	@Resource
@@ -73,13 +82,66 @@ public class QuotaItemCreatorDao extends HibernateDao {
 
 	@DataProvider
 	public Collection<QuotaItemCreator> getQuotaItemCreatorsByManageDept(
-			String manageDeptId) {
+			String manageDeptId) throws Exception {
 		String hqlString = "from " + QuotaItemCreator.class.getName()
 				+ " where quotaType.manageDept.id='" + manageDeptId + "'";
 		Collection<QuotaItemCreator> quotaItemCreators = this.query(hqlString);
-		return quotaItemCreators;
+		List<QuotaItemCreator> results=new ArrayList<QuotaItemCreator>();
+		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+			Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId());
+			String quotaPropertiesNames="";
+			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+				if (quotaPropertiesNames=="") {
+					quotaPropertiesNames=quotaPropertyValue.getQuotaProperty().getName();
+				}else {
+					quotaPropertiesNames=quotaPropertiesNames+","+quotaPropertyValue.getQuotaProperty().getName();
+				}
+			}
+			QuotaItemCreator targetQuotaItemCreator=EntityUtils.toEntity(quotaItemCreator);
+			EntityUtils.setValue(targetQuotaItemCreator, "quotaPropertiesNames", quotaPropertiesNames);
+			results.add(targetQuotaItemCreator);
+		}
+		return results;
 	}
 
+	@DataProvider
+	public Collection<QuotaItemCreator> getQuotaItemCreatorsByManageDept2(
+			String manageDeptId,String quotaFormulaResultId) throws Exception {
+		String hqlString = "from " + QuotaItemCreator.class.getName()
+				+ " where quotaType.manageDept.id='" + manageDeptId + "'";
+		Collection<QuotaItemCreator> quotaItemCreators = this.query(hqlString);
+		List<QuotaItemCreator> results=new ArrayList<QuotaItemCreator>();
+		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+			Collection<QuotaFormula> quotaFormulas=quotaItemCreator.getQuotaFormulas();
+			boolean formulaResultIsLinked=false;
+			if (quotaFormulas.size()>0) {
+				for (QuotaFormula quotaFormula : quotaFormulas) {
+					if (quotaFormula.getQuotaFormulaResult().getId().equals(quotaFormulaResultId)) {
+						formulaResultIsLinked=true;
+						break;
+					}
+				}
+			}
+			if (formulaResultIsLinked==false) {
+				Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId());
+				String quotaPropertiesNames="";
+				for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+					if (quotaPropertiesNames=="") {
+						quotaPropertiesNames=quotaPropertyValue.getQuotaProperty().getName();
+					}else {
+						quotaPropertiesNames=quotaPropertiesNames+","+quotaPropertyValue.getQuotaProperty().getName();
+					}
+				}
+				
+				QuotaItemCreator targetQuotaItemCreator=EntityUtils.toEntity(quotaItemCreator);
+				EntityUtils.setValue(targetQuotaItemCreator, "quotaPropertiesNames", quotaPropertiesNames);
+				results.add(targetQuotaItemCreator);
+			}
+		}
+		return results;
+	}
+
+	
 	@DataProvider
 	public Collection<QuotaItemCreator> getQuotaItemCreatorsByQuotaCover(
 			String quotaCoverId) {
@@ -87,6 +149,33 @@ public class QuotaItemCreatorDao extends HibernateDao {
 				+ " where quotaCover.id='" + quotaCoverId + "'";
 		Collection<QuotaItemCreator> quotaItemCreators = this.query(hqlString);
 		return quotaItemCreators;
+	}
+
+	@DataProvider
+	public Collection<QuotaItemCreator> getQuotaItemCreatorsByFormula(String quotaFormulaId) throws Exception {
+		Session session = this.getSessionFactory().openSession();
+		List<QuotaItemCreator> quotaItemCreators = session
+				.createCriteria(QuotaItemCreator.class)
+				.createAlias("quotaFormulas", "q")
+				.add(Restrictions.eq("q.id", quotaFormulaId)).list();
+		session.flush();
+		session.close();
+		List<QuotaItemCreator> results=new ArrayList<QuotaItemCreator>();
+		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+			Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId());
+			String quotaPropertiesNames="";
+			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+				if (quotaPropertiesNames=="") {
+					quotaPropertiesNames=quotaPropertyValue.getQuotaProperty().getName();
+				}else {
+					quotaPropertiesNames=quotaPropertiesNames+","+quotaPropertyValue.getQuotaProperty().getName();
+				}
+			}
+			QuotaItemCreator targetQuotaItemCreator=EntityUtils.toEntity(quotaItemCreator);
+			EntityUtils.setValue(targetQuotaItemCreator, "quotaPropertiesNames", quotaPropertiesNames);
+			results.add(targetQuotaItemCreator);
+		}
+		return results;
 	}
 
 	@Expose
@@ -150,14 +239,15 @@ public class QuotaItemCreatorDao extends HibernateDao {
 			for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
 				EntityState state = EntityUtils.getState(quotaItemCreator);
 				if (state.equals(EntityState.NEW)) {
-					QuotaType quotaType=quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
+					QuotaType quotaType = quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
 					quotaItemCreator.setName(quotaType.getQuotaTypeName());
 					quotaItemCreator.setQuotaType(quotaType);
 					session.merge(quotaItemCreator);
 				} else if (state.equals(EntityState.MODIFIED)) {
-					QuotaType quotaType=quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
-					String oldName=this.getQuotaItemCreator(quotaItemCreator.getId()).getName();
-					String newName=quotaType.getQuotaTypeName();
+					QuotaType quotaType = quotaTypeDao.getQuotaType(quotaItemCreator.getQuotaType().getId());
+					String oldName = this.getQuotaItemCreator(
+							quotaItemCreator.getId()).getName();
+					String newName = quotaType.getQuotaTypeName();
 					if (!oldName.equals(newName)) {
 						quotaItemCreator.setName(newName);
 					}
@@ -170,6 +260,40 @@ public class QuotaItemCreatorDao extends HibernateDao {
 		} catch (Exception e) {
 			System.out.print(e.toString());
 		} finally {
+			session.flush();
+			session.close();
+		}
+	}
+	
+	@DataResolver
+	public void saveQuotaItemCreatorsWithFormula(Collection<QuotaItemCreator> quotaItemCreators,String quotaFormulaId){
+		Session session=this.getSessionFactory().openSession();
+		QuotaFormula quotaFormula=quotaFormulaDao.getQuotaFormula(quotaFormulaId);
+		try {
+			for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+				EntityState state=EntityUtils.getState(quotaItemCreator);
+				if (state.equals(EntityState.NEW)) {
+					QuotaItemCreator updateQuotaItemCreator=this.getQuotaItemCreator(quotaItemCreator.getId());
+					Set<QuotaFormula> formulas=updateQuotaItemCreator.getQuotaFormulas();
+					formulas.add(quotaFormula);
+					updateQuotaItemCreator.setQuotaFormulas(formulas);
+					session.merge(updateQuotaItemCreator);
+				}else if (state.equals(EntityState.DELETED)) {
+					QuotaItemCreator updateQuotaItemCreator=this.getQuotaItemCreator(quotaItemCreator.getId());
+					Set<QuotaFormula> formulas=updateQuotaItemCreator.getQuotaFormulas();
+					for (QuotaFormula quotaFormula2 : formulas) {
+						if (quotaFormula2.getId().equals(quotaFormula.getId())) {
+							formulas.remove(quotaFormula2);
+							break;
+						}
+					}	
+					updateQuotaItemCreator.setQuotaFormulas(formulas);
+					session.merge(updateQuotaItemCreator);
+				}
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
 			session.flush();
 			session.close();
 		}

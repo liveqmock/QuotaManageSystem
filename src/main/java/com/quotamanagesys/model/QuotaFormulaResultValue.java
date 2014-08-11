@@ -31,7 +31,7 @@ public class QuotaFormulaResultValue implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="QUOTA_ITEM_ID")
 	private QuotaItem quotaItem;//关联该公式结果的指标
-	@Column(name="NAME")
+	@Column(name="VALUE")
 	private String value;//公式结果值
 	
 	public String getId() {

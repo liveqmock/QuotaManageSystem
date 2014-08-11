@@ -18,10 +18,8 @@
 		</dependency>
 		<dependency>
 			<groupId>jep</groupId>
-			<artifactId>jep-java</artifactId>
-			<version>3.4-trial</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jep-java-3.4-trial.jar</systemPath>
+			<artifactId>jep</artifactId>
+			<version>2.24</version>
 		</dependency>
 		<dependency>
 			<groupId>com.bstek.bdf2</groupId>

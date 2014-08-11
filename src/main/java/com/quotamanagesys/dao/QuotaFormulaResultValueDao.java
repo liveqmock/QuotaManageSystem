@@ -3,21 +3,25 @@ package com.quotamanagesys.dao;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.nfunk.jep.JEP;
 import org.springframework.stereotype.Component;
 
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
+import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.QuotaFormulaResultValue;
 
 @Component
 public class QuotaFormulaResultValueDao extends HibernateDao {
-
+	
 	@DataProvider
 	public Collection<QuotaFormulaResultValue> getAll(){
 		String hqlString="from "+QuotaFormulaResultValue.class.getName();
