@@ -28,13 +28,16 @@ public class QuotaType implements Serializable{
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String quotaTypeName;//指标种类名称
+	private String name;//指标种类名称
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="PROFESSION_ID")
 	private QuotaProfession quotaProfession;//指标专业
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="LEVEL_ID")
 	private QuotaLevel quotaLevel;//指标级别
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="DIMENSION_ID")
+	private QuotaDimension quotaDimension;//指标维度
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="UNIT_ID")
 	private QuotaUnit quotaUnit;//指标计量单位
@@ -45,20 +48,22 @@ public class QuotaType implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="DEPT_ID")
 	private DefaultDept manageDept;//管理部门
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="QUOTA_TYPE_ID")
+	private QuotaType fatherQuotaType;//上级指标种类
 	@Column(name="IS_USED")
 	private boolean inUsed;//指标种类使用状态
-	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getQuotaTypeName() {
-		return quotaTypeName;
+	public String getName() {
+		return name;
 	}
-	public void setQuotaTypeName(String quotaTypeName) {
-		this.quotaTypeName = quotaTypeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public QuotaProfession getQuotaProfession() {
 		return quotaProfession;
@@ -71,6 +76,12 @@ public class QuotaType implements Serializable{
 	}
 	public void setQuotaLevel(QuotaLevel quotaLevel) {
 		this.quotaLevel = quotaLevel;
+	}
+	public QuotaDimension getQuotaDimension() {
+		return quotaDimension;
+	}
+	public void setQuotaDimension(QuotaDimension quotaDimension) {
+		this.quotaDimension = quotaDimension;
 	}
 	public QuotaUnit getQuotaUnit() {
 		return quotaUnit;
@@ -95,6 +106,12 @@ public class QuotaType implements Serializable{
 	}
 	public void setManageDept(DefaultDept manageDept) {
 		this.manageDept = manageDept;
+	}
+	public QuotaType getFatherQuotaType() {
+		return fatherQuotaType;
+	}
+	public void setFatherQuotaType(QuotaType fatherQuotaType) {
+		this.fatherQuotaType = fatherQuotaType;
 	}
 	public boolean isInUsed() {
 		return inUsed;

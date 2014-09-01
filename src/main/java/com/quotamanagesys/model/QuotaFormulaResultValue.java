@@ -33,7 +33,6 @@ public class QuotaFormulaResultValue implements Serializable{
 	private QuotaItem quotaItem;//关联该公式结果的指标
 	@Column(name="VALUE")
 	private String value;//公式结果值
-	
 	public String getId() {
 		return id;
 	}
@@ -58,5 +57,5 @@ public class QuotaFormulaResultValue implements Serializable{
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 }

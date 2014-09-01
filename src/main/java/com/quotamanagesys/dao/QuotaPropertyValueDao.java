@@ -85,6 +85,23 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	}
 	
 	@DataResolver
+	public void deleteQuotaPropertyValues(Collection<QuotaPropertyValue> quotaPropertyValues){
+		Session session=this.getSessionFactory().openSession();
+		try {
+			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+				quotaPropertyValue.setQuotaItemCreator(null);
+				quotaPropertyValue.setQuotaProperty(null);
+				session.delete(quotaPropertyValue);
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}
+	}
+	
+	@DataResolver
 	public void excuteHQL(String HQL) {
 		Session session = this.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();

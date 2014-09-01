@@ -5,10 +5,11 @@
   <Model>
     <DataType name="QuotaType">
       <Property name="creationType">com.quotamanagesys.model.QuotaType</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaTypeName">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
       <PropertyDef name="quotaProfession">
@@ -16,6 +17,9 @@
       </PropertyDef>
       <PropertyDef name="quotaLevel">
         <Property name="dataType">QuotaLevel</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaDimension">
+        <Property name="dataType">QuotaDimension</Property>
       </PropertyDef>
       <PropertyDef name="quotaUnit">
         <Property name="dataType">QuotaUnit</Property>
@@ -35,32 +39,35 @@
     </DataType>
     <DataType name="QuotaProfession">
       <Property name="creationType">com.quotamanagesys.model.QuotaProfession</Property>
-      <Property name="defaultDisplayProperty">profession</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="profession">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaUnit">
       <Property name="creationType">com.quotamanagesys.model.QuotaUnit</Property>
-      <Property name="defaultDisplayProperty">quotaUnit</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaUnit">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaLevel">
       <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
-      <Property name="defaultDisplayProperty">quotaLevel</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaLevel">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="level">
+        <Property name="dataType">int</Property>
       </PropertyDef>
     </DataType>
     <DataType name="Department">
@@ -85,6 +92,16 @@
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
+    <DataType name="QuotaDimension">
+      <Property name="creationType">com.quotamanagesys.model.QuotaDimension</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
   </Model>
   <View>
     <DataSet id="dsQuotaType">
@@ -106,6 +123,10 @@
     <DataSet id="dsDepartment">
       <Property name="dataType">[Department]</Property>
       <Property name="dataProvider">departmentDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaDimension">
+      <Property name="dataType">[QuotaDimension]</Property>
+      <Property name="dataProvider">quotaDimensionDao#getAll</Property>
     </DataSet>
     <ToolBar>
       <DataPilot>
@@ -169,9 +190,9 @@ if(datas.current){&#xD;
         <Property name="visible">false</Property>
       </DataColumn>
       <DataColumn name="quotaTypeName">
-        <Property name="property">quotaTypeName</Property>
+        <Property name="property">name</Property>
         <Property name="caption">指标种类名称</Property>
-        <Property name="width">360</Property>
+        <Property name="width">300</Property>
         <Property name="wrappable">true</Property>
       </DataColumn>
       <DataColumn name="quotaProfession">
@@ -180,11 +201,11 @@ if(datas.current){&#xD;
         <Property name="visible">false</Property>
       </DataColumn>
       <DataColumn>
-        <Property name="property">quotaProfession.profession</Property>
-        <Property name="name">profession</Property>
+        <Property name="property">quotaProfession.name</Property>
+        <Property name="name">professionName</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">指标专业</Property>
-        <Property name="width">180</Property>
+        <Property name="width">120</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
@@ -194,12 +215,27 @@ if(datas.current){&#xD;
         <Property name="visible">false</Property>
       </DataColumn>
       <DataColumn>
-        <Property name="name">level</Property>
-        <Property name="property">quotaLevel.quotaLevel</Property>
+        <Property name="name">levelName</Property>
+        <Property name="property">quotaLevel.name</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">指标级别</Property>
-        <Property name="width">180</Property>
+        <Property name="width">120</Property>
         <Property name="align">center</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn>
+        <Property name="name">quotaDimension</Property>
+        <Property name="property">quotaDimension</Property>
+        <Property name="visible">false</Property>
+        <Property name="trigger">dsddQuotaDimension</Property>
+        <Editor/>
+      </DataColumn>
+      <DataColumn>
+        <Property name="name">dimensionName</Property>
+        <Property name="property">quotaDimension.name</Property>
+        <Property name="readOnly">true</Property>
+        <Property name="width">120</Property>
+        <Property name="caption">指标维度</Property>
         <Editor/>
       </DataColumn>
       <DataColumn name="quotaUnit">
@@ -208,8 +244,8 @@ if(datas.current){&#xD;
         <Property name="visible">false</Property>
       </DataColumn>
       <DataColumn>
-        <Property name="name">unit</Property>
-        <Property name="property">quotaUnit.quotaUnit</Property>
+        <Property name="name">unitName</Property>
+        <Property name="property">quotaUnit.name</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">计量单位</Property>
         <Property name="width">90</Property>
@@ -238,11 +274,11 @@ if(datas.current){&#xD;
         <Property name="visible">false</Property>
       </DataColumn>
       <DataColumn>
-        <Property name="name">department</Property>
+        <Property name="name">manageDeptName</Property>
         <Property name="property">manageDept.name</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">管理部门</Property>
-        <Property name="width">180</Property>
+        <Property name="width">120</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
@@ -264,8 +300,8 @@ if(datas.current){&#xD;
     <DataSetDropDown id="dsddQuotaProfession">
       <Property name="dataSet">dsQuotaProfession</Property>
       <DataColumn>
-        <Property name="name">profession</Property>
-        <Property name="property">profession</Property>
+        <Property name="name">name</Property>
+        <Property name="property">name</Property>
         <Property name="caption">指标专业</Property>
         <Editor/>
       </DataColumn>
@@ -273,8 +309,8 @@ if(datas.current){&#xD;
     <DataSetDropDown id="dsddQuotaUnit">
       <Property name="dataSet">dsQuotaUnit</Property>
       <DataColumn>
-        <Property name="name">quotaUnit</Property>
-        <Property name="property">quotaUnit</Property>
+        <Property name="name">name</Property>
+        <Property name="property">name</Property>
         <Property name="caption">指标计量单位</Property>
         <Editor/>
       </DataColumn>
@@ -282,9 +318,18 @@ if(datas.current){&#xD;
     <DataSetDropDown id="dsddQuotaLevel">
       <Property name="dataSet">dsQuotaLevel</Property>
       <DataColumn>
-        <Property name="name">quotaLevel</Property>
-        <Property name="property">quotaLevel</Property>
+        <Property name="name">name</Property>
+        <Property name="property">name</Property>
         <Property name="caption">指标级别</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddQuotaDimension">
+      <Property name="dataSet">dsQuotaDimension</Property>
+      <DataColumn>
+        <Property name="name">name</Property>
+        <Property name="property">name</Property>
+        <Property name="caption">指标维度</Property>
         <Editor/>
       </DataColumn>
     </DataSetDropDown>
@@ -300,9 +345,8 @@ if(datas.current){&#xD;
     <ListDropDown id="lddRate">
       <Property name="items">
         <Collection>
-          <Value>年度</Value>
-          <Value>季度</Value>
-          <Value>月度</Value>
+          <Value>年</Value>
+          <Value>月</Value>
         </Collection>
       </Property>
     </ListDropDown>
@@ -355,8 +399,8 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
           <Property name="dataType">QuotaType</Property>
           <AutoFormElement>
             <Property name="name">quotaTypeName</Property>
-            <Property name="property">quotaTypeName</Property>
-            <Property name="label">指标类别名称</Property>
+            <Property name="label">指标种类名称</Property>
+            <Property name="property">name</Property>
             <Editor/>
           </AutoFormElement>
           <AutoFormElement>
@@ -371,6 +415,13 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
             <Property name="property">quotaLevel</Property>
             <Property name="trigger">dsddQuotaLevel</Property>
             <Property name="label">指标级别</Property>
+            <Editor/>
+          </AutoFormElement>
+          <AutoFormElement>
+            <Property name="name">quotaDimension</Property>
+            <Property name="property">quotaDimension</Property>
+            <Property name="trigger">dsddQuotaDimension</Property>
+            <Property name="label">指标维度</Property>
             <Editor/>
           </AutoFormElement>
           <AutoFormElement>

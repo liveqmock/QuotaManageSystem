@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaType" parent="global:QuotaType">
+      <Reference name="childrenQuotaTypes">
+        <Property name="dataType">[SELF]</Property>
+        <Property name="submittable">false</Property>
+        <Property name="dataProvider">quotaTypeDao#getChildrenQuotaTypes</Property>
+        <Property name="parameter">$${this.id}</Property>
+      </Reference>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaType">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeDao#getTopLevelQuotaTypes</Property>
+      <Property name="parameter"></Property>
+    </DataSet>
+    <DataTreeGrid id="dtgQuotaType">
+      <Property name="dataSet">dsQuotaType</Property>
+      <Property name="treeColumn">name</Property>
+      <Property name="showLines">false</Property>
+      <Property name="dynaRowHeight">true</Property>
+      <Property name="showFooter">false</Property>
+      <Property name="stretchColumnsMode">off</Property>
+      <Property name="readOnly">true</Property>
+      <BindingConfigs>
+        <BindingConfig>
+          <Property name="childrenProperty">childrenQuotaTypes</Property>
+          <Property name="labelProperty">name</Property>
+          <Property name="recursive">true</Property>
+          <Property name="expandLevel">0</Property>
+        </BindingConfig>
+      </BindingConfigs>
+      <Columns>
+        <RowNumColumn/>
+        <DataColumn>
+          <Property name="property">id</Property>
+          <Property name="visible">false</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">name</Property>
+          <Property name="wrappable">true</Property>
+          <Property name="width">230</Property>
+          <Property name="caption">指标种类名称</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">quotaProfession.name</Property>
+          <Property name="width">100</Property>
+          <Property name="caption">指标专业</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">quotaLevel.name</Property>
+          <Property name="width">100</Property>
+          <Property name="caption">指标级别</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">quotaDimension.name</Property>
+          <Property name="width">100</Property>
+          <Property name="caption">指标维度</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">quotaUnit.name</Property>
+          <Property name="width">80</Property>
+          <Property name="caption">计量单位</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">digit</Property>
+          <Property name="width">70</Property>
+          <Property name="caption">小数位数</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">rate</Property>
+          <Property name="width">70</Property>
+          <Property name="caption">考核频率</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">manageDept.name</Property>
+          <Property name="width">100</Property>
+          <Property name="caption">管理部门</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">inUsed</Property>
+          <Property name="width">90</Property>
+          <Property name="caption">是否在用</Property>
+          <Property name="align">center</Property>
+          <Editor/>
+        </DataColumn>
+      </Columns>
+    </DataTreeGrid>
+  </View>
+</ViewConfig>

@@ -35,7 +35,7 @@ public class ResultTableCreator extends HibernateDao{
 	QuotaPropertyValueDao quotaPropertyValueDao;
 	@Resource
 	QuotaItemDao quotaItemDao;
-	
+
 	@Expose
 	public void creatorResultTable(int year){
 		excuteSQL("DROP TABLE IF EXISTS QUOTA_ITEM_VIEW");
@@ -52,72 +52,40 @@ public class ResultTableCreator extends HibernateDao{
 		String sqlString="INSERT INTO QUOTA_ITEM_VIEW(";
 		String staticColumnsString;
 		String staticValuesString;
-		if (quotaItemCreator.getQuotaDimensionTwo()==null) {
-			staticColumnsString="指标名称,"
-					+"年度,"
-					+ "季度,"
-					+ "月度,"
-					+ "指标专业,"
-					+ "指标级别,"
-					+ "计量单位,"
-					+ "小数位数,"
-					+ "考核频率,"
-					+ "管理部门,"
-					+ "责任部门,"
-					+ "口径,"
-					+ "一级维度,"
-					+ "目标值,"
-					+ "完成值";
-			staticValuesString="'"+quotaItemCreator.getName()+"',"
-					+quotaItem.getYear()+","
-					+quotaItem.getQuarter()+","
-					+quotaItem.getMonth()+","
-					+"'"+quotaType.getQuotaProfession().getProfession()+"',"
-					+"'"+quotaType.getQuotaLevel().getQuotaLevel()+"',"
-					+"'"+quotaType.getQuotaUnit().getQuotaUnit()+"',"
-					+quotaType.getDigit()+","
-					+"'"+quotaType.getRate()+"',"
-					+"'"+quotaType.getManageDept().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaDutyDept().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaCover().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaDimensionOne().getDimensionName()+"',"
-					+quotaItem.getTargetValue()+","
-					+quotaItem.getFinishValue();
+		staticColumnsString="指标名称,"
+				+"年度,"
+				+ "月度,"
+				+ "指标专业,"
+				+ "指标级别,"
+				+ "计量单位,"
+				+ "小数位数,"
+				+ "考核频率,"
+				+ "管理部门,"
+				+ "责任部门,"
+				+ "口径,"
+				+ "维度,"
+				+ "完成值";
+		
+		String professionName=null;
+		if (quotaType.getQuotaProfession()==null) {
+			professionName=null;
 		}else {
-			staticColumnsString="指标名称,"
-					+"年度,"
-					+ "季度,"
-					+ "月度,"
-					+ "指标专业,"
-					+ "指标级别,"
-					+ "计量单位,"
-					+ "小数位数,"
-					+ "考核频率,"
-					+ "管理部门,"
-					+ "责任部门,"
-					+ "口径,"
-					+ "一级维度,"
-					+ "二级维度,"
-					+ "目标值,"
-					+ "完成值";
-			staticValuesString="'"+quotaItemCreator.getName()+"',"
-					+quotaItem.getYear()+","
-					+quotaItem.getQuarter()+","
-					+quotaItem.getMonth()+","
-					+"'"+quotaType.getQuotaProfession().getProfession()+"',"
-					+"'"+quotaType.getQuotaLevel().getQuotaLevel()+"',"
-					+"'"+quotaType.getQuotaUnit().getQuotaUnit()+"',"
-					+quotaType.getDigit()+","
-					+"'"+quotaType.getRate()+"',"
-					+"'"+quotaType.getManageDept().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaDutyDept().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaCover().getName()+"',"
-					+"'"+quotaItemCreator.getQuotaDimensionOne().getDimensionName()+"',"
-					+"'"+quotaItemCreator.getQuotaDimensionTwo().getDimensionName()+"',"
-					+quotaItem.getTargetValue()+","
-					+quotaItem.getFinishValue();
+			professionName=quotaType.getQuotaProfession().getName();
 		}
 		
+		staticValuesString="'"+quotaItemCreator.getName()+"',"
+				+quotaItem.getYear()+","
+				+quotaItem.getMonth()+","
+				+"'"+professionName+"',"
+				+"'"+quotaType.getQuotaLevel().getName()+"',"
+				+"'"+quotaType.getQuotaUnit().getName()+"',"
+				+quotaType.getDigit()+","
+				+"'"+quotaType.getRate()+"',"
+				+"'"+quotaType.getManageDept().getName()+"',"
+				+"'"+quotaItemCreator.getQuotaDutyDept().getName()+"',"
+				+"'"+quotaItemCreator.getQuotaCover().getName()+"',"
+				+"'"+quotaType.getQuotaDimension().getName()+"',"
+				+quotaItem.getFinishValue();
 		
 		String dynamicColumnsString="";
 		String dynamicValuesString="";
@@ -137,10 +105,10 @@ public class ResultTableCreator extends HibernateDao{
 		if (quotaFormulaResultValues.size()>0) {
 			for (QuotaFormulaResultValue quotaFormulaResultValue : quotaFormulaResultValues) {
 				if (dynamicColumnsString=="") {
-					dynamicColumnsString=quotaFormulaResultValue.getQuotaFormulaResult().getResultName();
+					dynamicColumnsString=quotaFormulaResultValue.getQuotaFormulaResult().getName();
 					dynamicValuesString=quotaFormulaResultValue.getValue();
 				}else {
-					dynamicColumnsString=dynamicColumnsString+","+quotaFormulaResultValue.getQuotaFormulaResult().getResultName();
+					dynamicColumnsString=dynamicColumnsString+","+quotaFormulaResultValue.getQuotaFormulaResult().getName();
 					dynamicValuesString=dynamicValuesString+","+quotaFormulaResultValue.getValue();
 				}
 			}
@@ -158,7 +126,6 @@ public class ResultTableCreator extends HibernateDao{
 		String sqlString="CREATE TABLE QUOTA_ITEM_VIEW(";
 		String staticColumnsString="指标名称 VARCHAR(255),"
 				+ "年度 INT,"
-				+ "季度 INT,"
 				+ "月度 INT,"
 				+ "指标专业 VARCHAR(255),"
 				+ "指标级别 VARCHAR(255),"
@@ -168,9 +135,7 @@ public class ResultTableCreator extends HibernateDao{
 				+ "管理部门 VARCHAR(255),"
 				+ "责任部门 VARCHAR(255),"
 				+ "口径 VARCHAR(255),"
-				+ "一级维度 VARCHAR(255),"
-				+ "二级维度 VARCHAR(255),"
-				+ "目标值 VARCHAR(255),"
+				+ "维度 VARCHAR(255),"
 				+ "完成值 VARCHAR(255)";
 		String dynamicColumnsString="";
 		Collection<QuotaProperty> quotaProperties=quotaPropertyDao.getAll();
@@ -187,9 +152,9 @@ public class ResultTableCreator extends HibernateDao{
 		if (quotaFormulaResults.size()>0) {
 			for (QuotaFormulaResult quotaFormulaResult : quotaFormulaResults) {
 				if (dynamicColumnsString=="") {
-					dynamicColumnsString=quotaFormulaResult.getResultName()+" VARCHAR(255)";
+					dynamicColumnsString=quotaFormulaResult.getName()+" VARCHAR(255)";
 				}else {
-					dynamicColumnsString=dynamicColumnsString+","+quotaFormulaResult.getResultName()+" VARCHAR(255)";
+					dynamicColumnsString=dynamicColumnsString+","+quotaFormulaResult.getName()+" VARCHAR(255)";
 				}
 			}
 		}

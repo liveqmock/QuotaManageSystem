@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaCover" parent="global:QuotaCover">
+      <Reference name="childrenQuotaCovers">
+        <Property name="dataType">[SELF]</Property>
+        <Property name="parameter">$${this.id}</Property>
+        <Property name="dataProvider">quotaCoverDao#getQuotaCoversByFatherCover</Property>
+      </Reference>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaCover">
+      <Property name="dataProvider">quotaCoverDao#getTopQuotaCovers</Property>
+      <Property name="dataType">[QuotaCover]</Property>
+    </DataSet>
+    <ToolBar>
+      <DataPilot>
+        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaCover.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaCover&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgQuotaCover = view.get(&quot;#dgQuotaCover&quot;);&#xD;
+		var selection = dgQuotaCover.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+        <Property name="dataSet">dsQuotaCover</Property>
+        <Property name="itemCodes">pages,+,-,x</Property>
+      </DataPilot>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">function collapse(nodes){&#xD;
+    nodes.each(function(node){&#xD;
+        collapse(node.get(&quot;nodes&quot;));&#xD;
+        if (node.get(&quot;expanded&quot;)) &#xD;
+            node.collapse();&#xD;
+    });&#xD;
+}&#xD;
+&#xD;
+var dtgQuotaCover=view.get(&quot;#dtgQuotaCover&quot;);&#xD;
+collapse(dtgQuotaCover.get(&quot;nodes&quot;));&#xD;
+</ClientEvent>
+        <Property name="caption">全部收缩</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -300px -280px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">function expand(nodes){&#xD;
+    nodes.each(function(node){&#xD;
+        if (!node.get(&quot;expanded&quot;)) &#xD;
+            node.expand();&#xD;
+        expand(node.get(&quot;nodes&quot;));&#xD;
+    });&#xD;
+}&#xD;
+&#xD;
+var dtgQuotaCover=view.get(&quot;#dtgQuotaCover&quot;);&#xD;
+expand(dtgQuotaCover.get(&quot;nodes&quot;));&#xD;
+</ClientEvent>
+        <Property name="caption">全部展开</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -280px -280px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var dtgQuotaCover=view.get(&quot;#dtgQuotaCover&quot;);&#xD;
+var dsQuotaCover=view.get(&quot;#dsQuotaCover&quot;);&#xD;
+var currentNode = dtgQuotaCover.get(&quot;currentNode&quot;);&#xD;
+	if (!currentNode) {&#xD;
+		throw new dorado.Exception(&quot;请先点中一个树节点！&quot;);&#xD;
+	}&#xD;
+&#xD;
+	var currentEntity = currentNode.get(&quot;data&quot;);&#xD;
+	currentEntity.parent.insert({&#xD;
+		name: &quot;&lt;口径名称>&quot;&#xD;
+	}, &quot;before&quot;, currentEntity);&#xD;
+</ClientEvent>
+        <Property name="caption">增加同级口径</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -120px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var dtgQuotaCover=view.get(&quot;#dtgQuotaCover&quot;);&#xD;
+var currentNode = dtgQuotaCover.get(&quot;currentNode&quot;);&#xD;
+	if (!currentNode) {&#xD;
+		throw new dorado.Exception(&quot;请先点中一个树节点！&quot;);&#xD;
+	}&#xD;
+&#xD;
+	var currentEntity = currentNode.get(&quot;data&quot;);&#xD;
+	currentNode.expandAsync(function() {&#xD;
+		currentEntity.get(&quot;childrenQuotaCovers&quot;).insert({&#xD;
+			name : &quot;&lt;口径名称>&quot;&#xD;
+		}, &quot;before&quot;);&#xD;
+	});</ClientEvent>
+        <Property name="caption">增加子口径</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -120px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <Property name="action">uaQuotaCover</Property>
+        <Property name="caption">保存</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataTreeGrid id="dtgQuotaCover">
+      <Property name="dataSet">dsQuotaCover</Property>
+      <Property name="treeColumn">quotaCoverName</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <Property name="expandingMode">sync</Property>
+      <BindingConfigs>
+        <BindingConfig>
+          <Property name="name">quotaCoverName</Property>
+          <Property name="labelProperty">name</Property>
+          <Property name="childrenProperty">childrenQuotaCovers</Property>
+          <Property name="recursive">true</Property>
+          <Property name="expandLevel">100</Property>
+          <Property name="checkable">true</Property>
+          <Property name="autoCheckChildren">false</Property>
+        </BindingConfig>
+      </BindingConfigs>
+      <Columns>
+        <IndicatorColumn/>
+        <RowNumColumn/>
+        <DataColumn>
+          <Property name="name">quotaCoverName</Property>
+          <Property name="property">name</Property>
+          <Property name="caption">口径</Property>
+          <Property name="width">380</Property>
+          <Editor/>
+        </DataColumn>
+      </Columns>
+    </DataTreeGrid>
+    <UpdateAction id="uaQuotaCover">
+      <Property name="dataResolver">quotaCoverDao#saveQuotaCovers</Property>
+      <Property name="successMessage">保存成功！</Property>
+      <Property name="executingMessage">正在保存...</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsQuotaCover</Property>
+        <Property name="dataPath">!DIRTY_TREE</Property>
+      </UpdateItem>
+    </UpdateAction>
+  </View>
+</ViewConfig>

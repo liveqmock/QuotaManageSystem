@@ -8,7 +8,7 @@
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="resultName">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
@@ -52,9 +52,23 @@ switch(arg.code){&#xD;
       </DataPilot>
       <Separator/>
       <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaFormulaResult=view.get(&quot;#dgQuotaFormulaResult&quot;);&#xD;
+var dsQuotaFormulaResult=view.get(&quot;#dsQuotaFormulaResult&quot;);&#xD;
+var uaQuotaFormulaResult=view.get(&quot;#uaQuotaFormulaResult&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaFormulaResult.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaFormulaResult.flush();&#xD;
+			dgQuotaFormulaResult.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
         <Property name="caption">保存</Property>
         <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        <Property name="action">uaQuotaFormulaResult</Property>
       </ToolBarButton>
     </ToolBar>
     <DataGrid id="dgQuotaFormulaResult">
@@ -67,11 +81,11 @@ switch(arg.code){&#xD;
       <DataColumn name="id">
         <Property name="property">id</Property>
         <Property name="visible">false</Property>
+        <Property name="readOnly">true</Property>
       </DataColumn>
-      <DataColumn name="resultName">
-        <Property name="property">resultName</Property>
-        <Property name="width">300</Property>
-        <Property name="caption">计算结果名称</Property>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="width">200</Property>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaFormulaResult">

@@ -2,14 +2,10 @@ package com.quotamanagesys.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -17,19 +13,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Entity
-@Table(name = "QUOTA_COVER")
-public class QuotaCover implements Serializable{
-	
+@Table(name = "RENDER")
+public class Render implements Serializable{
+
 	@Id
 	@GeneratedValue(generator = "systemUUID")
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String name;//口径名称
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="FATHER_QUOTA_COVER_ID")
-	private QuotaCover fatherQuotaCover;//上级口径
+	private String name;//渲染器名称
+	@Column(name="RENDER_CODE")
+	private String renderCode;//渲染代码
+	@Column(name="TYPE")
+	private String type;//渲染器类型
+	@Column(name="REMARK")
+	private String remark;//备注
 	public String getId() {
 		return id;
 	}
@@ -42,10 +41,23 @@ public class QuotaCover implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public QuotaCover getFatherQuotaCover() {
-		return fatherQuotaCover;
+	public String getRenderCode() {
+		return renderCode;
 	}
-	public void setFatherQuotaCover(QuotaCover fatherQuotaCover) {
-		this.fatherQuotaCover = fatherQuotaCover;
+	public void setRenderCode(String renderCode) {
+		this.renderCode = renderCode;
 	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 }

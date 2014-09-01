@@ -8,7 +8,7 @@
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaUnit">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
@@ -52,6 +52,21 @@ switch(arg.code){&#xD;
       </DataPilot>
       <Separator/>
       <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaUnit=view.get(&quot;#dgQuotaUnit&quot;);&#xD;
+var dsQuotaUnit=view.get(&quot;#dsQuotaUnit&quot;);&#xD;
+var uaQuotaUnit=view.get(&quot;#uaQuotaUnit&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaUnit.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaUnit.flush();&#xD;
+			dgQuotaUnit.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
         <Property name="caption">保存</Property>
         <Property name="action">uaQuotaUnit</Property>
         <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
@@ -68,10 +83,11 @@ switch(arg.code){&#xD;
         <Property name="property">id</Property>
         <Property name="visible">false</Property>
       </DataColumn>
-      <DataColumn name="quotaUnit">
-        <Property name="property">quotaUnit</Property>
-        <Property name="width">300</Property>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="align">center</Property>
         <Property name="caption">计量单位</Property>
+        <Property name="width">200</Property>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaUnit">

@@ -22,19 +22,18 @@ public class QuotaFormulaResult implements Serializable{
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String resultName;//公式结果名称
-	
+	private String name;//公式结果名称
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getResultName() {
-		return resultName;
+	public String getName() {
+		return name;
 	}
-	public void setResultName(String resultName) {
-		this.resultName = resultName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
+
 }

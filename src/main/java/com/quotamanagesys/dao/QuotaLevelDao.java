@@ -20,7 +20,7 @@ public class QuotaLevelDao extends HibernateDao {
 
 	@DataProvider
 	public Collection<QuotaLevel> getAll(){
-		String hqlString="from "+QuotaLevel.class.getName();
+		String hqlString="from "+QuotaLevel.class.getName()+" order by level asc";
 		Collection<QuotaLevel> quotaLevels=this.query(hqlString);
 		return quotaLevels;
 	}

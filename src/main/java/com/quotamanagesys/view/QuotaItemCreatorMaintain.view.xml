@@ -14,30 +14,28 @@
       </PropertyDef>
       <PropertyDef name="quotaDutyDept">
         <Property name="dataType">Department</Property>
+        <Validator name="validator1" type="required"/>
       </PropertyDef>
       <PropertyDef name="year">
         <Property name="dataType">int</Property>
+        <Validator name="validator1" type="required"/>
       </PropertyDef>
       <PropertyDef name="quotaType">
         <Property name="dataType">QuotaType</Property>
+        <Validator name="validator1" type="required"/>
       </PropertyDef>
       <PropertyDef name="quotaCover">
         <Property name="dataType">QuotaCover</Property>
-      </PropertyDef>
-      <PropertyDef name="quotaDimensionOne">
-        <Property name="dataType">QuotaDimensionOne</Property>
-      </PropertyDef>
-      <PropertyDef name="quotaDimensionTwo">
-        <Property name="dataType">QuotaDimensionTwo</Property>
+        <Validator name="validator1" type="required"/>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaType">
       <Property name="creationType">com.quotamanagesys.model.QuotaType</Property>
-      <Property name="defaultDisplayProperty">quotaTypeName</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaTypeName">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
       <PropertyDef name="quotaProfession">
@@ -45,6 +43,9 @@
       </PropertyDef>
       <PropertyDef name="quotaLevel">
         <Property name="dataType">QuotaLevel</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaDimension">
+        <Property name="dataType">QuotaDimension</Property>
       </PropertyDef>
       <PropertyDef name="quotaUnit">
         <Property name="dataType">QuotaUnit</Property>
@@ -64,31 +65,44 @@
     </DataType>
     <DataType name="QuotaProfession">
       <Property name="creationType">com.quotamanagesys.model.QuotaProfession</Property>
-      <Property name="defaultDisplayProperty">profession</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="profession">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaUnit">
       <Property name="creationType">com.quotamanagesys.model.QuotaUnit</Property>
-      <Property name="defaultDisplayProperty">quotaUnit</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaUnit">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaLevel">
       <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
-      <Property name="defaultDisplayProperty">quotaLevel</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaLevel">
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="level">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaDimension">
+      <Property name="creationType">com.quotamanagesys.model.QuotaDimension</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
@@ -112,39 +126,6 @@
       </PropertyDef>
       <PropertyDef name="parentId">
         <Property name="dataType">String</Property>
-      </PropertyDef>
-    </DataType>
-    <DataType name="QuotaCover">
-      <Property name="creationType">com.quotamanagesys.model.QuotaCover</Property>
-      <Property name="defaultDisplayProperty">name</Property>
-      <PropertyDef name="id">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-      <PropertyDef name="name">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-    </DataType>
-    <DataType name="QuotaDimensionOne">
-      <Property name="creationType">com.quotamanagesys.model.QuotaDimensionOne</Property>
-      <Property name="defaultDisplayProperty">dimensionName</Property>
-      <PropertyDef name="id">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-      <PropertyDef name="dimensionName">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-    </DataType>
-    <DataType name="QuotaDimensionTwo">
-      <Property name="creationType">com.quotamanagesys.model.QuotaDimensionTwo</Property>
-      <Property name="defaultDisplayProperty">dimensionName</Property>
-      <PropertyDef name="id">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-      <PropertyDef name="dimensionName">
-        <Property name="dataType">String</Property>
-      </PropertyDef>
-      <PropertyDef name="quotaDimensionOne">
-        <Property name="dataType">QuotaDimensionOne</Property>
       </PropertyDef>
     </DataType>
     <DataType name="QuotaProperty">
@@ -175,6 +156,41 @@
         <Property name="dataType">double</Property>
       </PropertyDef>
     </DataType>
+    <DataType name="QuotaCover" parent="global:QuotaCover">
+      <Reference name="childrenQuotaCovers">
+        <Property name="dataType">[SELF]</Property>
+        <Property name="parameter">$${this.id}</Property>
+        <Property name="dataProvider">quotaCoverDao#getQuotaCoversByFatherCover</Property>
+      </Reference>
+    </DataType>
+    <DataType name="QuotaFormula">
+      <Property name="creationType">com.quotamanagesys.model.QuotaFormula</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="formula">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaFormulaResult">
+        <Property name="dataType">QuotaFormulaResult</Property>
+      </PropertyDef>
+      <PropertyDef name="remark">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaFormulaResult">
+      <Property name="creationType">com.quotamanagesys.model.QuotaFormulaResult</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
   </Model>
   <View>
     <DataSet id="dsQuotaItemCreator">
@@ -189,19 +205,6 @@
       <Property name="dataType">[Department]</Property>
       <Property name="dataProvider">departmentDao#getAll</Property>
     </DataSet>
-    <DataSet id="dsQuotaCover">
-      <Property name="dataType">[QuotaCover]</Property>
-      <Property name="dataProvider">quotaCoverDao#getAll</Property>
-    </DataSet>
-    <DataSet id="dsQuotaDimensionOne">
-      <Property name="dataType">[QuotaDimensionOne]</Property>
-      <Property name="dataProvider">quotaDimensionOneDao#getAll</Property>
-    </DataSet>
-    <DataSet id="dsQuotaDimensionTwo">
-      <Property name="dataType">[QuotaDimensionTwo]</Property>
-      <Property name="dataProvider">quotaDimensionTwoDao#getQuotaDimensionTwosByDimensionOne</Property>
-      <Property name="cacheable">true</Property>
-    </DataSet>
     <DataSet id="dsQuotaProperty">
       <Property name="dataType">[QuotaProperty]</Property>
       <Property name="dataProvider">quotaPropertyDao#getAll</Property>
@@ -210,13 +213,29 @@
       <Property name="dataProvider">quotaPropertyValueDao#getQuotaPropertyValuesByQuotaItemCreator</Property>
       <Property name="dataType">[QuotaPropertyValue]</Property>
     </DataSet>
+    <DataSet id="dsQuotaCover">
+      <Property name="dataProvider">quotaCoverDao#getTopQuotaCovers</Property>
+      <Property name="dataType">[QuotaCover]</Property>
+    </DataSet>
+    <DataSet id="dsQuotaFormula">
+      <Property name="dataType">[QuotaFormula]</Property>
+      <Property name="dataProvider">quotaFormulaDao#getQuotaFormulasByResult</Property>
+    </DataSet>
+    <DataSet id="dsQuotaFormula2">
+      <Property name="dataType">[QuotaFormula]</Property>
+      <Property name="dataProvider">quotaFormulaDao#getQuotaFormulasByQuotaItemCreator</Property>
+    </DataSet>
+    <DataSet id="dsQuotaFormulaResult">
+      <Property name="dataType">[QuotaFormulaResult]</Property>
+      <Property name="dataProvider">quotaFormulaResultDao#getAll</Property>
+    </DataSet>
     <SplitPanel>
       <Property name="position">200</Property>
       <MainControl>
         <Container>
           <SplitPanel>
             <Property name="direction">bottom</Property>
-            <Property name="position">40%</Property>
+            <Property name="position">35%</Property>
             <MainControl>
               <Container>
                 <ToolBar>
@@ -268,20 +287,41 @@ if(datas.current){&#xD;
                     <Property name="icon">url(>skin>common/icons.gif) -200px 0px</Property>
                   </ToolBarButton>
                   <ToolBarButton>
+                    <ClientEvent name="onClick">var aaCreateQuotaItems=view.get(&quot;#aaCreateQuotaItems&quot;);&#xD;
+var aaCreateQuotaItemsRelation=view.get(&quot;#aaCreateQuotaItemsRelation&quot;);&#xD;
+&#xD;
+aaCreateQuotaItems.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			aaCreateQuotaItemsRelation.execute({&#xD;
+				callback:function(success,obj){&#xD;
+					if (!success) {&#xD;
+						alert(&quot;关联指标关系失败！发生异常：&quot; + obj);
+					}&#xD;
+				}&#xD;
+			})&#xD;
+        }&#xD;
+		else{alert(&quot;生成指标失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
                     <Property name="caption">生成指标</Property>
                     <Property name="icon">url(>skin>common/icons.gif) -300px -220px</Property>
-                    <Property name="action">aaCreateQuotaItems</Property>
                   </ToolBarButton>
                 </ToolBar>
                 <DataGrid id="dgQuotaItemCreator">
                   <ClientEvent name="onClick">var dsQuotaPropertyValue=view.get(&quot;#dsQuotaPropertyValue&quot;);&#xD;
+var dsQuotaFormula2=view.get(&quot;#dsQuotaFormula2&quot;);&#xD;
 var dgQuotaItemCreator=view.get(&quot;#dgQuotaItemCreator&quot;);&#xD;
 var dgQuotaPropertyValue=view.get(&quot;#dgQuotaPropertyValue&quot;);&#xD;
+var dgQuotaFormulaLinked=view.get(&quot;#dgQuotaFormulaLinked&quot;);&#xD;
 var currentQuotaItemCreator=dgQuotaItemCreator.getCurrentItem();&#xD;
 var quotaItemCreatorId=currentQuotaItemCreator.get(&quot;id&quot;);&#xD;
 &#xD;
 dsQuotaPropertyValue.set(&quot;parameter&quot;,{quotaItemCreatorId:quotaItemCreatorId}).flushAsync();&#xD;
-dgQuotaPropertyValue.refresh();</ClientEvent>
+dgQuotaPropertyValue.refresh();&#xD;
+&#xD;
+dsQuotaFormula2.set(&quot;parameter&quot;,{quotaItemCreatorId:quotaItemCreatorId}).flushAsync();&#xD;
+dgQuotaFormulaLinked.refresh();&#xD;
+</ClientEvent>
                   <Property name="dataSet">dsQuotaItemCreator</Property>
                   <Property name="dataType">QuotaItemCreator</Property>
                   <Property name="dynaRowHeight">true</Property>
@@ -298,7 +338,7 @@ dgQuotaPropertyValue.refresh();</ClientEvent>
                     <Property name="visible">false</Property>
                   </DataColumn>
                   <DataColumn>
-                    <Property name="property">quotaType.quotaTypeName</Property>
+                    <Property name="property">quotaType.name</Property>
                     <Property name="name">showName</Property>
                     <Property name="caption">指标名称</Property>
                     <Property name="width">160</Property>
@@ -327,11 +367,17 @@ dgQuotaPropertyValue.refresh();</ClientEvent>
                       <Property name="visible">false</Property>
                     </DataColumn>
                     <DataColumn>
-                      <Property name="property">quotaType.quotaTypeName</Property>
+                      <Property name="property">quotaType.name</Property>
                       <Property name="name">quotaTypeName</Property>
                       <Property name="caption">指标种类名称</Property>
                       <Property name="width">160</Property>
                       <Property name="visible">false</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="name">quotaDimension</Property>
+                      <Property name="property">quotaType.quotaDimension.name</Property>
+                      <Property name="caption">指标维度</Property>
                       <Editor/>
                     </DataColumn>
                     <DataColumn>
@@ -343,7 +389,7 @@ dgQuotaPropertyValue.refresh();</ClientEvent>
                       <Editor/>
                     </DataColumn>
                     <DataColumn>
-                      <Property name="property">quotaType.quotaLevel.quotaLevel</Property>
+                      <Property name="property">quotaType.quotaLevel.name</Property>
                       <Property name="name">quotaLevel</Property>
                       <Property name="caption">指标级别</Property>
                       <Property name="width">80</Property>
@@ -351,7 +397,7 @@ dgQuotaPropertyValue.refresh();</ClientEvent>
                       <Editor/>
                     </DataColumn>
                     <DataColumn>
-                      <Property name="property">quotaType.quotaUnit.quotaUnit</Property>
+                      <Property name="property">quotaType.quotaUnit.name</Property>
                       <Property name="name">quotaUnit</Property>
                       <Property name="caption">计量单位</Property>
                       <Property name="width">60</Property>
@@ -370,18 +416,6 @@ dgQuotaPropertyValue.refresh();</ClientEvent>
                     <Property name="property">quotaCover.name</Property>
                     <Property name="caption">口径</Property>
                     <Property name="width">90</Property>
-                    <Property name="align">center</Property>
-                  </DataColumn>
-                  <DataColumn name="quotaDimensionOne">
-                    <Property name="property">quotaDimensionOne.dimensionName</Property>
-                    <Property name="caption">一级维度</Property>
-                    <Property name="width">80</Property>
-                    <Property name="align">center</Property>
-                  </DataColumn>
-                  <DataColumn name="quotaDimensionTwo">
-                    <Property name="property">quotaDimensionTwo.dimensionName</Property>
-                    <Property name="caption">二级维度</Property>
-                    <Property name="width">80</Property>
                     <Property name="align">center</Property>
                   </DataColumn>
                 </DataGrid>
@@ -439,9 +473,17 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
                       <Property name="dataSet">dsQuotaItemCreator</Property>
                       <Property name="dataType">QuotaItemCreator</Property>
                       <AutoFormElement>
-                        <Property name="name">year</Property>
-                        <Property name="property">year</Property>
-                        <Property name="label">年度</Property>
+                        <Property name="name">quotaType</Property>
+                        <Property name="property">quotaType</Property>
+                        <Property name="trigger">dsddQuotaType</Property>
+                        <Property name="label">指标种类</Property>
+                        <Editor/>
+                      </AutoFormElement>
+                      <AutoFormElement>
+                        <Property name="name">quotaCover</Property>
+                        <Property name="property">quotaCover</Property>
+                        <Property name="trigger">cddQuotaCover</Property>
+                        <Property name="label">口径</Property>
                         <Editor/>
                       </AutoFormElement>
                       <AutoFormElement>
@@ -452,72 +494,39 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
                         <Editor/>
                       </AutoFormElement>
                       <AutoFormElement>
-                        <Property name="name">quotaType</Property>
-                        <Property name="property">quotaType</Property>
-                        <Property name="trigger">dsddQuotaType</Property>
-                        <Property name="label">指标种类</Property>
-                        <Editor/>
-                      </AutoFormElement>
-                      <AutoFormElement>
-                        <Property name="name">quotaCover</Property>
-                        <Property name="property">quotaCover</Property>
-                        <Property name="trigger">dsddQuotaCover</Property>
-                        <Property name="label">口径</Property>
-                        <Editor/>
-                      </AutoFormElement>
-                      <AutoFormElement>
-                        <Property name="name">quotaDimensionOne</Property>
-                        <Property name="property">quotaDimensionOne</Property>
-                        <Property name="trigger">dsddQuotaDimensionOne</Property>
-                        <Property name="label">一级维度</Property>
-                        <Editor/>
-                      </AutoFormElement>
-                      <AutoFormElement>
-                        <Property name="name">quotaDimensionTwo</Property>
-                        <Property name="property">quotaDimensionTwo</Property>
-                        <Property name="trigger">dsddQuotaDimensionTwo</Property>
-                        <Property name="label">二级维度</Property>
+                        <Property name="name">year</Property>
+                        <Property name="property">year</Property>
+                        <Property name="label">年度</Property>
                         <Editor/>
                       </AutoFormElement>
                     </AutoForm>
                   </Children>
                   <Tools/>
                 </Dialog>
-                <DataSetDropDown id="dsddQuotaCover">
-                  <Property name="dataSet">dsQuotaCover</Property>
-                  <Property name="displayProperty">name</Property>
-                </DataSetDropDown>
-                <DataSetDropDown id="dsddQuotaDimensionOne">
-                  <Property name="dataSet">dsQuotaDimensionOne</Property>
-                  <Property name="displayProperty">dimensionName</Property>
-                </DataSetDropDown>
-                <DataSetDropDown id="dsddQuotaDimensionTwo">
-                  <ClientEvent name="beforeExecute">var dsQuotaDimensionTwo=view.get(&quot;#dsQuotaDimensionTwo&quot;);&#xD;
-var afQuotaItemCreator=view.get(&quot;#afQuotaItemCreator&quot;);&#xD;
-var quotaDimensionOne=afQuotaItemCreator.getElement(&quot;quotaDimensionOne&quot;).get(&quot;value&quot;);&#xD;
-var quotaDimensionOneId=quotaDimensionOne.get(&quot;id&quot;);&#xD;
-&#xD;
-if(quotaDimensionOneId){&#xD;
-	dsQuotaDimensionTwo.set(&quot;parameter&quot;,{quotaDimensionOneId:quotaDimensionOneId}).flushAsync();&#xD;
-}</ClientEvent>
-                  <Property name="dataSet">dsQuotaDimensionTwo</Property>
-                  <Property name="displayProperty">dimensionName</Property>
-                </DataSetDropDown>
                 <DataSetDropDown id="dsddQuotaType">
                   <Property name="dataSet">dsQuotaType</Property>
-                  <Property name="displayProperty">quotaTypeName</Property>
-                  <Property name="width">500</Property>
+                  <Property name="displayProperty">name</Property>
+                  <Property name="width">600</Property>
                   <DataColumn>
                     <Property name="name">quotaTypeName</Property>
-                    <Property name="property">quotaTypeName</Property>
-                    <Property name="width">200</Property>
+                    <Property name="property">name</Property>
+                    <Property name="width">180</Property>
                     <Property name="caption">指标种类名称</Property>
-                    <Property name="wrappable">false</Property>
+                    <Property name="wrappable">true</Property>
                     <Editor/>
                   </DataColumn>
                   <DataColumn>
                     <Property name="name">rate</Property>
                     <Property name="property">rate</Property>
+                    <Property name="align">center</Property>
+                    <Property name="width">70</Property>
+                    <Property name="caption">考核频率</Property>
+                    <Editor/>
+                  </DataColumn>
+                  <DataColumn>
+                    <Property name="name">quotaDimension</Property>
+                    <Property name="property">quotaDimension</Property>
+                    <Property name="caption">指标维度</Property>
                     <Property name="align">center</Property>
                     <Property name="width">80</Property>
                     <Editor/>
@@ -525,28 +534,25 @@ if(quotaDimensionOneId){&#xD;
                   <DataColumn>
                     <Property name="name">quotaLevel</Property>
                     <Property name="property">quotaLevel</Property>
-                    <Property name="width">120</Property>
+                    <Property name="width">80</Property>
                     <Property name="align">center</Property>
                     <Property name="caption">指标级别</Property>
-                    <Property name="dataType">QuotaLevel</Property>
                     <Editor/>
                   </DataColumn>
                   <DataColumn>
                     <Property name="name">quotaUnit</Property>
                     <Property name="property">quotaUnit</Property>
-                    <Property name="width">90</Property>
+                    <Property name="width">70</Property>
                     <Property name="align">center</Property>
                     <Property name="caption">计量单位</Property>
-                    <Property name="dataType">QuotaUnit</Property>
                     <Editor/>
                   </DataColumn>
                   <DataColumn>
                     <Property name="name">manageDept</Property>
                     <Property name="property">manageDept</Property>
-                    <Property name="width">150</Property>
+                    <Property name="width">90</Property>
                     <Property name="align">center</Property>
                     <Property name="caption">指标管理部门</Property>
-                    <Property name="dataType">Department</Property>
                     <Editor/>
                   </DataColumn>
                 </DataSetDropDown>
@@ -559,6 +565,32 @@ if(quotaDimensionOneId){&#xD;
                   <Property name="successMessage">指标生成成功!</Property>
                   <Property name="executingMessage">指标生成中...</Property>
                 </AjaxAction>
+                <AjaxAction id="aaCreateQuotaItemsRelation">
+                  <Property name="service">quotaItemDao#createQuotaItemsRelation</Property>
+                  <Property name="executingMessage">关联指标间关系...</Property>
+                  <Property name="successMessage">完成指标关系关联</Property>
+                </AjaxAction>
+                <CustomDropDown id="cddQuotaCover">
+                  <Property name="height">300</Property>
+                  <Container>
+                    <DataTree id="dtrQuotaCover">
+                      <ClientEvent name="onDataRowClick">var dropDown = dorado.widget.DropDown.findDropDown(self);&#xD;
+var node = self.get(&quot;currentNode&quot;);&#xD;
+dropDown.close(node.get(&quot;data&quot;));&#xD;
+</ClientEvent>
+                      <Property name="dataSet">dsQuotaCover</Property>
+                      <BindingConfigs>
+                        <BindingConfig>
+                          <Property name="childrenProperty">childrenQuotaCovers</Property>
+                          <Property name="expandLevel">3</Property>
+                          <Property name="labelProperty">name</Property>
+                          <Property name="recursive">true</Property>
+                          <Property name="name">quotaCoverName</Property>
+                        </BindingConfig>
+                      </BindingConfigs>
+                    </DataTree>
+                  </Container>
+                </CustomDropDown>
               </Container>
             </MainControl>
             <SideControl>
@@ -641,7 +673,7 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
                         <DataColumn name="value">
                           <Property name="property">value</Property>
                           <Property name="width">150</Property>
-                          <Property name="caption">属性目标值</Property>
+                          <Property name="caption">年度目标值</Property>
                         </DataColumn>
                       </DataGrid>
                       <DataSetDropDown id="dsddQuotaProperty">
@@ -658,6 +690,230 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
                   </ControlTab>
                   <ControlTab>
                     <Property name="caption">计算公式关联</Property>
+                    <Container>
+                      <ToolBar>
+                        <DataPilot>
+                          <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormula2&quot;).get(&quot;data&quot;);&#xD;
+var dgQuotaFormulaLinked=view.get(&quot;#dgQuotaFormulaLinked&quot;);&#xD;
+var selection=dgQuotaFormulaLinked.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		view.get(&quot;#dlgQuotaFormula&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		dgQuotaFormulaLinked.refresh();&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){	&#xD;
+			if (selection &amp;&amp; selection.length) {&#xD;
+				selection.each(function(data){&#xD;
+					datas.remove(data);&#xD;
+				});&#xD;
+			}else {message = &quot;未选中任何公式！&quot;;}&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                          <Property name="dataSet">dsQuotaFormula2</Property>
+                          <Property name="itemCodes">+,-,x</Property>
+                        </DataPilot>
+                        <Separator/>
+                        <ToolBarButton>
+                          <ClientEvent name="onClick">var dgQuotaItemCreator=view.get(&quot;#dgQuotaItemCreator&quot;);&#xD;
+var dgQuotaFormulaLinked=view.get(&quot;#dgQuotaFormulaLinked&quot;);&#xD;
+var currentQuotaItemCreator=dgQuotaItemCreator.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemCreatorId=currentQuotaItemCreator.get(&quot;id&quot;);&#xD;
+var uaQuotaItemCreatorFormulas=view.get(&quot;#uaQuotaItemCreatorFormulas&quot;);&#xD;
+var dsQuotaFormula2=view.get(&quot;#dsQuotaFormula2&quot;);&#xD;
+&#xD;
+uaQuotaItemCreatorFormulas.set(&quot;parameter&quot;,{quotaItemCreatorId:quotaItemCreatorId});&#xD;
+uaQuotaItemCreatorFormulas.execute({&#xD;
+	callback:function(success,obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaFormula2.set(&quot;parameter&quot;,{quotaItemCreatorId:quotaItemCreatorId}).flushAsync();&#xD;
+			dgQuotaFormulaLinked.refresh();&#xD;
+		}else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj)&#xD;
+		}&#xD;
+	}&#xD;
+})&#xD;
+</ClientEvent>
+                          <Property name="caption">保存</Property>
+                          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                        </ToolBarButton>
+                      </ToolBar>
+                      <DataGrid id="dgQuotaFormulaLinked">
+                        <Property name="dataSet">dsQuotaFormula2</Property>
+                        <Property name="dataType">QuotaFormula</Property>
+                        <Property name="stretchColumnsMode">off</Property>
+                        <Property name="selectionMode">multiRows</Property>
+                        <Property name="readOnly">true</Property>
+                        <IndicatorColumn/>
+                        <RowSelectorColumn/>
+                        <DataColumn name="id">
+                          <Property name="property">id</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="readOnly">true</Property>
+                        </DataColumn>
+                        <DataColumn name="name">
+                          <Property name="property">name</Property>
+                          <Property name="width">200</Property>
+                          <Property name="caption">公式名称</Property>
+                        </DataColumn>
+                        <DataColumn name="formula">
+                          <Property name="property">formula</Property>
+                          <Property name="width">300</Property>
+                          <Property name="caption">公式</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaFormulaResult">
+                          <Property name="property">quotaFormulaResult</Property>
+                          <Property name="width">100</Property>
+                          <Property name="align">center</Property>
+                          <Property name="caption">计算结果</Property>
+                        </DataColumn>
+                        <DataColumn name="remark">
+                          <Property name="property">remark</Property>
+                          <Property name="width">300</Property>
+                          <Property name="caption">公式说明</Property>
+                        </DataColumn>
+                      </DataGrid>
+                      <Dialog id="dlgQuotaFormula">
+                        <Property name="width">1200</Property>
+                        <Property name="height">500</Property>
+                        <Property name="caption">选择该指标要关联的计算公式</Property>
+                        <Buttons/>
+                        <Children>
+                          <ToolBar>
+                            <ToolBarButton>
+                              <ClientEvent name="onClick">var dgQuotaFormula=view.get(&quot;#dgQuotaFormula&quot;);&#xD;
+var dgQuotaFormulaLinked=view.get(&quot;#dgQuotaFormulaLinked&quot;);&#xD;
+var datas = view.get(&quot;#dsQuotaFormula2&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgQuotaFormula.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection){&#xD;
+	//alert(selection.get(&quot;id&quot;));&#xD;
+	var isAdded=false;&#xD;
+	datas.each(function(dataAdded){&#xD;
+		if(dataAdded.get(&quot;quotaFormulaResult&quot;).get(&quot;id&quot;)==selection.get(&quot;quotaFormulaResult&quot;).get(&quot;id&quot;)){&#xD;
+			isAdded=true;&#xD;
+		}&#xD;
+	});&#xD;
+	if(isAdded==false){&#xD;
+		datas.insert(selection.toJSON());&#xD;
+	}&#xD;
+	dgQuotaFormulaLinked.refresh();&#xD;
+	view.get(&quot;#dlgQuotaFormula&quot;).hide();&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中任何公式！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                              <Property name="caption">确定</Property>
+                              <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                            </ToolBarButton>
+                            <ToolBarButton>
+                              <ClientEvent name="onClick">var data=view.get(&quot;#dsQuotaFormula2&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgQuotaFormula&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+                              <Property name="caption">取消</Property>
+                              <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                            </ToolBarButton>
+                          </ToolBar>
+                          <SplitPanel>
+                            <Property name="position">180</Property>
+                            <MainControl>
+                              <Container>
+                                <DataGrid id="dgQuotaFormula">
+                                  <Property name="dataSet">dsQuotaFormula</Property>
+                                  <Property name="dataType">QuotaFormula</Property>
+                                  <Property name="selectionMode">singleRow</Property>
+                                  <Property name="stretchColumnsMode">allColumns</Property>
+                                  <Property name="dynaRowHeight">true</Property>
+                                  <Property name="readOnly">true</Property>
+                                  <IndicatorColumn/>
+                                  <RowSelectorColumn/>
+                                  <DataColumn name="id">
+                                    <Property name="property">id</Property>
+                                    <Property name="visible">false</Property>
+                                  </DataColumn>
+                                  <DataColumn name="name">
+                                    <Property name="property">name</Property>
+                                    <Property name="caption">公式名称</Property>
+                                    <Property name="wrappable">true</Property>
+                                    <Property name="width">200</Property>
+                                    <Editor>
+                                      <TextArea>
+                                        <Property name="height">50</Property>
+                                      </TextArea>
+                                    </Editor>
+                                  </DataColumn>
+                                  <DataColumn name="formula">
+                                    <Property name="property">formula</Property>
+                                    <Property name="caption">公式</Property>
+                                    <Property name="wrappable">true</Property>
+                                    <Property name="width">300</Property>
+                                    <Editor>
+                                      <TextArea>
+                                        <Property name="height">100</Property>
+                                      </TextArea>
+                                    </Editor>
+                                  </DataColumn>
+                                  <DataColumn name="quotaFormulaResult">
+                                    <Property name="property">quotaFormulaResult</Property>
+                                    <Property name="visible">false</Property>
+                                  </DataColumn>
+                                  <DataColumn name="remark">
+                                    <Property name="property">remark</Property>
+                                    <Property name="width">300</Property>
+                                    <Property name="caption">公式说明</Property>
+                                    <Editor>
+                                      <TextArea>
+                                        <Property name="height">100</Property>
+                                      </TextArea>
+                                    </Editor>
+                                  </DataColumn>
+                                </DataGrid>
+                              </Container>
+                            </MainControl>
+                            <SideControl>
+                              <DataTree id="dtrQuotaFormulaResult">
+                                <ClientEvent name="onClick">var dtrQuotaFormulaResult=view.get(&quot;#dtrQuotaFormulaResult&quot;);&#xD;
+var currentQuotaFormulaResult=dtrQuotaFormulaResult.get(&quot;currentEntity&quot;);&#xD;
+var quotaFormulaResultId=currentQuotaFormulaResult.get(&quot;id&quot;);&#xD;
+var dsQuotaFormula=view.get(&quot;#dsQuotaFormula&quot;);&#xD;
+&#xD;
+dsQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResultId}).flushAsync();</ClientEvent>
+                                <Property name="dataSet">dsQuotaFormulaResult</Property>
+                                <Property name="allowNoCurrent">true</Property>
+                                <BindingConfigs>
+                                  <BindingConfig>
+                                    <Property name="name">quotaFormulaResult</Property>
+                                    <Property name="labelProperty">name</Property>
+                                    <Property name="icon">url(>skin>common/icons.gif) -0px -200px</Property>
+                                  </BindingConfig>
+                                </BindingConfigs>
+                              </DataTree>
+                            </SideControl>
+                          </SplitPanel>
+                        </Children>
+                        <Tools/>
+                      </Dialog>
+                      <UpdateAction id="uaQuotaItemCreatorFormulas">
+                        <Property name="dataResolver">quotaItemCreatorDao#saveFormulasWithQuotaItemCreator</Property>
+                        <Property name="executingMessage">正在保存...</Property>
+                        <Property name="successMessage">保存成功！</Property>
+                        <UpdateItem>
+                          <Property name="dataSet">dsQuotaFormula2</Property>
+                        </UpdateItem>
+                      </UpdateAction>
+                    </Container>
                   </ControlTab>
                 </TabControl>
               </Container>

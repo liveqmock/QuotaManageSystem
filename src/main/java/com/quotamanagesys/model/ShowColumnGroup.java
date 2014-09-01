@@ -13,28 +13,35 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Entity
-@Table(name = "QUOTA_DIMENSION_ONE")
-public class QuotaDimensionOne implements Serializable{
-
+@Table(name = "SHOW_COLUMN_GROUP")
+public class ShowColumnGroup implements Serializable{
+	
 	@Id
 	@GeneratedValue(generator = "systemUUID")
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String dimensionName;//一维名称
-	
+	private String name;//列分组名称
+	@Column(name="SORT")
+	private int sort;//排序
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getDimensionName() {
-		return dimensionName;
+	public String getName() {
+		return name;
 	}
-	public void setDimensionName(String dimensionName) {
-		this.dimensionName = dimensionName;
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getSort() {
+		return sort;
+	}
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 	
 }

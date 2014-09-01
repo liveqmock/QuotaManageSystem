@@ -9,4 +9,8 @@ http://www.bstek.com/dorado/schema http://www.bstek.com/dorado/schema/spring-dor
 		<property name="configLocation" value="home:packages-config.xml">
 		</property>
 	</bean>
+	
+	<bean parent="dorado.dataConfigLoader">
+		<property name="configLocation" value="${model.root}/*.model.xml" />
+	</bean>
 </beans>

@@ -17,12 +17,15 @@ import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.QuotaFormula;
 import com.quotamanagesys.model.QuotaFormulaResult;
+import com.quotamanagesys.model.QuotaItemCreator;
 
 @Component
 public class QuotaFormulaDao extends HibernateDao {
 	
 	@Resource
 	QuotaFormulaResultDao quotaFormulaResultDao;
+	@Resource
+	QuotaItemCreatorDao quotaItemCreatorDao;
 
 	@DataProvider
 	public Collection<QuotaFormula> getAll(){
@@ -49,6 +52,12 @@ public class QuotaFormulaDao extends HibernateDao {
 		}
 	}
 
+	@DataProvider
+	public Collection<QuotaFormula> getQuotaFormulasByQuotaItemCreator(String quotaItemCreatorId){
+		QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
+		return quotaItemCreator.getQuotaFormulas();
+	}
+	
 	@DataResolver
 	public void saveQuotaFormulas(Collection<QuotaFormula> quotaFormulas,String quotaFormulaResultId){
 		Session session=this.getSessionFactory().openSession();
@@ -58,7 +67,7 @@ public class QuotaFormulaDao extends HibernateDao {
 				EntityState state=EntityUtils.getState(quotaFormula);
 				if (state.equals(EntityState.NEW)) {
 					quotaFormula.setQuotaFormulaResult(quotaFormulaResult);
-					session.save(quotaFormula);
+					session.merge(quotaFormula);
 				}else if (state.equals(EntityState.MODIFIED)) {
 					quotaFormula.setQuotaFormulaResult(quotaFormulaResult);
 					session.merge(quotaFormula);

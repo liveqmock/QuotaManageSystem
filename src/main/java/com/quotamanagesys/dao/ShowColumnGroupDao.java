@@ -3,6 +3,8 @@ package com.quotamanagesys.dao;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -13,55 +15,52 @@ import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
-import com.quotamanagesys.model.QuotaCover;
+import com.quotamanagesys.model.ShowColumn;
+import com.quotamanagesys.model.ShowColumnGroup;
 
 @Component
-public class QuotaCoverDao extends HibernateDao {
+public class ShowColumnGroupDao extends HibernateDao {
+	
+	@Resource
+	ShowColumnDao showColumnDao;
 
 	@DataProvider
-	public Collection<QuotaCover> getAll(){
-		String hqlString="from "+QuotaCover.class.getName();
-		Collection<QuotaCover> quotaCovers=this.query(hqlString);
-		return quotaCovers;
+	public Collection<ShowColumnGroup> getAll(){
+		String hqlString="from "+ShowColumnGroup.class.getName()+" order by sort asc";
+		Collection<ShowColumnGroup> showColumnGroups=this.query(hqlString);
+		return showColumnGroups;
 	}
 	
 	@DataProvider
-	public QuotaCover getQuotaCover(String id){
-		String hqlString="from "+QuotaCover.class.getName()+" where id='"+id+"'";
-		List<QuotaCover> quotaCovers=this.query(hqlString);
-		if (quotaCovers.size()>0) {
-			return quotaCovers.get(0);
+	public ShowColumnGroup getShowColumnGroup(String id){
+		String hqlString="from "+ShowColumnGroup.class.getName()+" where id='"+id+"'";
+		List<ShowColumnGroup> showColumnGroups=this.query(hqlString);
+		if (showColumnGroups.size()>0) {
+			return showColumnGroups.get(0);
 		}else {
 			return null;
 		}
 	}
 	
-	@DataProvider
-	public Collection<QuotaCover> getTopQuotaCovers(){
-		String hqlString="from "+QuotaCover.class.getName()+" where fatherQuotaCover=null";
-		Collection<QuotaCover> quotaCovers=this.query(hqlString);
-		return quotaCovers;
-	}
-	
-	@DataProvider
-	public Collection<QuotaCover> getQuotaCoversByFatherCover(String fatherQuotaCoverId){
-		String hqString="from "+QuotaCover.class.getName()+" where fatherQuotaCover.id='"+fatherQuotaCoverId+"'";
-		Collection<QuotaCover> quotaCovers=this.query(hqString);
-		return quotaCovers;
-	}
-	
 	@DataResolver
-	public void saveQuotaCovers(Collection<QuotaCover> quotaCovers){
+	public void saveShowColumnGroups(Collection<ShowColumnGroup> showColumnGroups){
 		Session session=this.getSessionFactory().openSession();
 		try {
-			for (QuotaCover quotaCover : quotaCovers) {
-				EntityState state=EntityUtils.getState(quotaCover);
+			for (ShowColumnGroup showColumnGroup : showColumnGroups) {
+				EntityState state=EntityUtils.getState(showColumnGroup);
 				if (state.equals(EntityState.NEW)) {
-					session.save(quotaCover);
+					session.save(showColumnGroup);
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaCover);
+					session.update(showColumnGroup);
 				}else if (state.equals(EntityState.DELETED)) {
-					session.delete(quotaCover);
+					Collection<ShowColumn> showColumns=showColumnDao.getShowColumnsByGroup(showColumnGroup.getId());
+					for (ShowColumn showColumn : showColumns) {
+						showColumn.setShowColumnGroup(null);
+						session.merge(showColumn);
+						session.flush();
+						session.clear();
+					}
+					session.delete(showColumnGroup);
 				}
 			}
 		} catch (Exception e) {
