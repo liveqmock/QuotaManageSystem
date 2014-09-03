@@ -16,6 +16,7 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.QuotaItem;
+import com.quotamanagesys.model.QuotaProperty;
 import com.quotamanagesys.model.QuotaTargetValue;
 
 @Component
@@ -23,6 +24,8 @@ public class QuotaTargetValueDao extends HibernateDao {
 	
 	@Resource
 	QuotaItemDao quotaItemDao;
+	@Resource
+	QuotaPropertyDao quotaPropertyDao;
 	
 	@DataProvider
 	public Collection<QuotaTargetValue> getAll(){

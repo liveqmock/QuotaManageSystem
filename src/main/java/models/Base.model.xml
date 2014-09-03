@@ -197,5 +197,8 @@
     <PropertyDef name="quotaItem">
       <Property name="dataType">QuotaItem</Property>
     </PropertyDef>
+    <PropertyDef name="parameterName">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
   </DataType>
 </Model>

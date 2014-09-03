@@ -347,6 +347,10 @@ dgQuotaItemTargetValue.refresh();</ClientEvent>
                       <Property name="align">center</Property>
                       <Property name="caption">指标属性</Property>
                     </DataColumn>
+                    <DataColumn name="parameterName">
+                      <Property name="property">parameterName</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
                     <DataColumn name="value">
                       <Property name="property">value</Property>
                       <Property name="width">190</Property>

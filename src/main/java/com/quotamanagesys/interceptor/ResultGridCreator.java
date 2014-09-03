@@ -133,6 +133,7 @@ public class ResultGridCreator {
 		dgQuotaItemStatus.setShowFilterBar(true);
 		dgQuotaItemStatus.setDataSet("dsQuotaItemStatus");
 		dgQuotaItemStatus.setStretchColumnsMode(StretchColumnsMode.off);
+		dgQuotaItemStatus.setDynaRowHeight(true);
 		dgQuotaItemStatus.setFixedColumnCount(1);
 	}
 	

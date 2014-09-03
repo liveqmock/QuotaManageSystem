@@ -19,12 +19,15 @@
         <ClientEvent name="onClick">// 获取AjaxAction对象&#xD;
 var action = view.get(&quot;#aaCalculateQuotaItemResultValue&quot;);&#xD;
 var year=view.get(&quot;#nsYear.value&quot;);&#xD;
+if(isNaN(year)){&#xD;
+	alert(&quot;请填写要计算的年度&quot;);&#xD;
+}else{&#xD;
+	var parameter = {year: year};&#xD;
+	// 调用AjaxAction&#xD;
+	action.set(&quot;parameter&quot;,parameter).execute();&#xD;
+}&#xD;
 &#xD;
-var parameter = {&#xD;
-    year: year&#xD;
-};&#xD;
-// 调用AjaxAction&#xD;
-action.set(&quot;parameter&quot;,parameter).execute();&#xD;
+&#xD;
 </ClientEvent>
         <Property name="caption">计算</Property>
         <Property name="icon">url(>skin>common/icons.gif) -260px -60px</Property>

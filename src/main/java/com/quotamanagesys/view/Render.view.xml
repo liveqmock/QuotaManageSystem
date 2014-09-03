@@ -103,7 +103,12 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
           <Property name="property">renderCode</Property>
           <Property name="caption">渲染代码</Property>
           <Property name="wrappable">true</Property>
-          <Property name="width">220</Property>
+          <Property name="width">300</Property>
+          <Editor>
+            <TextArea>
+              <Property name="height">200</Property>
+            </TextArea>
+          </Editor>
         </DataColumn>
         <DataColumn name="type">
           <Property name="property">type</Property>
@@ -117,6 +122,11 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
           <Property name="caption">备注</Property>
           <Property name="wrappable">true</Property>
           <Property name="width">220</Property>
+          <Editor>
+            <TextArea>
+              <Property name="height">200</Property>
+            </TextArea>
+          </Editor>
         </DataColumn>
       </DataGrid>
       <UpdateAction id="uaRender">
