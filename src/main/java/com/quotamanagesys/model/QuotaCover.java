@@ -1,6 +1,7 @@
 package com.quotamanagesys.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,11 +10,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.stereotype.Component;
+
+import com.bstek.bdf2.core.model.DefaultDept;
 
 @Component
 @Entity
@@ -30,6 +35,9 @@ public class QuotaCover implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="FATHER_QUOTA_COVER_ID")
 	private QuotaCover fatherQuotaCover;//上级口径
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = DefaultDept.class, cascade = CascadeType.ALL)
+	@JoinTable(name = "QUOTA_COVER_DUTY_DEPT_MAP", joinColumns = { @JoinColumn(name = "QUOTA_COVER_ID") }, inverseJoinColumns = { @JoinColumn(name = "DUTY_DEPT_ID") })
+	private Set<DefaultDept> dutyDepts;//与该口径关联的部门
 	public String getId() {
 		return id;
 	}
@@ -47,5 +55,11 @@ public class QuotaCover implements Serializable{
 	}
 	public void setFatherQuotaCover(QuotaCover fatherQuotaCover) {
 		this.fatherQuotaCover = fatherQuotaCover;
+	}
+	public Set<DefaultDept> getDutyDepts() {
+		return dutyDepts;
+	}
+	public void setDutyDepts(Set<DefaultDept> dutyDepts) {
+		this.dutyDepts = dutyDepts;
 	}
 }

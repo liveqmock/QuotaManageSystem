@@ -27,6 +27,8 @@ public class ShowColumn implements Serializable{
 	private String id;
 	@Column(name="NAME")
 	private String name;//列名
+	@Column(name="ALIAS")
+	private String alias;//别名
 	@Column(name="WIDTH")
 	private int width;//列宽
 	@Column(name="IS_WRAPPABLE")
@@ -52,6 +54,12 @@ public class ShowColumn implements Serializable{
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getAlias() {
+		return alias;
+	}
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 	public int getWidth() {
 		return width;

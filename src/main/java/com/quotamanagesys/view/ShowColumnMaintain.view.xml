@@ -12,6 +12,9 @@
       <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
+      <PropertyDef name="alias">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
       <PropertyDef name="showColumnGroup">
         <Property name="dataType">ShowColumnGroup</Property>
       </PropertyDef>
@@ -132,6 +135,13 @@ uaShowColumn.execute({&#xD;
           <Property name="readOnly">true</Property>
           <Property name="align">center</Property>
           <Property name="caption">列名</Property>
+        </DataColumn>
+        <DataColumn name="alias">
+          <Property name="property">alias</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">别名</Property>
+          <Property name="width">180</Property>
+          <Property name="wrappable">true</Property>
         </DataColumn>
         <DataColumn name="showColumnGroup">
           <Property name="property">showColumnGroup</Property>

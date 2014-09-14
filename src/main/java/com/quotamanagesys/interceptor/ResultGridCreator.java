@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -17,8 +18,11 @@ import org.springframework.stereotype.Component;
 
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.common.event.ClientEvent;
+import com.bstek.dorado.data.config.definition.DataTypeDefinition;
 import com.bstek.dorado.data.provider.manager.DataProviderManager;
+import com.bstek.dorado.data.type.DataType;
 import com.bstek.dorado.data.type.EntityDataType;
+import com.bstek.dorado.data.type.manager.DefaultDataTypeManager;
 import com.bstek.dorado.data.type.property.BasePropertyDef;
 import com.bstek.dorado.data.type.property.PropertyDef;
 import com.bstek.dorado.data.variant.Record;
@@ -26,6 +30,7 @@ import com.bstek.dorado.view.manager.ViewConfig;
 import com.bstek.dorado.view.widget.grid.ColumnGroup;
 import com.bstek.dorado.view.widget.grid.DataColumn;
 import com.bstek.dorado.view.widget.grid.DataGrid;
+import com.bstek.dorado.view.widget.grid.SortState;
 import com.bstek.dorado.view.widget.grid.StretchColumnsMode;
 import com.quotamanagesys.dao.DepartmentDao;
 import com.quotamanagesys.dao.ShowColumnDao;
@@ -66,7 +71,7 @@ public class ResultGridCreator {
 			for (int i = 1; i <=rsm.getColumnCount(); i++) {
 	        	String columnName=rsm.getColumnName(i);
 	        	propertyDef = new BasePropertyDef(columnName);
-	        	if (columnName=="定業"||columnName=="埖業") {
+	        	if (columnName.equals("定業")||columnName.equals("埖業")) {
 	        		propertyDef.setDataType(viewConfig.getDataType("int"));
 				}else{
 					propertyDef.setDataType(viewConfig.getDataType("String"));
@@ -86,7 +91,7 @@ public class ResultGridCreator {
 				DataColumn dataColumn=new DataColumn();
 				dataColumn.setName(showColumn.getName());
 				dataColumn.setProperty(showColumn.getName());
-				dataColumn.setCaption(showColumn.getName());
+				dataColumn.setCaption(showColumn.getAlias());
 				dataColumn.setWidth(showColumn.getWidth()+"");
 				dataColumn.setVisible(showColumn.getVisible());
 				dataColumn.setWrappable(showColumn.getWrappable());
@@ -109,10 +114,11 @@ public class ResultGridCreator {
 				
 				Collection<ShowColumn> showColumns=showColumnDao.getShowColumnsByGroup(showColumnGroup.getId());
 				for (ShowColumn showColumn : showColumns) {
+					
 					DataColumn dataColumn=new DataColumn();
 					dataColumn.setName(showColumn.getName());
 					dataColumn.setProperty(showColumn.getName());
-					dataColumn.setCaption(showColumn.getName());
+					dataColumn.setCaption(showColumn.getAlias());
 					dataColumn.setWidth(showColumn.getWidth()+"");
 					dataColumn.setVisible(showColumn.getVisible());
 					dataColumn.setWrappable(showColumn.getWrappable());
@@ -149,7 +155,7 @@ public class ResultGridCreator {
 				Record record=new Record();
 				for (int i = 1; i <=rsm.getColumnCount(); i++) {
 					String columnName=rsm.getColumnName(i);
-					if (columnName=="定業"||columnName=="埖業"){
+					if (columnName.equals("定業")||columnName.equals("埖業")){
 						record.set(columnName,rs.getInt(columnName));
 					}else {
 						record.set(columnName,rs.getString(columnName));

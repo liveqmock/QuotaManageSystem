@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
-import com.bstek.dorado.data.entity.EntityState;
-import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.model.FormulaParameter;
-import com.quotamanagesys.model.QuotaProperty;
 
 @Component
 public class FormulaParameterDao extends HibernateDao {
@@ -37,7 +34,7 @@ public class FormulaParameterDao extends HibernateDao {
 			return null;
 		}
 	}
-
+	
 	@DataResolver
 	public void excuteHQL(String HQL) {
 		Session session = this.getSessionFactory().openSession();

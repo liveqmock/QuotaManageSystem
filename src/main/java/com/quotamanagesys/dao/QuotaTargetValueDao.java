@@ -68,6 +68,10 @@ public class QuotaTargetValueDao extends HibernateDao {
 				if (state.equals(EntityState.NEW)) {
 					session.merge(quotaTargetValue);
 				}else if (state.equals(EntityState.MODIFIED)) {
+					QuotaItem thisQuotaItem=quotaItemDao.getQuotaItem(quotaTargetValue.getQuotaItem().getId());
+					QuotaProperty thisQuotaProperty=quotaPropertyDao.getQuotaProperty(quotaTargetValue.getQuotaProperty().getId());
+					quotaTargetValue.setQuotaItem(thisQuotaItem);
+					quotaTargetValue.setQuotaProperty(thisQuotaProperty);
 					session.merge(quotaTargetValue);
 				}else if (state.equals(EntityState.DELETED)) {
 					quotaTargetValue.setQuotaItem(null);

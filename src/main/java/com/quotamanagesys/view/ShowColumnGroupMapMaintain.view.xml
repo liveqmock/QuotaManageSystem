@@ -11,6 +11,9 @@
       <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
+      <PropertyDef name="alias">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
       <PropertyDef name="width">
         <Property name="dataType">int</Property>
       </PropertyDef>
@@ -145,9 +148,16 @@ uaShowColumnLinked.execute({&#xD;
             </DataColumn>
             <DataColumn name="name">
               <Property name="property">name</Property>
-              <Property name="width">200</Property>
+              <Property name="width">180</Property>
               <Property name="caption">列名</Property>
               <Property name="align">center</Property>
+            </DataColumn>
+            <DataColumn name="alias">
+              <Property name="property">alias</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">别名</Property>
+              <Property name="width">180</Property>
+              <Property name="wrappable">true</Property>
             </DataColumn>
             <DataColumn name="width">
               <Property name="property">width</Property>
@@ -246,6 +256,11 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
                     <Property name="property">name</Property>
                     <Property name="align">center</Property>
                     <Property name="caption">列名</Property>
+                  </DataColumn>
+                  <DataColumn name="alias">
+                    <Property name="property">alias</Property>
+                    <Property name="align">center</Property>
+                    <Property name="caption">别名</Property>
                   </DataColumn>
                   <DataColumn name="width">
                     <Property name="property">width</Property>

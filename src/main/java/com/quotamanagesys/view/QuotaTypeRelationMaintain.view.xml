@@ -144,7 +144,7 @@
           <ToolBar>
             <DataPilot>
               <Property name="dataSet">dsQuotaType</Property>
-              <Property name="itemCodes">pages,+,-,x</Property>
+              <Property name="itemCodes">pages,x</Property>
             </DataPilot>
             <Separator/>
             <ToolBarButton>
@@ -383,6 +383,7 @@ dgQuotaType.refresh();</ClientEvent>
             <BindingConfig>
               <Property name="labelProperty">name</Property>
               <Property name="name">quotaLevel</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -120px -80px</Property>
             </BindingConfig>
           </BindingConfigs>
         </DataTree>

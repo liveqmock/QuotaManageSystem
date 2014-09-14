@@ -1,5 +1,6 @@
 package com.quotamanagesys.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,9 +16,12 @@ import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.bstek.dorado.view.widget.base.Dialog;
+import com.bstek.dorado.view.widget.base.Tip;
 import com.quotamanagesys.model.QuotaFormula;
 import com.quotamanagesys.model.QuotaFormulaResult;
 import com.quotamanagesys.model.QuotaItemCreator;
+import com.quotamanagesys.model.QuotaTypeFormulaLink;
 
 @Component
 public class QuotaFormulaDao extends HibernateDao {
@@ -26,6 +30,8 @@ public class QuotaFormulaDao extends HibernateDao {
 	QuotaFormulaResultDao quotaFormulaResultDao;
 	@Resource
 	QuotaItemCreatorDao quotaItemCreatorDao;
+	@Resource
+	QuotaTypeFormulaLinkDao quotaTypeFormulaLinkDao;
 
 	@DataProvider
 	public Collection<QuotaFormula> getAll(){
@@ -39,6 +45,20 @@ public class QuotaFormulaDao extends HibernateDao {
 		String hqlString="from "+QuotaFormula.class.getName()+" where quotaFormulaResult.id='"+quotaFormulaResultId+"'";
 		Collection<QuotaFormula> quotaFormulas=this.query(hqlString);
 		return quotaFormulas;
+	}
+	
+	@DataProvider
+	public Collection<QuotaFormula> getQuotaFormulasByQuotaType(String quotaTypeId){
+		Collection<QuotaTypeFormulaLink> quotaTypeFormulaLinks=quotaTypeFormulaLinkDao.getQuotaTypeFormulaLinksByQuotaType(quotaTypeId);
+		if (quotaTypeFormulaLinks.size()>0) {
+			Collection<QuotaFormula> quotaFormulas=new ArrayList<QuotaFormula>();
+			for (QuotaTypeFormulaLink quotaTypeFormulaLink : quotaTypeFormulaLinks) {
+				quotaFormulas.add(quotaTypeFormulaLink.getQuotaFormula());
+			}
+			return quotaFormulas;
+		}else {
+			return null;
+		}
 	}
 	
 	@DataProvider

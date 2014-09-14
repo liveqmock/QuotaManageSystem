@@ -2,6 +2,7 @@ package com.quotamanagesys.interceptor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Set;
 
@@ -38,8 +39,7 @@ public class CalculateCore extends HibernateDao{
 	QuotaTargetValueDao quotaTargetValueDao;
 	
 	@Expose
-	public void calculate(int year){
-		Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByYear(year);
+	public void calculate(Collection<QuotaItem> quotaItems){
 		quotaFormulaResultValueDao.excuteHQL("delete from "+QuotaFormulaResultValue.class.getName());
 		for (QuotaItem quotaItem : quotaItems) {
 			calculateQuotaItemResultValue(quotaItem);

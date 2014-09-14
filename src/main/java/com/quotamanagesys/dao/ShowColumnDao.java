@@ -43,7 +43,7 @@ public class ShowColumnDao extends HibernateDao {
 	
 	@DataProvider
 	public Collection<ShowColumn> getShowColumnsNotYetLinked(){
-		String hqlString="from "+ShowColumn.class.getName()+" where showColumnGroup=null order by sort asc";
+		String hqlString="from "+ShowColumn.class.getName()+" where showColumnGroup=null and visible=true order by sort asc";
 		Collection<ShowColumn> showColumns=this.query(hqlString);
 		return showColumns;
 	}
@@ -95,6 +95,7 @@ public class ShowColumnDao extends HibernateDao {
 				for (int i = 1; i <= rsm.getColumnCount(); i++) {
 					ShowColumn showColumn=new ShowColumn();
 					showColumn.setName(rsm.getColumnName(i));
+					showColumn.setAlias(rsm.getColumnName(i));
 					showColumn.setWidth(70);
 					showColumn.setVisible(true);
 					showColumn.setWrappable(true);
@@ -121,6 +122,11 @@ public class ShowColumnDao extends HibernateDao {
 				if (render!=null) {
 					thisShowColumn.setRender(renderDao.getRender(render.getId()));
 				}
+				thisShowColumn.setAlias(showColumn.getAlias());
+				thisShowColumn.setSort(showColumn.getSort());
+				thisShowColumn.setVisible(showColumn.getVisible());
+				thisShowColumn.setWrappable(showColumn.getWrappable());
+				thisShowColumn.setWidth(showColumn.getWidth());
 				session.merge(thisShowColumn);
 			}
 		} catch (Exception e) {
