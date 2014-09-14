@@ -2,6 +2,7 @@ package com.quotamanagesys.interceptor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Set;
 
@@ -17,11 +18,13 @@ import com.quotamanagesys.dao.QuotaFormulaResultValueDao;
 import com.quotamanagesys.dao.QuotaItemCreatorDao;
 import com.quotamanagesys.dao.QuotaItemDao;
 import com.quotamanagesys.dao.QuotaPropertyValueDao;
+import com.quotamanagesys.dao.QuotaTargetValueDao;
 import com.quotamanagesys.model.QuotaFormula;
 import com.quotamanagesys.model.QuotaFormulaResultValue;
 import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaPropertyValue;
+import com.quotamanagesys.model.QuotaTargetValue;
 import com.quotamanagesys.model.QuotaType;
 
 @Component
@@ -32,10 +35,11 @@ public class CalculateCore extends HibernateDao{
 	QuotaPropertyValueDao quotaPropertyValueDao;
 	@Resource
 	QuotaFormulaResultValueDao quotaFormulaResultValueDao;
-
+	@Resource
+	QuotaTargetValueDao quotaTargetValueDao;
+	
 	@Expose
-	public void calculate(int year){
-		Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByYear(year);
+	public void calculate(Collection<QuotaItem> quotaItems){
 		quotaFormulaResultValueDao.excuteHQL("delete from "+QuotaFormulaResultValue.class.getName());
 		for (QuotaItem quotaItem : quotaItems) {
 			calculateQuotaItemResultValue(quotaItem);
@@ -82,9 +86,11 @@ public class CalculateCore extends HibernateDao{
 		if (finishValue!=null&&finishValue!="") {
 			calculateParameters.add(new CalculateParameter("F",finishValue));
 		}
-		String targetValue=quotaItem.getTargetValue();
-		if (targetValue!=null&&targetValue!="") {
-			calculateParameters.add(new CalculateParameter("T", targetValue));
+		Collection<QuotaTargetValue> quotaTargetValues=quotaTargetValueDao.getQuotaTargetValuesByQuotaItem(quotaItemId);
+		if (quotaTargetValues.size()>0) {
+			for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
+				calculateParameters.add(new CalculateParameter(quotaTargetValue.getParameterName(), quotaTargetValue.getValue()+""));
+			}
 		}
 		QuotaItemCreator quotaItemCreator=quotaItem.getQuotaItemCreator();
 		Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId());

@@ -1,72 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ViewConfig listener="spring:resultGridCreator#dataTypeDefine">
+<ViewConfig listener="spring:resultGridCreator#ViewConfigInit">
   <Arguments/>
   <Context/>
   <Model>
-    <DataType name="QuotaItemStatus"/>
+    <DataType listener="spring:resultGridCreator#initQuotaItemStatus" name="QuotaItemStatus"/>
   </Model>
   <View>
-    <Container>
-      <DataSet id="dsQuotaItemStatus">
-        <Property name="dataType">[QuotaItemStatus]</Property>
-        <Property name="dataProvider">resultGridCreator#getQuotaItemStatusRecord</Property>
-      </DataSet>
-      <ToolBar>
-        <ToolBarLabel>
-          <Property name="text">年度</Property>
-        </ToolBarLabel>
-        <NumberSpinner id="nsYear"/>
-        <ToolBarButton>
-          <ClientEvent name="onClick">// 获取AjaxAction对象&#xD;
-var action = view.get(&quot;#aaCalculateQuotaItemResultValue&quot;);&#xD;
-var year=view.get(&quot;#nsYear.value&quot;);&#xD;
-&#xD;
-var parameter = {&#xD;
-    year: year&#xD;
-};&#xD;
-// 调用AjaxAction&#xD;
-action.set(&quot;parameter&quot;,parameter).execute();&#xD;
-</ClientEvent>
-          <Property name="caption">计算</Property>
-          <Property name="icon">url(>skin>common/icons.gif) -260px -60px</Property>
-        </ToolBarButton>
-        <ToolBarButton>
-          <ClientEvent name="onClick">var action = view.get(&quot;#aaCreatorResultTable&quot;);&#xD;
-var year=view.get(&quot;#nsYear.value&quot;);&#xD;
-var parameter = {&#xD;
-    year: year&#xD;
-};&#xD;
-action.set(&quot;parameter&quot;,parameter).execute();</ClientEvent>
-          <Property name="caption">生成数据</Property>
-          <Property name="icon">url(>skin>common/icons.gif) -280px -60px</Property>
-        </ToolBarButton>
-        <ToolBarButton>
-          <ClientEvent name="onClick">var dsQuotaItemStatus=view.get(&quot;#dsQuotaItemStatus&quot;);&#xD;
-dsQuotaItemStatus.clear();&#xD;
-dsQuotaItemStatus.flush();&#xD;
-&#xD;
-&#xD;
-</ClientEvent>
-          <Property name="caption">显示数据</Property>
-          <Property name="icon">url(>skin>common/icons.gif) -220px -80px</Property>
-        </ToolBarButton>
-      </ToolBar>
-      <DataGrid id="dgQuotaItemStatus">
-        <ClientEvent name="onRenderRow">var targetValue=arg.data.get(&quot;监控阀值&quot;);&#xD;
-arg.dom.style.background = (targetValue==1) ? &quot;#FF8888&quot; : &quot;#66FF66&quot;;</ClientEvent>
-        <Property name="autoCreateColumns">true</Property>
-        <Property name="dataSet">dsQuotaItemStatus</Property>
-      </DataGrid>
-      <AjaxAction id="aaCalculateQuotaItemResultValue">
-        <Property name="service">calculateCore#calculate</Property>
-        <Property name="executingMessage">正在进行各指标公式计算..</Property>
-        <Property name="successMessage">计算完成！</Property>
-      </AjaxAction>
-      <AjaxAction id="aaCreatorResultTable">
-        <Property name="executingMessage">正在生成指标信息视图..</Property>
-        <Property name="successMessage">生成完成</Property>
-        <Property name="service">resultTableCreator#creatorResultTable</Property>
-      </AjaxAction>
-    </Container>
+    <DataSet id="dsQuotaItemStatus">
+      <Property name="dataType">[QuotaItemStatus]</Property>
+      <Property name="dataProvider">resultGridCreator#getQuotaItemStatusRecord</Property>
+    </DataSet>
+    <ToolBar>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var action = view.get(&quot;#aaCreateQuotaHistoryBackup&quot;);&#xD;
+action.execute();</ClientEvent>
+        <Property name="caption">备份数据</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -300px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">window.location.reload();</ClientEvent>
+        <Property name="caption">刷新</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -40px -240px</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgQuotaItemStatus" listener="spring:resultGridCreator#DataGridInit"/>
+    <AjaxAction id="aaCreateQuotaHistoryBackup">
+      <Property name="service">quotaHistoryBackupCore#createQuotaHistoryBackup</Property>
+      <Property name="executingMessage">正在生成历史数据备份...</Property>
+      <Property name="successMessage">完成备份！</Property>
+    </AjaxAction>
   </View>
 </ViewConfig>

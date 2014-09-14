@@ -31,7 +31,6 @@ public class QuotaPropertyValue {
 	private QuotaItemCreator quotaItemCreator;//指标生成器
 	@Column(name="VALUE")
 	private double value;//指标属性目标值
-	
 	public String getId() {
 		return id;
 	}
@@ -56,5 +55,5 @@ public class QuotaPropertyValue {
 	public void setValue(double value) {
 		this.value = value;
 	}
-	
+
 }

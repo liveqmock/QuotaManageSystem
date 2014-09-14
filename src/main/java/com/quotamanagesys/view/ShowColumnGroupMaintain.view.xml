@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="ShowColumnGroup">
+      <Property name="creationType">com.quotamanagesys.model.ShowColumnGroup</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="sort">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsShowColumnGroup">
+      <Property name="dataType">[ShowColumnGroup]</Property>
+      <Property name="dataProvider">showColumnGroupDao#getAll</Property>
+    </DataSet>
+    <Container>
+      <ToolBar>
+        <DataPilot>
+          <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsShowColumnGroup.data&quot;);&#xD;
+var action = view.get(&quot;#uaShowColumnGroup&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgShowColumnGroup = view.get(&quot;#dgShowColumnGroup&quot;);&#xD;
+		var selection = dgShowColumnGroup.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+          <Property name="dataSet">dsShowColumnGroup</Property>
+          <Property name="itemCodes">pages,+,-,x</Property>
+        </DataPilot>
+        <Separator/>
+        <ToolBarButton>
+          <ClientEvent name="onClick">var dgShowColumnGroup=view.get(&quot;#dgShowColumnGroup&quot;);&#xD;
+var dsShowColumnGroup=view.get(&quot;#dsShowColumnGroup&quot;);&#xD;
+var uaShowColumnGroup=view.get(&quot;#uaShowColumnGroup&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaShowColumnGroup.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsShowColumnGroup.flush();&#xD;
+			dgShowColumnGroup.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
+          <Property name="caption">保存</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </ToolBarButton>
+      </ToolBar>
+      <DataGrid id="dgShowColumnGroup">
+        <Property name="dataSet">dsShowColumnGroup</Property>
+        <Property name="dataType">ShowColumnGroup</Property>
+        <Property name="stretchColumnsMode">off</Property>
+        <Property name="selectionMode">multiRows</Property>
+        <IndicatorColumn/>
+        <RowSelectorColumn/>
+        <DataColumn name="id">
+          <Property name="property">id</Property>
+          <Property name="visible">false</Property>
+          <Property name="readOnly">true</Property>
+        </DataColumn>
+        <DataColumn name="name">
+          <Property name="property">name</Property>
+          <Property name="width">200</Property>
+          <Property name="caption">列分组名称</Property>
+          <Property name="align">center</Property>
+        </DataColumn>
+        <DataColumn name="sort">
+          <Property name="property">sort</Property>
+          <Property name="width">150</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">序号</Property>
+          <Editor>
+            <NumberSpinner>
+              <Property name="min">0</Property>
+              <Property name="max">100</Property>
+            </NumberSpinner>
+          </Editor>
+        </DataColumn>
+      </DataGrid>
+      <UpdateAction id="uaShowColumnGroup">
+        <Property name="dataResolver">showColumnGroupDao#saveShowColumnGroups</Property>
+        <UpdateItem>
+          <Property name="dataSet">dsShowColumnGroup</Property>
+        </UpdateItem>
+      </UpdateAction>
+    </Container>
+  </View>
+</ViewConfig>

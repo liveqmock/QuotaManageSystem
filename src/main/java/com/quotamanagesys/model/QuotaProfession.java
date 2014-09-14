@@ -21,20 +21,19 @@ public class QuotaProfession implements Serializable{
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
 	@Column(name = "ID")
 	private String id;
-	@Column(name="PROFESSION")
-	private String profession;//指标专业名称
-	
+	@Column(name="NAME")
+	private String name;//指标专业名称
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getProfession() {
-		return profession;
+	public String getName() {
+		return name;
 	}
-	public void setProfession(String profession) {
-		this.profession = profession;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
+
 }

@@ -23,11 +23,11 @@
     </DataType>
     <DataType name="QuotaFormulaResult">
       <Property name="creationType">com.quotamanagesys.model.QuotaFormulaResult</Property>
-      <Property name="defaultDisplayProperty">resultName</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="resultName">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
@@ -95,7 +95,6 @@ uaQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResul
 });</ClientEvent>
               <Property name="caption">保存</Property>
               <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-              <Property name="action">uaQuotaFormula</Property>
             </ToolBarButton>
           </ToolBar>
           <DataGrid id="dgQuotaFormula">
@@ -109,24 +108,23 @@ uaQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResul
             <DataColumn name="id">
               <Property name="property">id</Property>
               <Property name="visible">false</Property>
-              <Property name="readOnly">true</Property>
             </DataColumn>
             <DataColumn name="name">
               <Property name="property">name</Property>
-              <Property name="width">260</Property>
               <Property name="caption">公式名称</Property>
               <Property name="wrappable">true</Property>
+              <Property name="width">200</Property>
               <Editor>
                 <TextArea>
-                  <Property name="height">100</Property>
+                  <Property name="height">50</Property>
                 </TextArea>
               </Editor>
             </DataColumn>
             <DataColumn name="formula">
               <Property name="property">formula</Property>
               <Property name="caption">公式</Property>
-              <Property name="width">280</Property>
               <Property name="wrappable">true</Property>
+              <Property name="width">300</Property>
               <Editor>
                 <TextArea>
                   <Property name="height">100</Property>
@@ -136,13 +134,11 @@ uaQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResul
             <DataColumn name="quotaFormulaResult">
               <Property name="property">quotaFormulaResult</Property>
               <Property name="visible">false</Property>
-              <Property name="readOnly">true</Property>
             </DataColumn>
             <DataColumn name="remark">
               <Property name="property">remark</Property>
-              <Property name="caption">备注</Property>
               <Property name="width">300</Property>
-              <Property name="wrappable">true</Property>
+              <Property name="caption">公式说明</Property>
               <Editor>
                 <TextArea>
                   <Property name="height">100</Property>
@@ -173,7 +169,7 @@ dsQuotaFormula.set(&quot;parameter&quot;,{quotaFormulaResultId:quotaFormulaResul
           <BindingConfigs>
             <BindingConfig>
               <Property name="name">quotaFormulaResult</Property>
-              <Property name="labelProperty">resultName</Property>
+              <Property name="labelProperty">name</Property>
               <Property name="icon">url(>skin>common/icons.gif) -0px -200px</Property>
             </BindingConfig>
           </BindingConfigs>

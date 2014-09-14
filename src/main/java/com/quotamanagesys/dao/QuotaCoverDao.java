@@ -2,12 +2,15 @@ package com.quotamanagesys.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+import com.bstek.bdf2.core.model.DefaultDept;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
@@ -36,6 +39,31 @@ public class QuotaCoverDao extends HibernateDao {
 		}
 	}
 	
+	@DataProvider
+	public QuotaCover getFatherQuotaCover(String id){
+		String hqlString="from "+QuotaCover.class.getName()+" where id='"+id+"'";
+		List<QuotaCover> quotaCovers=this.query(hqlString);
+		if (quotaCovers.size()>0) {
+			return quotaCovers.get(0).getFatherQuotaCover();
+		}else {
+			return null;
+		}
+	}
+	
+	@DataProvider
+	public Collection<QuotaCover> getTopQuotaCovers(){
+		String hqlString="from "+QuotaCover.class.getName()+" where fatherQuotaCover=null";
+		Collection<QuotaCover> quotaCovers=this.query(hqlString);
+		return quotaCovers;
+	}
+	
+	@DataProvider
+	public Collection<QuotaCover> getQuotaCoversByFatherCover(String fatherQuotaCoverId){
+		String hqString="from "+QuotaCover.class.getName()+" where fatherQuotaCover.id='"+fatherQuotaCoverId+"'";
+		Collection<QuotaCover> quotaCovers=this.query(hqString);
+		return quotaCovers;
+	}
+	
 	@DataResolver
 	public void saveQuotaCovers(Collection<QuotaCover> quotaCovers){
 		Session session=this.getSessionFactory().openSession();
@@ -43,13 +71,70 @@ public class QuotaCoverDao extends HibernateDao {
 			for (QuotaCover quotaCover : quotaCovers) {
 				EntityState state=EntityUtils.getState(quotaCover);
 				if (state.equals(EntityState.NEW)) {
-					session.save(quotaCover);
+					QuotaCover fatherQuotaCover=quotaCover.getFatherQuotaCover();
+					quotaCover.setFatherQuotaCover(getQuotaCover(fatherQuotaCover.getId()));
+					
+					session.merge(quotaCover);
+					session.flush();
+					session.clear();
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaCover);
+					QuotaCover thisQuotaCover=getQuotaCover(quotaCover.getId());
+					thisQuotaCover.setName(quotaCover.getName());
+					if ((quotaCover.getFatherQuotaCover()).equals(null)) {
+						thisQuotaCover.setFatherQuotaCover(null);
+					}else {
+						thisQuotaCover.setFatherQuotaCover(getQuotaCover(quotaCover.getFatherQuotaCover().getId()));
+					}
+					
+					session.merge(thisQuotaCover);
+					session.flush();
+					session.clear();
 				}else if (state.equals(EntityState.DELETED)) {
+					Collection<QuotaCover> childrenQuotaCovers=getQuotaCoversByFatherCover(quotaCover.getId());
+					for (QuotaCover child : childrenQuotaCovers) {
+						child.setFatherQuotaCover(null);
+						session.merge(child);
+						session.flush();
+						session.clear();
+					}
+					
+					quotaCover.setDutyDepts(null);
+					quotaCover.setFatherQuotaCover(null);
 					session.delete(quotaCover);
+					session.flush();
+					session.clear();
 				}
 			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}
+	}
+	
+	@DataResolver
+	public void saveDutyDepts(Collection<DefaultDept> dutyDepts,String quotaCoverId){
+		QuotaCover quotaCover=getQuotaCover(quotaCoverId);
+		Set<DefaultDept> thisDutyDepts=quotaCover.getDutyDepts();
+		
+		Session session=this.getSessionFactory().openSession();
+		try {
+			for (DefaultDept dutyDept : dutyDepts) {
+				EntityState state=EntityUtils.getState(dutyDept);
+				if (state.equals(EntityState.NEW)) {
+					thisDutyDepts.add(dutyDept);
+				}else if (state.equals(EntityState.DELETED)) {
+					for (DefaultDept thisDutyDept : thisDutyDepts) {
+						if ((thisDutyDept.getId()).equals(dutyDept.getId())) {
+							thisDutyDepts.remove(thisDutyDept);
+							break;
+						}
+					}
+				}
+			}
+			quotaCover.setDutyDepts(thisDutyDepts);
+			session.merge(quotaCover);
 		} catch (Exception e) {
 			System.out.print(e.toString());
 		}finally{

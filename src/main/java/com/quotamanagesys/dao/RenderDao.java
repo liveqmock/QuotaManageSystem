@@ -3,6 +3,8 @@ package com.quotamanagesys.dao;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -13,41 +15,59 @@ import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
-import com.quotamanagesys.model.QuotaDimensionOne;
+import com.quotamanagesys.model.Render;
+import com.quotamanagesys.model.ShowColumn;
 
 @Component
-public class QuotaDimensionOneDao extends HibernateDao {
+public class RenderDao extends HibernateDao {
+	
+	@Resource
+	ShowColumnDao showColumnDao;
 
 	@DataProvider
-	public Collection<QuotaDimensionOne> getAll(){
-		String hqlString="from "+QuotaDimensionOne.class.getName();
-		Collection<QuotaDimensionOne> quotaDimensionOnes=this.query(hqlString);
-		return quotaDimensionOnes;
+	public Collection<Render> getAll(){
+		String hqlString="from "+Render.class.getName();
+		Collection<Render> renders=this.query(hqlString);
+		return renders;
 	}
 	
 	@DataProvider
-	public QuotaDimensionOne getQuotaDimensionOne(String id){
-		String hqlString="from "+QuotaDimensionOne.class.getName()+" where id='"+id+"'";
-		List<QuotaDimensionOne> quotaDimensionOnes=this.query(hqlString);
-		if (quotaDimensionOnes.size()>0) {
-			return quotaDimensionOnes.get(0);
-		}else {
+	public Collection<Render> getRendersByType(String type){
+		String hqlString="from "+Render.class.getName()+" where type='"+type+"'";
+		Collection<Render> renders=this.query(hqlString);
+		return renders;
+	}
+	
+	@DataProvider
+	public Render getRender(String id){
+		String hqlString="from "+Render.class.getName()+" where id='"+id+"'";
+		List<Render> renders=this.query(hqlString);
+		if (renders.size()>0) {
+			return renders.get(0);
+		}else{
 			return null;
 		}
 	}
 	
 	@DataResolver
-	public void saveQuotaDimensionOnes(Collection<QuotaDimensionOne> quotaDimensionOnes){
+	public void saveRenders(Collection<Render> renders){
 		Session session=this.getSessionFactory().openSession();
 		try {
-			for (QuotaDimensionOne quotaDimensionOne : quotaDimensionOnes) {
-				EntityState state=EntityUtils.getState(quotaDimensionOne);
+			for (Render render : renders) {
+				EntityState state=EntityUtils.getState(render);
 				if (state.equals(EntityState.NEW)) {
-					session.save(quotaDimensionOne);
+					session.save(render);
 				}else if (state.equals(EntityState.MODIFIED)) {
-					session.update(quotaDimensionOne);
+					session.merge(render);
 				}else if (state.equals(EntityState.DELETED)) {
-					session.delete(quotaDimensionOne);
+					Collection<ShowColumn> showColumns=showColumnDao.getShowColumnsByRender(render.getId());
+					for (ShowColumn showColumn : showColumns) {
+						showColumn.setRender(null);
+						session.merge(showColumn);
+						session.flush();
+						session.clear();
+					}
+					session.delete(render);
 				}
 			}
 		} catch (Exception e) {

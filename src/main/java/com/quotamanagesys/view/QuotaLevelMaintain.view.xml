@@ -8,8 +8,11 @@
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
-      <PropertyDef name="quotaLevel">
+      <PropertyDef name="name">
         <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="level">
+        <Property name="dataType">int</Property>
       </PropertyDef>
     </DataType>
   </Model>
@@ -52,9 +55,23 @@ switch(arg.code){&#xD;
       </DataPilot>
       <Separator/>
       <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaLevel=view.get(&quot;#dgQuotaLevel&quot;);&#xD;
+var dsQuotaLevel=view.get(&quot;#dsQuotaLevel&quot;);&#xD;
+var uaQuotaLevel=view.get(&quot;#uaQuotaLevel&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaLevel.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaLevel.flush();&#xD;
+			dgQuotaLevel.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
         <Property name="caption">保存</Property>
         <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        <Property name="action">uaQuotaLevel</Property>
       </ToolBarButton>
     </ToolBar>
     <DataGrid id="dgQuotaLevel">
@@ -68,10 +85,23 @@ switch(arg.code){&#xD;
         <Property name="property">id</Property>
         <Property name="visible">false</Property>
       </DataColumn>
-      <DataColumn name="quotaLevel">
-        <Property name="property">quotaLevel</Property>
-        <Property name="width">300</Property>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
         <Property name="caption">指标级别</Property>
+        <Property name="width">150</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="level">
+        <Property name="property">level</Property>
+        <Property name="caption">等级值</Property>
+        <Property name="width">120</Property>
+        <Property name="align">center</Property>
+        <Editor>
+          <NumberSpinner>
+            <Property name="min">1</Property>
+            <Property name="max">10</Property>
+          </NumberSpinner>
+        </Editor>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaLevel">

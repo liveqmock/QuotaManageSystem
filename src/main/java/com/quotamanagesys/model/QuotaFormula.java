@@ -34,7 +34,6 @@ public class QuotaFormula implements Serializable{
 	private QuotaFormulaResult quotaFormulaResult;//公式结果输出对象
 	@Column(name="REMARK")
 	private String remark;//备注
-	
 	public String getId() {
 		return id;
 	}
@@ -53,16 +52,17 @@ public class QuotaFormula implements Serializable{
 	public void setFormula(String formula) {
 		this.formula = formula;
 	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 	public QuotaFormulaResult getQuotaFormulaResult() {
 		return quotaFormulaResult;
 	}
 	public void setQuotaFormulaResult(QuotaFormulaResult quotaFormulaResult) {
 		this.quotaFormulaResult = quotaFormulaResult;
 	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 }

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Model>
+  <DataType name="QuotaType" meta="x:825;y:165">
+    <Property name="creationType">com.quotamanagesys.model.QuotaType</Property>
+    <Property name="autoCreatePropertyDefs">false</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaProfession">
+      <Property name="dataType">QuotaProfession</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaLevel">
+      <Property name="dataType">QuotaLevel</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaDimension">
+      <Property name="dataType">QuotaDimension</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaUnit">
+      <Property name="dataType">QuotaUnit</Property>
+    </PropertyDef>
+    <PropertyDef name="digit">
+      <Property name="dataType">int</Property>
+    </PropertyDef>
+    <PropertyDef name="rate">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="manageDept">
+      <Property name="dataType">Department</Property>
+    </PropertyDef>
+    <PropertyDef name="inUsed">
+      <Property name="dataType">boolean</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaProfession" meta="x:375;y:30">
+    <Property name="creationType">com.quotamanagesys.model.QuotaProfession</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaUnit" meta="x:630;y:60">
+    <Property name="creationType">com.quotamanagesys.model.QuotaUnit</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaLevel" meta="x:120;y:360">
+    <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="level">
+      <Property name="dataType">int</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="Department" meta="x:300;y:165">
+    <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="desc">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="companyId">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="createDate">
+      <Property name="dataType">Date</Property>
+    </PropertyDef>
+    <PropertyDef name="parentId">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaDimension" meta="x:570;y:180">
+    <Property name="creationType">com.quotamanagesys.model.QuotaDimension</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaItemCreator" meta="x:15;y:4">
+    <Property name="creationType">com.quotamanagesys.model.QuotaItemCreator</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+      <Property name="submittable">true</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaDutyDept">
+      <Property name="dataType">Department</Property>
+    </PropertyDef>
+    <PropertyDef name="year">
+      <Property name="dataType">int</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaType">
+      <Property name="dataType">QuotaType</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaCover">
+      <Property name="dataType">QuotaCover</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaCover" meta="x:945;y:44">
+    <Property name="creationType">com.quotamanagesys.model.QuotaCover</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaProperty" meta="x:79;y:195">
+    <Property name="creationType">com.quotamanagesys.model.QuotaProperty</Property>
+    <Property name="defaultDisplayProperty">name</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="name">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="parameterName">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="symbol">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaPropertyValue" meta="x:465;y:480">
+    <Property name="creationType">com.quotamanagesys.model.QuotaPropertyValue</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaProperty">
+      <Property name="dataType">QuotaProperty</Property>
+    </PropertyDef>
+    <PropertyDef name="value">
+      <Property name="dataType">double</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaItem">
+    <Property name="creationType">com.quotamanagesys.model.QuotaItem</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="year">
+      <Property name="dataType">int</Property>
+    </PropertyDef>
+    <PropertyDef name="month">
+      <Property name="dataType">int</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaItemCreator">
+      <Property name="dataType">QuotaItemCreator</Property>
+    </PropertyDef>
+    <PropertyDef name="finishValue">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="accumulateValue">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="sameTermValue">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+  <DataType name="QuotaTargetValue" meta="x:634;y:360">
+    <Property name="creationType">com.quotamanagesys.model.QuotaTargetValue</Property>
+    <PropertyDef name="id">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="value">
+      <Property name="dataType">double</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaProperty">
+      <Property name="dataType">QuotaProperty</Property>
+    </PropertyDef>
+    <PropertyDef name="quotaItem">
+      <Property name="dataType">QuotaItem</Property>
+    </PropertyDef>
+    <PropertyDef name="parameterName">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+  </DataType>
+</Model>

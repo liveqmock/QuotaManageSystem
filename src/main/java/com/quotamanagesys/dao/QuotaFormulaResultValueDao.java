@@ -58,8 +58,27 @@ public class QuotaFormulaResultValueDao extends HibernateDao {
 				}else if (state.equals(EntityState.MODIFIED)) {
 					session.update(quotaFormulaResultValue);
 				}else if (state.equals(EntityState.DELETED)) {
+					quotaFormulaResultValue.setQuotaFormulaResult(null);
+					quotaFormulaResultValue.setQuotaItem(null);
 					session.delete(quotaFormulaResultValue);
 				}
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}
+	}
+	
+	@DataResolver
+	public void deleteQuotaFormulaResultValues(Collection<QuotaFormulaResultValue> quotaFormulaResultValues){
+		Session session=this.getSessionFactory().openSession();
+		try {
+			for (QuotaFormulaResultValue quotaFormulaResultValue : quotaFormulaResultValues) {
+				quotaFormulaResultValue.setQuotaFormulaResult(null);
+				quotaFormulaResultValue.setQuotaItem(null);
+				session.delete(quotaFormulaResultValue);
 			}
 		} catch (Exception e) {
 			System.out.print(e.toString());

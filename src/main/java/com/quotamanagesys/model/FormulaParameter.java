@@ -1,7 +1,5 @@
 package com.quotamanagesys.model;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,19 +15,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Entity
-@Table(name = "QUOTA_DIMENSION_TWO")
-public class QuotaDimensionTwo implements Serializable{
+@Table(name = "FORMULA_PARAMETER")
+public class FormulaParameter {
 
 	@Id
 	@GeneratedValue(generator = "systemUUID")
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
-	@Column(name = "ID")
 	private String id;
-	@Column(name="NAME")
-	private String dimensionName;//二维名称
+	@Column(name="RATE")
+	private String rate;
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="DIMENSION_ONE_ID")
-	private QuotaDimensionOne quotaDimensionOne;//所属一维
+	@JoinColumn(name="QUOTA_PROPERTY_ID")
+	private QuotaProperty quotaProperty;
+	@Column(name="PARAMETER_NAME")
+	private String parameterName;
 	
 	public String getId() {
 		return id;
@@ -37,17 +36,22 @@ public class QuotaDimensionTwo implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getDimensionName() {
-		return dimensionName;
+	public String getRate() {
+		return rate;
 	}
-	public void setDimensionName(String dimensionName) {
-		this.dimensionName = dimensionName;
+	public void setRate(String rate) {
+		this.rate = rate;
 	}
-	public QuotaDimensionOne getQuotaDimensionOne() {
-		return quotaDimensionOne;
+	public String getParameterName() {
+		return parameterName;
 	}
-	public void setQuotaDimensionOne(QuotaDimensionOne quotaDimensionOne) {
-		this.quotaDimensionOne = quotaDimensionOne;
+	public void setParameterName(String parameterName) {
+		this.parameterName = parameterName;
 	}
-	
+	public QuotaProperty getQuotaProperty() {
+		return quotaProperty;
+	}
+	public void setQuotaProperty(QuotaProperty quotaProperty) {
+		this.quotaProperty = quotaProperty;
+	}
 }

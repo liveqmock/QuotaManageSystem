@@ -31,7 +31,7 @@ public class QuotaItemCreator implements Serializable{
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String name;//指标名称
+	private String name;//指标生成器名称(==指标种类名称&&==指标名称)
 	@Column(name="YEAR")
 	private int year;//指标年度
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -43,16 +43,9 @@ public class QuotaItemCreator implements Serializable{
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="DUTY_DEPT_ID")
 	private DefaultDept quotaDutyDept;//指标责任部门
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="DIMENSION_ONE_ID")
-	private QuotaDimensionOne quotaDimensionOne;//一维
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="DIMENSION_TWO_ID")
-	private QuotaDimensionTwo quotaDimensionTwo;//二维
 	@ManyToMany(fetch = FetchType.EAGER, targetEntity = QuotaFormula.class, cascade = CascadeType.ALL)
 	@JoinTable(name = "FORMULA_QUOTA_ITEM_CREATOR_MAP", joinColumns = { @JoinColumn(name = "QUOTA_ITEM_CREATOR_ID") }, inverseJoinColumns = { @JoinColumn(name = "QUOTA_FORMULA_ID") })
 	private Set<QuotaFormula> quotaFormulas;//关联的计算公式
-	
 	public String getId() {
 		return id;
 	}
@@ -89,22 +82,11 @@ public class QuotaItemCreator implements Serializable{
 	public void setQuotaDutyDept(DefaultDept quotaDutyDept) {
 		this.quotaDutyDept = quotaDutyDept;
 	}
-	public QuotaDimensionOne getQuotaDimensionOne() {
-		return quotaDimensionOne;
-	}
-	public void setQuotaDimensionOne(QuotaDimensionOne quotaDimensionOne) {
-		this.quotaDimensionOne = quotaDimensionOne;
-	}
-	public QuotaDimensionTwo getQuotaDimensionTwo() {
-		return quotaDimensionTwo;
-	}
-	public void setQuotaDimensionTwo(QuotaDimensionTwo quotaDimensionTwo) {
-		this.quotaDimensionTwo = quotaDimensionTwo;
-	}
 	public Set<QuotaFormula> getQuotaFormulas() {
 		return quotaFormulas;
 	}
 	public void setQuotaFormulas(Set<QuotaFormula> quotaFormulas) {
 		this.quotaFormulas = quotaFormulas;
 	}
+	
 }

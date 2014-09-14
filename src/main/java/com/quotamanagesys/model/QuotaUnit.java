@@ -21,20 +21,19 @@ public class QuotaUnit implements Serializable{
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
 	@Column(name = "ID")
 	private String id;
-	@Column(name="UNIT")
-	private String quotaUnit;//计量单位名称
-	
+	@Column(name="NAME")
+	private String name;//计量单位名称
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getQuotaUnit() {
-		return quotaUnit;
+	public String getName() {
+		return name;
 	}
-	public void setQuotaUnit(String quotaUnit) {
-		this.quotaUnit = quotaUnit;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
+
 }

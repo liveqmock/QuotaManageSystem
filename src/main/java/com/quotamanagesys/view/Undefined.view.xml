@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaCover">
+      <Property name="creationType">com.quotamanagesys.model.QuotaCover</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <Reference name="fatherQuotaCover">
+        <Property name="dataType">QuotaCover</Property>
+        <Property name="parameter">$${this.id}</Property>
+        <Property name="dataProvider">quotaCoverDao#getFatherQuotaCover</Property>
+      </Reference>
+    </DataType>
+    <DataType name="Department">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="parentId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaCover">
+      <Property name="dataProvider">quotaCoverDao#getAll</Property>
+      <Property name="dataType">[QuotaCover]</Property>
+    </DataSet>
+    <DataSet id="dsFatherQuotaCover">
+      <Property name="dataProvider">quotaCoverDao#getAll</Property>
+      <Property name="dataType">[QuotaCover]</Property>
+    </DataSet>
+    <DataSet id="dsDutyDept">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">departmentDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsDutyDeptLinked">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">departmentDao#getDutyDeptsByQuotaCover</Property>
+      <Property name="parameter"></Property>
+    </DataSet>
+    <SplitPanel>
+      <Property name="direction">right</Property>
+      <MainControl>
+        <TabControl>
+          <Property name="tabPlacement">bottom</Property>
+          <ControlTab>
+            <Property name="caption">口径编辑</Property>
+            <Container>
+              <ToolBar>
+                <DataPilot>
+                  <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaCover.data&quot;);&#xD;
+var action = view.get(&quot;#uaQuotaCover&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgQuotaCover = view.get(&quot;#dgQuotaCover&quot;);&#xD;
+		var selection = dgQuotaCover.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                  <Property name="dataSet">dsQuotaCover</Property>
+                  <Property name="itemCodes">pages,+,-,x</Property>
+                </DataPilot>
+                <Separator/>
+                <ToolBarButton>
+                  <ClientEvent name="onClick">var dgQuotaCover=view.get(&quot;#dgQuotaCover&quot;);&#xD;
+var dsQuotaCover=view.get(&quot;#dsQuotaCover&quot;);&#xD;
+var dsFatherQuotaCover=view.get(&quot;#dsFatherQuotaCover&quot;);&#xD;
+var dsDutyDeptLinked=view.get(&quot;#dsDutyDeptLinked&quot;);&#xD;
+var uaQuotaCover=view.get(&quot;#uaQuotaCover&quot;);&#xD;
+var currentQuotaCover=dgQuotaCover.getCurrentItem();&#xD;
+var quotaCoverId=currentQuotaCover.get(&quot;id&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaQuotaCover.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsQuotaCover.flush();&#xD;
+			dsFatherQuotaCover.flush();&#xD;
+			dsDutyDeptLinked.set(&quot;parameter&quot;,{quotaCoverId:quotaCoverId}).flushAsync();&#xD;
+			dgDutyDeptLinked.refresh();&#xD;
+			dgQuotaCover.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
+                  <Property name="caption">保存</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                </ToolBarButton>
+              </ToolBar>
+              <DataGrid id="dgQuotaCover">
+                <ClientEvent name="onClick">var dsDutyDeptLinked=view.get(&quot;#dsDutyDeptLinked&quot;);&#xD;
+var dgQuotaCover=view.get(&quot;#dgQuotaCover&quot;);&#xD;
+var dgDutyDeptLinked=view.get(&quot;#dgDutyDeptLinked&quot;);&#xD;
+var currentQuotaCover=dgQuotaCover.getCurrentItem();&#xD;
+var quotaCoverId=currentQuotaCover.get(&quot;id&quot;);&#xD;
+&#xD;
+dsDutyDeptLinked.set(&quot;parameter&quot;,{quotaCoverId:quotaCoverId}).flushAsync();&#xD;
+dgDutyDeptLinked.refresh();</ClientEvent>
+                <Property name="dataSet">dsQuotaCover</Property>
+                <Property name="dataType">QuotaCover</Property>
+                <Property name="selectionMode">multiRows</Property>
+                <Property name="stretchColumnsMode">allColumns</Property>
+                <IndicatorColumn/>
+                <RowSelectorColumn/>
+                <DataColumn name="id">
+                  <Property name="property">id</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+                <DataColumn name="name">
+                  <Property name="property">name</Property>
+                  <Property name="caption">指标口径</Property>
+                  <Property name="width">300</Property>
+                  <Property name="align">center</Property>
+                </DataColumn>
+                <DataColumn name="fatherQuotaCover">
+                  <Property name="property">fatherQuotaCover</Property>
+                  <Property name="width">300</Property>
+                  <Property name="align">center</Property>
+                  <Property name="caption">父口径</Property>
+                  <Property name="trigger">dsddFatherQuotaCover</Property>
+                </DataColumn>
+              </DataGrid>
+              <UpdateAction id="uaQuotaCover">
+                <Property name="dataResolver">quotaCoverDao#saveQuotaCovers</Property>
+                <Property name="executingMessage">正在保存...</Property>
+                <Property name="successMessage">保存成功!</Property>
+                <UpdateItem>
+                  <Property name="dataSet">dsQuotaCover</Property>
+                </UpdateItem>
+              </UpdateAction>
+              <DataSetDropDown id="dsddFatherQuotaCover">
+                <Property name="dataSet">dsFatherQuotaCover</Property>
+                <DataColumn>
+                  <Property name="name">name</Property>
+                  <Property name="property">name</Property>
+                  <Property name="caption">父口径</Property>
+                  <Editor/>
+                </DataColumn>
+              </DataSetDropDown>
+            </Container>
+          </ControlTab>
+        </TabControl>
+      </MainControl>
+      <SideControl>
+        <TabControl>
+          <Property name="tabPlacement">bottom</Property>
+          <ControlTab>
+            <Property name="caption">关联责任部门</Property>
+            <Container>
+              <ToolBar>
+                <DataPilot>
+                  <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsDutyDeptLinked&quot;).get(&quot;data&quot;);&#xD;
+var dgDutyDeptLinked=view.get(&quot;#dgDutyDeptLinked&quot;);&#xD;
+var selection=dgDutyDeptLinked.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		view.get(&quot;#dlgDutyDept&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		dgDutyDeptLinked.refresh();&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){	&#xD;
+			if (selection &amp;&amp; selection.length) {&#xD;
+				selection.each(function(data){&#xD;
+					datas.remove(data);&#xD;
+				});&#xD;
+			}else {message = &quot;未选中任何公式！&quot;;}&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                  <Property name="dataSet">dsDutyDeptLinked</Property>
+                  <Property name="itemCodes">+,-,x</Property>
+                </DataPilot>
+                <Separator/>
+                <ToolBarButton>
+                  <ClientEvent name="onClick">var dgQuotaCover=view.get(&quot;#dgQuotaCover&quot;);&#xD;
+var dgDutyDeptLinked=view.get(&quot;#dgDutyDeptLinked&quot;);&#xD;
+var currentQuotaCover=dgQuotaCover.get(&quot;currentEntity&quot;);&#xD;
+var quotaCoverId=currentQuotaCover.get(&quot;id&quot;);&#xD;
+var uaDutyDeptLinked=view.get(&quot;#uaDutyDeptLinked&quot;);&#xD;
+var dsDutyDeptLinked=view.get(&quot;#dsDutyDeptLinked&quot;);&#xD;
+&#xD;
+uaDutyDeptLinked.set(&quot;parameter&quot;,{quotaCoverId:quotaCoverId});&#xD;
+uaDutyDeptLinked.execute({&#xD;
+	callback:function(success,obj){&#xD;
+		if (success) {&#xD;
+			dsDutyDeptLinked.set(&quot;parameter&quot;,{quotaCoverId:quotaCoverId}).flushAsync();&#xD;
+			dgDutyDeptLinked.refresh();&#xD;
+		}else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj)&#xD;
+		}&#xD;
+	}&#xD;
+})&#xD;
+</ClientEvent>
+                  <Property name="caption">保存</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                </ToolBarButton>
+              </ToolBar>
+              <DataGrid id="dgDutyDeptLinked">
+                <ClientEvent name="onReady">var dsDutyDeptLinked=view.get(&quot;#dsDutyDeptLinked&quot;);&#xD;
+&#xD;
+dsDutyDeptLinked.set(&quot;parameter&quot;,{quotaCoverId:null}).flushAsync();</ClientEvent>
+                <Property name="dataSet">dsDutyDeptLinked</Property>
+                <Property name="dataType">Department</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="selectionMode">multiRows</Property>
+                <IndicatorColumn/>
+                <RowSelectorColumn/>
+                <DataColumn name="id">
+                  <Property name="property">id</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+                <DataColumn name="name">
+                  <Property name="property">name</Property>
+                  <Property name="caption">部门名称</Property>
+                </DataColumn>
+                <DataColumn name="desc">
+                  <Property name="property">desc</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+                <DataColumn name="companyId">
+                  <Property name="property">companyId</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+                <DataColumn name="createDate">
+                  <Property name="property">createDate</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+                <DataColumn name="parentId">
+                  <Property name="property">parentId</Property>
+                  <Property name="visible">false</Property>
+                </DataColumn>
+              </DataGrid>
+              <Dialog id="dlgDutyDept">
+                <Property name="width">400</Property>
+                <Property name="height">500</Property>
+                <Property name="caption">选择口径关联的责任部门</Property>
+                <Buttons/>
+                <Children>
+                  <ToolBar>
+                    <ToolBarButton>
+                      <ClientEvent name="onClick">var dgDutyDept=view.get(&quot;#dgDutyDept&quot;);&#xD;
+var dgDutyDeptLinked=view.get(&quot;#dgDutyDeptLinked&quot;);&#xD;
+var datas = view.get(&quot;#dsDutyDeptLinked&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgDutyDept.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	selection.each(function(data){&#xD;
+		var isAdded=false;&#xD;
+		datas.each(function(dataAdded){&#xD;
+			if(dataAdded.get(&quot;id&quot;)==data.get(&quot;id&quot;)){&#xD;
+				isAdded=true;&#xD;
+			}&#xD;
+		});&#xD;
+		if(isAdded==false){&#xD;
+			datas.insert(data.toJSON());&#xD;
+		}&#xD;
+	});&#xD;
+	dgDutyDeptLinked.refresh();&#xD;
+	view.get(&quot;#dlgDutyDept&quot;).hide();&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中要关联的部门！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                      <Property name="caption">确定</Property>
+                      <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                    </ToolBarButton>
+                    <ToolBarButton>
+                      <ClientEvent name="onClick">var data=view.get(&quot;#dsDutyDeptLinked&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgDutyDept&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+                      <Property name="caption">取消</Property>
+                      <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                    </ToolBarButton>
+                  </ToolBar>
+                  <DataGrid id="dgDutyDept">
+                    <Property name="dataSet">dsDutyDept</Property>
+                    <Property name="dataType">Department</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="selectionMode">multiRows</Property>
+                    <RowSelectorColumn/>
+                    <DataColumn name="id">
+                      <Property name="property">id</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="name">
+                      <Property name="property">name</Property>
+                      <Property name="caption">部门名称</Property>
+                    </DataColumn>
+                    <DataColumn name="desc">
+                      <Property name="property">desc</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="companyId">
+                      <Property name="property">companyId</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="createDate">
+                      <Property name="property">createDate</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="parentId">
+                      <Property name="property">parentId</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                  </DataGrid>
+                </Children>
+                <Tools/>
+              </Dialog>
+              <UpdateAction id="uaDutyDeptLinked">
+                <Property name="dataResolver">quotaCoverDao#saveDutyDepts</Property>
+                <Property name="executingMessage">关联责任部门...</Property>
+                <Property name="successMessage">关联完成！ </Property>
+                <UpdateItem>
+                  <Property name="dataSet">dsDutyDeptLinked</Property>
+                </UpdateItem>
+              </UpdateAction>
+            </Container>
+          </ControlTab>
+        </TabControl>
+      </SideControl>
+    </SplitPanel>
+  </View>
+</ViewConfig>

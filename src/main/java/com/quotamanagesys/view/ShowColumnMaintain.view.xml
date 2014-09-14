@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="ShowColumn">
+      <Property name="creationType">com.quotamanagesys.model.ShowColumn</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="alias">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="showColumnGroup">
+        <Property name="dataType">ShowColumnGroup</Property>
+      </PropertyDef>
+      <PropertyDef name="width">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="wrappable">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+      <PropertyDef name="visible">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+      <PropertyDef name="sort">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="render">
+        <Property name="dataType">Render</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="ShowColumnGroup">
+      <Property name="creationType">com.quotamanagesys.model.ShowColumnGroup</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="sort">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="Render">
+      <Property name="creationType">com.quotamanagesys.model.Render</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="renderCode">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="type">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="remark">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsShowColumn">
+      <Property name="dataType">[ShowColumn]</Property>
+      <Property name="dataProvider">showColumnDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsRender">
+      <Property name="dataType">[Render]</Property>
+      <Property name="dataProvider">renderDao#getAll</Property>
+    </DataSet>
+    <Container>
+      <ToolBar>
+        <DataPilot>
+          <Property name="dataSet">dsShowColumn</Property>
+        </DataPilot>
+        <Separator/>
+        <ToolBarButton>
+          <ClientEvent name="onClick">var aaInitShowColumn=view.get(&quot;#aaInitShowColumn&quot;);&#xD;
+var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
+var dgShowColumn=view.get(&quot;#dgShowColumn&quot;);&#xD;
+&#xD;
+aaInitShowColumn.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsShowColumn.flush();&#xD;
+			dgShowColumn.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;抽取数据表字段失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="icon">url(>skin>common/icons.gif) -280px -240px</Property>
+          <Property name="caption">抽取表格字段</Property>
+          <Property name="action">aaInitShowColumn</Property>
+        </ToolBarButton>
+        <ToolBarButton>
+          <ClientEvent name="onClick">var uaShowColumn=view.get(&quot;#uaShowColumn&quot;);&#xD;
+var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
+var dgShowColumn=view.get(&quot;#dgShowColumn&quot;);&#xD;
+uaShowColumn.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsShowColumn.flush();&#xD;
+			dgShowColumn.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+</ClientEvent>
+          <Property name="caption">保存</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </ToolBarButton>
+      </ToolBar>
+      <DataGrid id="dgShowColumn">
+        <Property name="dataType">ShowColumn</Property>
+        <Property name="dataSet">dsShowColumn</Property>
+        <Property name="stretchColumnsMode">off</Property>
+        <Property name="dynaRowHeight">true</Property>
+        <IndicatorColumn/>
+        <RowNumColumn/>
+        <DataColumn name="id">
+          <Property name="property">id</Property>
+          <Property name="visible">false</Property>
+        </DataColumn>
+        <DataColumn name="name">
+          <Property name="property">name</Property>
+          <Property name="width">180</Property>
+          <Property name="wrappable">true</Property>
+          <Property name="readOnly">true</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">列名</Property>
+        </DataColumn>
+        <DataColumn name="alias">
+          <Property name="property">alias</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">别名</Property>
+          <Property name="width">180</Property>
+          <Property name="wrappable">true</Property>
+        </DataColumn>
+        <DataColumn name="showColumnGroup">
+          <Property name="property">showColumnGroup</Property>
+          <Property name="width">160</Property>
+          <Property name="align">center</Property>
+          <Property name="readOnly">true</Property>
+          <Property name="visible">false</Property>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">showColumnGroup.name</Property>
+          <Property name="name">showColumnGroupName</Property>
+          <Property name="width">160</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">所属分组</Property>
+          <Property name="readOnly">true</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn name="width">
+          <Property name="property">width</Property>
+          <Property name="width">90</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">列宽度</Property>
+          <Editor>
+            <NumberSpinner>
+              <Property name="min">70</Property>
+              <Property name="max">500</Property>
+            </NumberSpinner>
+          </Editor>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">wrappable</Property>
+          <Property name="width">70</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">自动换行</Property>
+          <Property name="name">wrappable</Property>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">visible</Property>
+          <Property name="width">80</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">是否可见</Property>
+          <Property name="name">visible</Property>
+        </DataColumn>
+        <DataColumn name="sort">
+          <Property name="property">sort</Property>
+          <Property name="width">80</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">序号</Property>
+          <Editor>
+            <NumberSpinner>
+              <Property name="min">1</Property>
+              <Property name="max">100</Property>
+            </NumberSpinner>
+          </Editor>
+        </DataColumn>
+        <DataColumn>
+          <Property name="property">render</Property>
+          <Property name="caption">渲染器</Property>
+          <Property name="align">center</Property>
+          <Property name="name">render</Property>
+          <Property name="trigger">dsddRender</Property>
+          <Property name="width">200</Property>
+          <Property name="wrappable">true</Property>
+          <Editor/>
+        </DataColumn>
+      </DataGrid>
+      <AjaxAction id="aaInitShowColumn">
+        <Property name="executingMessage">正在获取数据表字段...</Property>
+        <Property name="successMessage">获取完毕！</Property>
+        <Property name="service">showColumnDao#initShowColumnsFromTable</Property>
+      </AjaxAction>
+      <UpdateAction id="uaShowColumn">
+        <Property name="dataResolver">showColumnDao#updateShowColumns</Property>
+        <Property name="executingMessage">正在保存...</Property>
+        <Property name="successMessage">保存成功！</Property>
+        <UpdateItem>
+          <Property name="dataSet">dsShowColumn</Property>
+        </UpdateItem>
+      </UpdateAction>
+      <DataSetDropDown id="dsddRender">
+        <Property name="dataSet">dsRender</Property>
+        <Property name="displayProperty">name</Property>
+        <Property name="width">500</Property>
+        <DataColumn>
+          <Property name="name">renderName</Property>
+          <Property name="property">name</Property>
+          <Property name="readOnly">true</Property>
+          <Property name="caption">渲染器名称</Property>
+          <Property name="width">200</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="name">renderType</Property>
+          <Property name="caption">渲染器类型</Property>
+          <Property name="readOnly">true</Property>
+          <Property name="property">type</Property>
+          <Property name="width">90</Property>
+          <Editor/>
+        </DataColumn>
+        <DataColumn>
+          <Property name="caption">备注</Property>
+          <Property name="property">remark</Property>
+          <Property name="name">renderRemark</Property>
+          <Property name="width">200</Property>
+          <Editor/>
+        </DataColumn>
+      </DataSetDropDown>
+    </Container>
+  </View>
+</ViewConfig>

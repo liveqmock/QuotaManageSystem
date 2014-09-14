@@ -27,7 +27,6 @@ public class QuotaProperty implements Serializable{
 	private String parameterName;//指标属性在公式中对应的参数
 	@Column(name="SYMBOL")
 	private String symbol;//指标属性符号
-	
 	public String getId() {
 		return id;
 	}
@@ -52,5 +51,5 @@ public class QuotaProperty implements Serializable{
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
-	
+
 }

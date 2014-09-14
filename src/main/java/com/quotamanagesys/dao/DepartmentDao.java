@@ -3,6 +3,8 @@ package com.quotamanagesys.dao;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,9 +14,13 @@ import com.bstek.bdf2.core.model.DefaultDept;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
+import com.quotamanagesys.model.QuotaCover;
 
 @Component
 public class DepartmentDao extends HibernateDao {
+	
+	@Resource
+	QuotaCoverDao quotaCoverDao;
 
 	@DataProvider
 	public Collection<DefaultDept> getAll(){
@@ -29,6 +35,16 @@ public class DepartmentDao extends HibernateDao {
 		List<DefaultDept> depts=this.query(hqlString);
 		if (depts.size()>0) {
 			return depts.get(0);
+		}else {
+			return null;
+		}
+	}
+	
+	@DataProvider
+	public Collection<DefaultDept> getDutyDeptsByQuotaCover(String quotaCoverId){
+		QuotaCover quotaCover=quotaCoverDao.getQuotaCover(quotaCoverId);
+		if (quotaCover!=null) {
+			return quotaCover.getDutyDepts();
 		}else {
 			return null;
 		}
