@@ -62,6 +62,8 @@ public class QuotaItemInfoImportCore extends HibernateDao{
 				if (quotaItems.size()>0) {
 					QuotaItem quotaItem=quotaItems.get(0);
 					quotaItem.setFinishValue(rs.getString("finishValue"));
+					quotaItem.setAccumulateValue(rs.getString("accumulateValue"));
+					quotaItem.setSameTermValue(rs.getString("sameTermValue"));
 					session.merge(quotaItem);
 					session.flush();
 					session.clear();

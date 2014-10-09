@@ -23,7 +23,7 @@ public class QuotaCoverDao extends HibernateDao {
 
 	@DataProvider
 	public Collection<QuotaCover> getAll(){
-		String hqlString="from "+QuotaCover.class.getName();
+		String hqlString="from "+QuotaCover.class.getName()+" order by sort asc";
 		Collection<QuotaCover> quotaCovers=this.query(hqlString);
 		return quotaCovers;
 	}
@@ -51,17 +51,29 @@ public class QuotaCoverDao extends HibernateDao {
 	}
 	
 	@DataProvider
-	public Collection<QuotaCover> getTopQuotaCovers(){
-		String hqlString="from "+QuotaCover.class.getName()+" where fatherQuotaCover=null";
-		Collection<QuotaCover> quotaCovers=this.query(hqlString);
+	public List<QuotaCover> getTopQuotaCovers(){
+		String hqlString="from "+QuotaCover.class.getName()+" where fatherQuotaCover=null  order by sort asc";
+		List<QuotaCover> quotaCovers=this.query(hqlString);
 		return quotaCovers;
 	}
 	
+	//获取下一级口径
 	@DataProvider
 	public Collection<QuotaCover> getQuotaCoversByFatherCover(String fatherQuotaCoverId){
-		String hqString="from "+QuotaCover.class.getName()+" where fatherQuotaCover.id='"+fatherQuotaCoverId+"'";
+		String hqString="from "+QuotaCover.class.getName()+" where fatherQuotaCover.id='"+fatherQuotaCoverId+"'  order by sort asc";
 		Collection<QuotaCover> quotaCovers=this.query(hqString);
 		return quotaCovers;
+	}
+	
+	//获取子口径树
+	@DataProvider
+	public Collection<QuotaCover> getQuotaCoversTreeByFatherCover(String fatherQuotaCoverId,Collection<QuotaCover> quotaCoversTree){
+		Collection<QuotaCover> childrenQuotaCovers=getQuotaCoversByFatherCover(fatherQuotaCoverId);
+		quotaCoversTree.addAll(childrenQuotaCovers);
+		for (QuotaCover child : childrenQuotaCovers) {
+			getQuotaCoversTreeByFatherCover(child.getId(), quotaCoversTree);
+		}
+		return quotaCoversTree;
 	}
 	
 	@DataResolver
@@ -80,6 +92,7 @@ public class QuotaCoverDao extends HibernateDao {
 				}else if (state.equals(EntityState.MODIFIED)) {
 					QuotaCover thisQuotaCover=getQuotaCover(quotaCover.getId());
 					thisQuotaCover.setName(quotaCover.getName());
+					thisQuotaCover.setSort(quotaCover.getSort());
 					if ((quotaCover.getFatherQuotaCover()).equals(null)) {
 						thisQuotaCover.setFatherQuotaCover(null);
 					}else {

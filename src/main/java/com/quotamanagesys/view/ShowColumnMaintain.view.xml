@@ -116,6 +116,10 @@ uaShowColumn.execute({&#xD;
           <Property name="caption">保存</Property>
           <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
         </ToolBarButton>
+        <ToolBarButton>
+          <Property name="action">aa</Property>
+          <Property name="caption">导出</Property>
+        </ToolBarButton>
       </ToolBar>
       <DataGrid id="dgShowColumn">
         <Property name="dataType">ShowColumn</Property>
@@ -249,6 +253,9 @@ uaShowColumn.execute({&#xD;
           <Editor/>
         </DataColumn>
       </DataSetDropDown>
+      <Export2ReportAction id="aa">
+        <Property name="template">dgShowColumn</Property>
+      </Export2ReportAction>
     </Container>
   </View>
 </ViewConfig>

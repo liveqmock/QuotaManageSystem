@@ -89,17 +89,20 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
       <DataColumn name="name">
         <Property name="property">name</Property>
         <Property name="caption">属性名称</Property>
-        <Property name="width">300</Property>
+        <Property name="width">200</Property>
+        <Property name="align">center</Property>
       </DataColumn>
       <DataColumn name="parameterName">
         <Property name="property">parameterName</Property>
         <Property name="caption">参数符号</Property>
         <Property name="width">100</Property>
+        <Property name="align">center</Property>
       </DataColumn>
       <DataColumn name="symbol">
         <Property name="property">symbol</Property>
         <Property name="caption">表示符号</Property>
         <Property name="width">100</Property>
+        <Property name="align">center</Property>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaProperty">

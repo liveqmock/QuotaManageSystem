@@ -38,6 +38,8 @@ public class QuotaCover implements Serializable{
 	@ManyToMany(fetch = FetchType.EAGER, targetEntity = DefaultDept.class, cascade = CascadeType.ALL)
 	@JoinTable(name = "QUOTA_COVER_DUTY_DEPT_MAP", joinColumns = { @JoinColumn(name = "QUOTA_COVER_ID") }, inverseJoinColumns = { @JoinColumn(name = "DUTY_DEPT_ID") })
 	private Set<DefaultDept> dutyDepts;//与该口径关联的部门
+	@Column(name="SORT")
+	private int sort;//排序
 	public String getId() {
 		return id;
 	}
@@ -61,5 +63,11 @@ public class QuotaCover implements Serializable{
 	}
 	public void setDutyDepts(Set<DefaultDept> dutyDepts) {
 		this.dutyDepts = dutyDepts;
+	}
+	public int getSort() {
+		return sort;
+	}
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 }

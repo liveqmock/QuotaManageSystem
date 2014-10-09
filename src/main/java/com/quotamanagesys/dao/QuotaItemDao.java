@@ -1,6 +1,7 @@
 package com.quotamanagesys.dao;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.bstek.dorado.view.View;
 import com.quotamanagesys.interceptor.CalculateCore;
 import com.quotamanagesys.interceptor.ResultTableCreator;
 import com.quotamanagesys.model.QuotaFormulaResultValue;
@@ -44,7 +46,9 @@ public class QuotaItemDao extends HibernateDao {
 
 	@DataProvider
 	public Collection<QuotaItem> getAll() {
-		String hqlString = "from " + QuotaItem.class.getName();
+		String hqlString = "from " + QuotaItem.class.getName()
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -59,41 +63,27 @@ public class QuotaItemDao extends HibernateDao {
 			return null;
 		}
 	}
-
-	@DataProvider
-	public Collection<QuotaItem> getQuotaItemsByFatherItem(String fatherItemId){
-		String hqlString="from "+QuotaItem.class.getName()+" where fatherQuotaItem.id='"+fatherItemId+"'";
-		Collection<QuotaItem> quotaItems=this.query(hqlString);
-		return quotaItems;
-	}
 	
 	@DataProvider
 	public Collection<QuotaItem> getQuotaItemsByManageDept(String manageDeptId) {
+		Calendar calendar=Calendar.getInstance();	
+		//获取执行时的年月
+		int year=calendar.get(Calendar.YEAR);
+		int month=calendar.get(Calendar.MONTH);//calendar的真实月份需要+1,因为calendar的月份从0开始
+		
+		//去年12月情况
+		if (month==0) {
+			year=year-1;
+			month=12;
+		}
+		
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaType.manageDept.id='"
-				+ manageDeptId + "'";
+				+ manageDeptId + "' and year="+year+" and month="+month
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
-	}
-	
-	@DataProvider
-	public Collection<QuotaItem> getQuotaItemsByUserDept(){
-		IUser loginuser = ContextHolder.getLoginUser();
-		List<IDept> depts=loginuser.getDepts();
-		if (depts.size()>0) {
-			String hqlString="from "+QuotaItem.class.getName()
-					+" where quotaItemCreator.quotaType.manageDept.id='"+depts.get(0).getId()+"'";
-			Collection<QuotaItem> quotaItems=this.query(hqlString);
-			return quotaItems;
-		}else {
-			if (loginuser.isAdministrator()) {
-				String hqlString="from "+QuotaItem.class.getName();
-				Collection<QuotaItem> quotaItems=this.query(hqlString);
-				return quotaItems;
-			}else {
-				return null;
-			}
-		}
 	}
 	
 	@DataProvider
@@ -101,7 +91,9 @@ public class QuotaItemDao extends HibernateDao {
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaType.manageDept.id='"
 				+ manageDeptId 
-				+ "' and quotaItemCreator.quotaType.rate='月'";
+				+ "' and quotaItemCreator.quotaType.rate='月'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -111,7 +103,9 @@ public class QuotaItemDao extends HibernateDao {
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaType.manageDept.id='"
 				+ manageDeptId 
-				+ "' and quotaItemCreator.quotaType.rate='年'";
+				+ "' and quotaItemCreator.quotaType.rate='年'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -132,7 +126,9 @@ public class QuotaItemDao extends HibernateDao {
 		
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaType.manageDept.id='"+ manageDeptId 
-				+ "' and quotaItemCreator.quotaType.quotaLevel.level='"+highestLevel+"'";
+				+ "' and quotaItemCreator.quotaType.quotaLevel.level='"+highestLevel+"'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -140,7 +136,9 @@ public class QuotaItemDao extends HibernateDao {
 	@DataProvider
 	public Collection<QuotaItem> getQuotaItemsByYear(int year) {
 		String hqlString = "from " + QuotaItem.class.getName() + " where year="
-				+ year;
+				+ year
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -148,7 +146,9 @@ public class QuotaItemDao extends HibernateDao {
 	@DataProvider
 	public Collection<QuotaItem> getQuotaItemsByQuotaType(String quotaTypeId) {
 		String hqlString = "from " + QuotaItem.class.getName()
-				+ " where quotaItemCreator.quotaType.id='" + quotaTypeId + "'";
+				+ " where quotaItemCreator.quotaType.id='" + quotaTypeId + "'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -157,7 +157,9 @@ public class QuotaItemDao extends HibernateDao {
 	public Collection<QuotaItem> getQuotaItemsByQuotaCover(String quotaCoverId) {
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaCover.id='" + quotaCoverId
-				+ "'";
+				+ "'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -165,7 +167,9 @@ public class QuotaItemDao extends HibernateDao {
 	@DataProvider
 	public Collection<QuotaItem> getQuotaItemsByRate(String rate) {
 		String hqlString = "from " + QuotaItem.class.getName()
-				+ " where quotaItemCreator.quotaType.rate='" + rate + "'";
+				+ " where quotaItemCreator.quotaType.rate='" + rate + "'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -174,7 +178,9 @@ public class QuotaItemDao extends HibernateDao {
 	public Collection<QuotaItem> getQuotaItemsByQuotaItemCreator(
 			String quotaItemCreatorId) {
 		String hqlString = "from " + QuotaItem.class.getName()
-				+ " where quotaItemCreator.id='" + quotaItemCreatorId + "'";
+				+ " where quotaItemCreator.id='" + quotaItemCreatorId + "'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
 	}
@@ -183,40 +189,11 @@ public class QuotaItemDao extends HibernateDao {
 	public Collection<QuotaItem> getQuotaItemsByDutyDept(String dutyDeptId) {
 		String hqlString = "from " + QuotaItem.class.getName()
 				+ " where quotaItemCreator.quotaDutyDept.id='" + dutyDeptId
-				+ "'";
+				+ "'"
+				+" order by quotaItemCreator.quotaType.quotaLevel.level asc,quotaItemCreator.name,year asc,month asc,"
+				+"quotaItemCreator.quotaCover.sort asc";
 		Collection<QuotaItem> quotaItems = this.query(hqlString);
 		return quotaItems;
-	}
-	
-	//关联具体指标间关系
-	@Expose
-	public void createQuotaItemsRelation() throws Exception{
-		Session session=this.getSessionFactory().openSession();
-		try {
-			String checkUnRelatedQuotaItems="from "+QuotaItem.class.getName()+" where fatherQuotaItem.id=null "
-					+"and quotaItemCreator.quotaType.quotaLevel.level>1 order by quotaItemCreator.quotaType.quotaLevel.level asc";
-			Collection<QuotaItem> unRelatedQuotaItems=this.query(checkUnRelatedQuotaItems);
-			for (QuotaItem quotaItem : unRelatedQuotaItems) {
-				String findFatherQuotaItem="from "+QuotaItem.class.getName()+" where year="+quotaItem.getYear()
-						+" and month="+quotaItem.getMonth()
-						+" and quotaItemCreator.quotaCover.id='"+quotaItem.getQuotaItemCreator().getQuotaCover().getId()+"'"
-						+" and quotaItemCreator.quotaType.id='"+quotaItem.getQuotaItemCreator().getQuotaType().getFatherQuotaType().getId()+"'";
-				List<QuotaItem> fatherQuotaItems=this.query(findFatherQuotaItem);
-				QuotaItem fatherQuotaItem=null;
-				if (fatherQuotaItems.size()>0) {
-					fatherQuotaItem=fatherQuotaItems.get(0);
-					quotaItem.setFatherQuotaItem(fatherQuotaItem);
-				}
-				session.merge(quotaItem);
-				session.flush();
-				session.clear();
-			}
-		} catch (Exception e) {
-			System.out.print(e.toString());
-		}finally{
-			session.flush();
-			session.close();
-		}
 	}
 
 	@DataResolver
@@ -244,16 +221,7 @@ public class QuotaItemDao extends HibernateDao {
 					session.flush();
 					session.clear();
 					updateQuotaItems.add(thisQuotaItem);
-				} else if (state.equals(EntityState.DELETED)) {
-					//将下级具体指标的父级设置为null
-					Collection<QuotaItem> childrenItems=getQuotaItemsByFatherItem(quotaItem.getId());
-					for (QuotaItem child : childrenItems) {
-						child.setFatherQuotaItem(null);
-						session.merge(child);
-						session.flush();
-						session.clear();
-					}
-					
+				} else if (state.equals(EntityState.DELETED)) {					
 					//级联删除QuotaFormulaResultValue
 					Collection<QuotaFormulaResultValue> quotaFormulaResultValues = quotaFormulaResultValueDao
 							.getQuotaFormulaResultValuesByQuotaItem(quotaItem.getId());
@@ -264,7 +232,6 @@ public class QuotaItemDao extends HibernateDao {
 							.getQuotaTargetValuesByQuotaItem(quotaItem.getId());
 					quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
 
-					quotaItem.setFatherQuotaItem(null);
 					quotaItem.setQuotaItemCreator(null);
 					session.delete(quotaItem);
 					session.flush();
@@ -288,15 +255,6 @@ public class QuotaItemDao extends HibernateDao {
 		try {
 			resultTableCreator.deleteItemsFromResultTable(quotaItems);
 			for (QuotaItem quotaItem : quotaItems) {
-				//将下级具体指标的父级设置为null
-				Collection<QuotaItem> childrenItems=getQuotaItemsByFatherItem(quotaItem.getId());
-				for (QuotaItem child : childrenItems) {
-					child.setFatherQuotaItem(null);
-					session.merge(child);
-					session.flush();
-					session.clear();
-				}
-				
 				//级联删除QuotaFormulaResultValue
 				Collection<QuotaFormulaResultValue> quotaFormulaResultValues = quotaFormulaResultValueDao
 						.getQuotaFormulaResultValuesByQuotaItem(quotaItem.getId());
@@ -307,7 +265,6 @@ public class QuotaItemDao extends HibernateDao {
 						.getQuotaTargetValuesByQuotaItem(quotaItem.getId());
 				quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
 
-				quotaItem.setFatherQuotaItem(null);
 				quotaItem.setQuotaItemCreator(null);
 				session.delete(quotaItem);
 				session.flush();

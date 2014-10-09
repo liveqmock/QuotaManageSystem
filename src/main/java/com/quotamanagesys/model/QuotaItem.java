@@ -38,9 +38,6 @@ public class QuotaItem implements Serializable{
 	private String sameTermValue;//同期值
 	@Column(name="FINISH_VALUE")
 	private String finishValue;//完成值
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="QUOTA_ITEM_ID")
-	private QuotaItem fatherQuotaItem;//上级指标条目
 	public String getId() {
 		return id;
 	}
@@ -82,11 +79,5 @@ public class QuotaItem implements Serializable{
 	}
 	public void setFinishValue(String finishValue) {
 		this.finishValue = finishValue;
-	}
-	public QuotaItem getFatherQuotaItem() {
-		return fatherQuotaItem;
-	}
-	public void setFatherQuotaItem(QuotaItem fatherQuotaItem) {
-		this.fatherQuotaItem = fatherQuotaItem;
 	}
 }

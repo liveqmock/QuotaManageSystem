@@ -2,7 +2,6 @@ package com.quotamanagesys.interceptor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.Expose;
 import com.quotamanagesys.dao.QuotaFormulaResultValueDao;
-import com.quotamanagesys.dao.QuotaItemCreatorDao;
 import com.quotamanagesys.dao.QuotaItemDao;
 import com.quotamanagesys.dao.QuotaPropertyValueDao;
 import com.quotamanagesys.dao.QuotaTargetValueDao;
@@ -40,8 +38,9 @@ public class CalculateCore extends HibernateDao{
 	
 	@Expose
 	public void calculate(Collection<QuotaItem> quotaItems){
-		quotaFormulaResultValueDao.excuteHQL("delete from "+QuotaFormulaResultValue.class.getName());
 		for (QuotaItem quotaItem : quotaItems) {
+			quotaFormulaResultValueDao.excuteHQL("delete from "+QuotaFormulaResultValue.class.getName()
+					+" where quotaItem.id='"+quotaItem.getId()+"'");
 			calculateQuotaItemResultValue(quotaItem);
 		}
 	}
@@ -82,10 +81,20 @@ public class CalculateCore extends HibernateDao{
 	public Collection<CalculateParameter> getCalculateParametersByQuotaItem(String quotaItemId){
 		QuotaItem quotaItem=quotaItemDao.getQuotaItem(quotaItemId);
 		ArrayList<CalculateParameter> calculateParameters=new ArrayList<CalculateParameter>();
+		
 		String finishValue=quotaItem.getFinishValue();
+		String accumulateValue=quotaItem.getAccumulateValue();
+		String sameTermValue=quotaItem.getSameTermValue();
 		if (finishValue!=null&&finishValue!="") {
-			calculateParameters.add(new CalculateParameter("F",finishValue));
+			calculateParameters.add(new CalculateParameter("F",finishValue));//完成值
 		}
+		if (accumulateValue!=null&&accumulateValue!="") {
+			calculateParameters.add(new CalculateParameter("A",accumulateValue));//累计值
+		}
+		if (sameTermValue!=null&&sameTermValue!="") {
+			calculateParameters.add(new CalculateParameter("S",sameTermValue));//同期值
+		}
+		
 		Collection<QuotaTargetValue> quotaTargetValues=quotaTargetValueDao.getQuotaTargetValuesByQuotaItem(quotaItemId);
 		if (quotaTargetValues.size()>0) {
 			for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {

@@ -3,13 +3,7 @@
   <Arguments/>
   <Context/>
   <Model>
-    <DataType name="QuotaItem" parent="global:QuotaItem">
-      <Reference name="childrenQuotaItems">
-        <Property name="dataProvider">quotaItemDao#getQuotaItemsByFatherItem</Property>
-        <Property name="dataType">[SELF]</Property>
-        <Property name="parameter">$${this.id}</Property>
-      </Reference>
-    </DataType>
+    <DataType name="QuotaItem" parent="global:QuotaItem"/>
     <DataType name="Department">
       <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
       <Property name="defaultDisplayProperty">name</Property>
@@ -36,7 +30,7 @@
   <View>
     <DataSet id="dsDepartment">
       <Property name="dataType">[Department]</Property>
-      <Property name="dataProvider">departmentDao#getAll</Property>
+      <Property name="dataProvider">departmentDao#getDeptsByLoginUser</Property>
     </DataSet>
     <DataSet id="dsQuotaItem">
       <Property name="dataType">[QuotaItem]</Property>
@@ -196,11 +190,17 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
             </DataColumn>
             <DataColumn name="accumulateValue">
               <Property name="property">accumulateValue</Property>
-              <Property name="visible">false</Property>
+              <Property name="visible">true</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">累计值</Property>
+              <Property name="width">90</Property>
             </DataColumn>
             <DataColumn name="sameTermValue">
               <Property name="property">sameTermValue</Property>
-              <Property name="visible">false</Property>
+              <Property name="visible">true</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">去年同期值</Property>
+              <Property name="width">90</Property>
             </DataColumn>
           </DataGrid>
           <Export2ReportAction id="epDgQuotaItem">

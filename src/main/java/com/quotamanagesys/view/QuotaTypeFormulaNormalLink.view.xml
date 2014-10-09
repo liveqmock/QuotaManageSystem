@@ -168,6 +168,8 @@
       <Property name="dataProvider">formulaParameterDao#getAll</Property>
     </DataSet>
     <DataSet id="dsFormulaParameterLinked">
+      <ClientEvent name="onReady">var dsFormulaParameterLinked=view.get(&quot;#dsFormulaParameterLinked&quot;);&#xD;
+dsFormulaParameterLinked.set(&quot;parameter&quot;,{quotaTypeId:null,quotaFormulaId:null});</ClientEvent>
       <Property name="dataType">[FormulaParameter]</Property>
       <Property name="dataProvider">quotaTypeFormulaLinkDao#getFormulaParametersByQuotaTypeFormulaLink</Property>
     </DataSet>
@@ -196,6 +198,55 @@
           <Property name="caption">指标种类</Property>
           <Buttons/>
           <Children>
+            <ToolBar>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var dgQuotaType=view.get(&quot;#dgQuotaType&quot;);&#xD;
+var selection=dgQuotaType.get(&quot;selection&quot;);&#xD;
+var aaClearQuotaTypeFormulaLink=view.get(&quot;#aaClearQuotaTypeFormulaLink&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	aaClearQuotaTypeFormulaLink.set(&quot;parameter&quot;,{quotaTypes:selection}).execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+	});&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中指标种类！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                <Property name="icon">url(>skin>common/icons.gif) -20px -200px</Property>
+                <Property name="caption">清除关联的计算公式及参数</Property>
+              </ToolBarButton>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var ipQuotaTypeFormula=view.get(&quot;#ipQuotaTypeFormula&quot;);&#xD;
+var aaUpdateQuotaTypesFormulas=view.get(&quot;#aaUpdateQuotaTypesFormulas&quot;);&#xD;
+&#xD;
+ipQuotaTypeFormula.execute(&#xD;
+{&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			aaUpdateQuotaTypesFormulas.execute(&#xD;
+			{&#xD;
+				callback : function(success, obj){&#xD;
+					if (success) {&#xD;
+						&#xD;
+			        }&#xD;
+					else{alert(&quot;导入数据失败！发生异常：&quot; + obj);}}&#xD;
+			}&#xD;
+			);&#xD;
+        }&#xD;
+		else{alert(&quot;导入数据失败！发生异常：&quot; + obj);}}&#xD;
+}&#xD;
+);&#xD;
+</ClientEvent>
+                <Property name="caption">导入计算公式</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -120px -240px</Property>
+              </ToolBarButton>
+            </ToolBar>
             <DataGrid id="dgQuotaType">
               <ClientEvent name="onClick">var dsQuotaFormulaLinked=view.get(&quot;#dsQuotaFormulaLinked&quot;);&#xD;
 var dgQuotaType=view.get(&quot;#dgQuotaType&quot;);&#xD;
@@ -214,11 +265,11 @@ dgFormulaParameterLinked.refresh();&#xD;
 </ClientEvent>
               <Property name="dataSet">dsQuotaType</Property>
               <Property name="dataType">QuotaType</Property>
-              <Property name="selectionMode">none</Property>
+              <Property name="selectionMode">multiRows</Property>
               <Property name="readOnly">true</Property>
               <Property name="stretchColumnsMode">allColumns</Property>
               <Property name="dynaRowHeight">true</Property>
-              <RowNumColumn/>
+              <RowSelectorColumn/>
               <DataColumn name="id">
                 <Property name="property">id</Property>
                 <Property name="visible">false</Property>
@@ -327,6 +378,20 @@ dgFormulaParameterLinked.refresh();&#xD;
                 <Property name="align">center</Property>
               </DataColumn>
             </DataGrid>
+            <AjaxAction id="aaClearQuotaTypeFormulaLink">
+              <Property name="service">quotaTypeFormulaLinkDao#clearQuotaTypeFormulaLink</Property>
+              <Property name="executingMessage">正在清除该指标种类关联的计算公式..</Property>
+              <Property name="successMessage">清除完成！</Property>
+            </AjaxAction>
+            <ImportExcelAction id="ipQuotaTypeFormula">
+              <Property name="excelModelId">78a44ead05</Property>
+              <Property name="startRow">2</Property>
+            </ImportExcelAction>
+            <AjaxAction id="aaUpdateQuotaTypesFormulas">
+              <Property name="service">quotaTypeFormulaImportCore#updateQuotaTypesFormulas</Property>
+              <Property name="executingMessage">正在导入计算公式...</Property>
+              <Property name="successMessage">导入完成！</Property>
+            </AjaxAction>
           </Children>
           <Tools/>
         </Panel>
@@ -628,7 +693,7 @@ dgFormulaParameterLinked.refresh();</ClientEvent>
                     <Property name="property">quotaFormulaResult</Property>
                     <Property name="width">100</Property>
                     <Property name="align">center</Property>
-                    <Property name="caption">计算结果</Property>
+                    <Property name="caption">公式种类</Property>
                   </DataColumn>
                   <DataColumn name="remark">
                     <Property name="property">remark</Property>
@@ -637,8 +702,8 @@ dgFormulaParameterLinked.refresh();</ClientEvent>
                   </DataColumn>
                 </DataGrid>
                 <Dialog id="dlgQuotaFormula">
-                  <Property name="width">1200</Property>
-                  <Property name="height">500</Property>
+                  <Property name="width">800</Property>
+                  <Property name="height">450</Property>
                   <Property name="caption">选择该指标要关联的计算公式</Property>
                   <Buttons/>
                   <Children>

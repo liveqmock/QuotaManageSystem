@@ -1,5 +1,6 @@
 package com.quotamanagesys.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
+import com.bstek.bdf2.core.business.IDept;
+import com.bstek.bdf2.core.business.IUser;
+import com.bstek.bdf2.core.context.ContextHolder;
 import com.bstek.bdf2.core.model.DefaultDept;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
@@ -47,6 +51,21 @@ public class DepartmentDao extends HibernateDao {
 			return quotaCover.getDutyDepts();
 		}else {
 			return null;
+		}
+	}
+	
+	@DataProvider
+	public Collection<DefaultDept> getDeptsByLoginUser(){
+		IUser loginuser = ContextHolder.getLoginUser();
+		if (loginuser.isAdministrator()) {
+			return getAll();
+		}else {
+			List<IDept> idepts=loginuser.getDepts();
+			Collection<DefaultDept> depts=new ArrayList<DefaultDept>();
+			for (IDept iDept : idepts) {
+				depts.add(getDept(iDept.getId()));
+			}
+			return depts;
 		}
 	}
 	

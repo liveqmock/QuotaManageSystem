@@ -39,7 +39,7 @@ public class QuotaHistoryBackupCore extends HibernateDao{
 			
 			//获取执行时的年月
 			int year=calendar.get(Calendar.YEAR);
-			int month=calendar.get(Calendar.MONTH);
+			int month=calendar.get(Calendar.MONTH)+1;//calendar的真实月份需要+1,因为calendar的月份从0开始
 			
 			//当年从2月开始，才可执行上一年度指标信息备份操作
 			if (month>1){
@@ -106,6 +106,22 @@ public class QuotaHistoryBackupCore extends HibernateDao{
 		}
 	}
 	
+	//生成指标信息数据表
+	@Expose
+	public void createQuotaHistoryBackupTables(Collection<QuotaHistoryBackUp> quotaHistoryBackUps){
+		for (QuotaHistoryBackUp quotaHistoryBackUp : quotaHistoryBackUps) {
+			createQuotaHistoryBackupTable(quotaHistoryBackUp.getYear());
+		}
+	}
+	
+	//清除指标信息数据表
+	@Expose
+	public void clearQuotaHistoryBackupTables(Collection<QuotaHistoryBackUp> quotaHistoryBackUps){
+		for (QuotaHistoryBackUp quotaHistoryBackUp : quotaHistoryBackUps) {
+			clearQuotaHistoryBackupTable(quotaHistoryBackUp.getYear());
+		}
+	}
+	
 	//根据指标备份记录生成该记录年度对应的指标信息数据表
 	@Expose
 	public void createQuotaHistoryBackupTable(int year){
@@ -121,11 +137,11 @@ public class QuotaHistoryBackupCore extends HibernateDao{
 		}
 	}
 	
-	//清除所有已经生成的指标信息数据表，释放数据库存储空间
+	//清除已经生成的指标信息数据表，释放数据库存储空间
 	@Expose
-	public void clearQuotaHistoryBackupTables(){
-		Collection<QuotaHistoryBackUp> quotaHistoryBackUps=quotaHistoryBackupDao.getAll();
-		for (QuotaHistoryBackUp quotaHistoryBackUp : quotaHistoryBackUps) {
+	public void clearQuotaHistoryBackupTable(int year){
+		QuotaHistoryBackUp quotaHistoryBackUp=quotaHistoryBackupDao.getQuotaHistoryBackUpByYear(year);
+		if (!quotaHistoryBackUp.equals(null)) {
 			excuteSQL("DROP TABLE IF EXISTS "+quotaHistoryBackUp.getTableName());
 		}
 	}

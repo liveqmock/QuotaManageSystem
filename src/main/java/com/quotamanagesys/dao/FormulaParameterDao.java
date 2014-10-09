@@ -35,6 +35,18 @@ public class FormulaParameterDao extends HibernateDao {
 		}
 	}
 	
+	@DataProvider
+	public FormulaParameter getFormulaParameterByParameterName(String parameterName) {
+		String hqlString = "from " + FormulaParameter.class.getName()
+				+ " where parameterName='" + parameterName + "'";
+		List<FormulaParameter> formulaParameters = this.query(hqlString);
+		if (formulaParameters.size() > 0) {
+			return formulaParameters.get(0);
+		} else {
+			return null;
+		}
+	}
+	
 	@DataResolver
 	public void excuteHQL(String HQL) {
 		Session session = this.getSessionFactory().openSession();

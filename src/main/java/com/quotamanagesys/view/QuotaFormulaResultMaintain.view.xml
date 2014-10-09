@@ -86,6 +86,8 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
       <DataColumn name="name">
         <Property name="property">name</Property>
         <Property name="width">200</Property>
+        <Property name="align">center</Property>
+        <Property name="caption">公式种类</Property>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaFormulaResult">

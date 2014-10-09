@@ -31,7 +31,7 @@ public class QuotaItemCreator implements Serializable{
 	@Column(name = "ID")
 	private String id;
 	@Column(name="NAME")
-	private String name;//指标生成器名称(==指标种类名称&&==指标名称)
+	private String name;//指标生成器名称(等于指标种类名称&&等于指标名称)
 	@Column(name="YEAR")
 	private int year;//指标年度
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

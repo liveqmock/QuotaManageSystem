@@ -54,6 +54,24 @@ public class QuotaTypeDao extends HibernateDao {
 	}
 	
 	@DataProvider
+	public QuotaType getQuotaTypeByName(String quotaTypeName){
+		String hqlString = "from " + QuotaType.class.getName()+" where name='"+quotaTypeName+"'";
+		List<QuotaType> quotaTypes = this.query(hqlString);
+		if (quotaTypes.size()>0) {
+			return quotaTypes.get(0);
+		}else {
+			return null;
+		}
+	}
+	
+	@DataProvider
+	public Collection<QuotaType> getQuotaTypesInUsed(){
+		String hqlString = "from " + QuotaType.class.getName()+" where inUsed=true";
+		Collection<QuotaType> quotaTypes = this.query(hqlString);
+		return quotaTypes;
+	}
+	
+	@DataProvider
 	public QuotaType getFatherQuotaType(String id){
 		String hqlString = "from " + QuotaType.class.getName()+" where id='"+id+"'";
 		List<QuotaType> quotaTypes = this.query(hqlString);

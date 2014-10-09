@@ -69,8 +69,30 @@ public class ResultTableCreator extends HibernateDao{
 				for (String quotaItemId : quotaItemIds) {
 					if ((quotaItem.getId()).equals(quotaItemId)) {
 						isDoUpdate=true;
-						String updateString="UPDATE quota_item_view SET 完成值="+quotaItem.getFinishValue()
-						+" WHERE 指标id='"+quotaItemId+"'";
+						//更新完成值、累计值、去年同期值
+						String staticSetString="完成值="+quotaItem.getFinishValue()
+								+",累计值="+quotaItem.getAccumulateValue()
+								+",去年同期值="+quotaItem.getSameTermValue();
+						String dynamicSetString="";
+						//更新计算结果
+						Collection<QuotaFormulaResultValue> quotaFormulaResultValues=quotaFormulaResultValueDao.getQuotaFormulaResultValuesByQuotaItem(quotaItemId);
+						for (QuotaFormulaResultValue quotaFormulaResultValue : quotaFormulaResultValues) {
+							dynamicSetString=dynamicSetString+","+quotaFormulaResultValue.getQuotaFormulaResult().getName()
+									+"="+quotaFormulaResultValue.getValue();
+						}
+						//更新月度目标值
+						Collection<QuotaTargetValue> quotaTargetValues=quotaTargetValueDao.getQuotaTargetValuesByQuotaItem(quotaItemId);
+						for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
+							dynamicSetString=dynamicSetString+","+quotaTargetValue.getQuotaProperty().getName()+"_月度"
+									+"="+quotaTargetValue.getValue();
+						}
+						//更新年度目标值
+						Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItem.getQuotaItemCreator().getId());
+						for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+							dynamicSetString=dynamicSetString+","+quotaPropertyValue.getQuotaProperty().getName()
+									+"="+quotaPropertyValue.getValue();
+						}
+						String updateString="UPDATE quota_item_view SET "+staticSetString+dynamicSetString+" WHERE 指标id='"+quotaItemId+"'";
 						excuteSQL(updateString);
 						quotaItemIds.remove(quotaItemId);
 						break;
@@ -144,7 +166,9 @@ public class ResultTableCreator extends HibernateDao{
 				+ "口径id,"
 				+ "口径,"
 				+ "维度,"
-				+ "完成值";
+				+ "完成值,"
+				+ "累计值,"
+				+ "去年同期值";
 		
 		String professionName=null;
 		if (quotaType.getQuotaProfession()==null) {
@@ -168,7 +192,9 @@ public class ResultTableCreator extends HibernateDao{
 				+"'"+quotaItemCreator.getQuotaCover().getId()+"',"
 				+"'"+quotaItemCreator.getQuotaCover().getName()+"',"
 				+"'"+quotaType.getQuotaDimension().getName()+"',"
-				+quotaItem.getFinishValue();
+				+quotaItem.getFinishValue()+","
+				+quotaItem.getAccumulateValue()+","
+				+quotaItem.getSameTermValue();
 		
 		String dynamicColumnsString="";
 		String dynamicValuesString="";
@@ -237,7 +263,9 @@ public class ResultTableCreator extends HibernateDao{
 				+ "口径id VARCHAR(255),"
 				+ "口径 VARCHAR(255),"
 				+ "维度 VARCHAR(255),"
-				+ "完成值 VARCHAR(255)";
+				+ "完成值 VARCHAR(255),"
+				+ "累计值 VARCHAR(255),"
+				+ "去年同期值 VARCHAR(255)";
 		String dynamicColumnsString="";
 		Collection<QuotaProperty> quotaProperties=quotaPropertyDao.getAll();
 		if (quotaProperties.size()>0) {

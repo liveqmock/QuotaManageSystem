@@ -49,16 +49,21 @@ public class QuotaFormulaDao extends HibernateDao {
 	
 	@DataProvider
 	public Collection<QuotaFormula> getQuotaFormulasByQuotaType(String quotaTypeId){
-		Collection<QuotaTypeFormulaLink> quotaTypeFormulaLinks=quotaTypeFormulaLinkDao.getQuotaTypeFormulaLinksByQuotaType(quotaTypeId);
-		if (quotaTypeFormulaLinks.size()>0) {
-			Collection<QuotaFormula> quotaFormulas=new ArrayList<QuotaFormula>();
-			for (QuotaTypeFormulaLink quotaTypeFormulaLink : quotaTypeFormulaLinks) {
-				quotaFormulas.add(quotaTypeFormulaLink.getQuotaFormula());
+		if (quotaTypeId!=null) {
+			Collection<QuotaTypeFormulaLink> quotaTypeFormulaLinks=quotaTypeFormulaLinkDao.getQuotaTypeFormulaLinksByQuotaType(quotaTypeId);
+			if (quotaTypeFormulaLinks.size()>0) {
+				Collection<QuotaFormula> quotaFormulas=new ArrayList<QuotaFormula>();
+				for (QuotaTypeFormulaLink quotaTypeFormulaLink : quotaTypeFormulaLinks) {
+					quotaFormulas.add(quotaTypeFormulaLink.getQuotaFormula());
+				}
+				return quotaFormulas;
+			}else {
+				return null;
 			}
-			return quotaFormulas;
 		}else {
 			return null;
 		}
+		
 	}
 	
 	@DataProvider

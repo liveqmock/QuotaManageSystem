@@ -17,6 +17,9 @@
         <Property name="parameter">$${this.id}</Property>
         <Property name="dataProvider">quotaCoverDao#getFatherQuotaCover</Property>
       </Reference>
+      <PropertyDef name="sort">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
     </DataType>
     <DataType name="Department" meta="x:359;y:76">
       <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
@@ -352,6 +355,18 @@ dgDutyDeptLinked.refresh();</ClientEvent>
                   <Property name="align">center</Property>
                   <Property name="caption">父口径</Property>
                   <Property name="trigger">dsddFatherQuotaCover</Property>
+                </DataColumn>
+                <DataColumn name="sort">
+                  <Property name="property">sort</Property>
+                  <Property name="align">center</Property>
+                  <Property name="caption">排序</Property>
+                  <Property name="width">70</Property>
+                  <Editor>
+                    <NumberSpinner>
+                      <Property name="min">1</Property>
+                      <Property name="max">500</Property>
+                    </NumberSpinner>
+                  </Editor>
                 </DataColumn>
               </DataGrid>
               <UpdateAction id="uaQuotaCover">

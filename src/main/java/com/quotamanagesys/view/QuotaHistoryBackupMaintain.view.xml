@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaHistoryBackup">
+      <Property name="creationType">com.quotamanagesys.model.QuotaHistoryBackUp</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="year">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="tableName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="tableCreateSQL">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsQuotaHistoryBackup">
+      <Property name="dataProvider">quotaHistoryBackupDao#getAll</Property>
+      <Property name="dataType">[QuotaHistoryBackup]</Property>
+    </DataSet>
+    <ToolBar>
+      <ToolBarButton>
+        <Property name="caption">删除备份</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -0px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaHistoryBackup=view.get(&quot;#dgQuotaHistoryBackup&quot;);&#xD;
+var aaCreateQuotaHistoryBackupTables=view.get(&quot;#aaCreateQuotaHistoryBackupTables&quot;);&#xD;
+var datas = view.get(&quot;#dsQuotaHistoryBackup&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgQuotaHistoryBackup.get(&quot;selection&quot;);&#xD;
+var messge; &#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	aaCreateQuotaHistoryBackupTables.set(&quot;parameter&quot;,{quotaHistoryBackUps:selection}).execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;发生异常：&quot; + obj);}&#xD;
+	}&#xD;
+	});&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中指标备份记录！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+        <Property name="caption">生成数据表</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -280px -60px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var dgQuotaHistoryBackup=view.get(&quot;#dgQuotaHistoryBackup&quot;);&#xD;
+var aaClearQuotaHistoryBackupTables=view.get(&quot;#aaClearQuotaHistoryBackupTables&quot;);&#xD;
+var datas = view.get(&quot;#dsQuotaHistoryBackup&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgQuotaHistoryBackup.get(&quot;selection&quot;);&#xD;
+var messge; &#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	aaClearQuotaHistoryBackupTables.set(&quot;parameter&quot;,{quotaHistoryBackUps:selection}).execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;发生异常：&quot; + obj);}&#xD;
+	}&#xD;
+	});&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中指标备份记录！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+        <Property name="caption">清除数据表</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -20px -200px</Property>
+      </ToolBarButton>
+    </ToolBar>
+    <DataGrid id="dgQuotaHistoryBackup">
+      <Property name="dataSet">dsQuotaHistoryBackup</Property>
+      <Property name="dataType">QuotaHistoryBackup</Property>
+      <Property name="readOnly">true</Property>
+      <Property name="stretchColumnsMode">off</Property>
+      <Property name="selectionMode">multiRows</Property>
+      <RowSelectorColumn/>
+      <RowNumColumn/>
+      <DataColumn name="id">
+        <Property name="property">id</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+      <DataColumn name="year">
+        <Property name="property">year</Property>
+        <Property name="width">100</Property>
+        <Property name="caption">年度</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="name">
+        <Property name="property">name</Property>
+        <Property name="width">200</Property>
+        <Property name="align">center</Property>
+        <Property name="caption">备份名</Property>
+      </DataColumn>
+      <DataColumn name="tableName">
+        <Property name="property">tableName</Property>
+        <Property name="width">200</Property>
+        <Property name="caption">数据表名</Property>
+        <Property name="align">center</Property>
+      </DataColumn>
+      <DataColumn name="tableCreateSQL">
+        <Property name="property">tableCreateSQL</Property>
+        <Property name="visible">false</Property>
+      </DataColumn>
+    </DataGrid>
+    <AjaxAction id="aaCreateQuotaHistoryBackupTables">
+      <Property name="service">quotaHistoryBackupCore#createQuotaHistoryBackupTables</Property>
+      <Property name="executingMessage">正在生成指标备份数据表...</Property>
+      <Property name="successMessage">数据表生成完成！</Property>
+    </AjaxAction>
+    <AjaxAction id="aaClearQuotaHistoryBackupTables">
+      <Property name="service">quotaHistoryBackupCore#clearQuotaHistoryBackupTables</Property>
+      <Property name="executingMessage">正在清除指标数据表...</Property>
+      <Property name="successMessage">数据表清除完成！</Property>
+    </AjaxAction>
+  </View>
+</ViewConfig>

@@ -175,6 +175,11 @@ if(datas.current){&#xD;
         <Property name="caption">编辑</Property>
         <Property name="icon">url(>skin>common/icons.gif) -200px 0px</Property>
       </ToolBarButton>
+      <ToolBarButton>
+        <Property name="icon">url(>skin>common/icons.gif) -140px -240px</Property>
+        <Property name="caption">导出表单</Property>
+        <Property name="action">epQuotaType</Property>
+      </ToolBarButton>
     </ToolBar>
     <DataGrid id="dgQuotaType">
       <Property name="dataSet">dsQuotaType</Property>
@@ -399,7 +404,7 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
           <Property name="dataType">QuotaType</Property>
           <AutoFormElement>
             <Property name="name">quotaTypeName</Property>
-            <Property name="label">指标种类名称</Property>
+            <Property name="label">指标种类</Property>
             <Property name="property">name</Property>
             <Editor/>
           </AutoFormElement>
@@ -463,5 +468,13 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
       </Children>
       <Tools/>
     </Dialog>
+    <Export2ReportAction id="epQuotaType">
+      <Property name="template">dgQuotaType</Property>
+      <Property name="showTitle">false</Property>
+      <Property name="rowSpace">1</Property>
+      <Property name="dataScope">currentPage</Property>
+      <Property name="userData"></Property>
+      <Property name="extension">xlsx</Property>
+    </Export2ReportAction>
   </View>
 </ViewConfig>

@@ -83,6 +83,7 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
         <Property name="property">name</Property>
         <Property name="width">200</Property>
         <Property name="caption">指标维度</Property>
+        <Property name="align">center</Property>
       </DataColumn>
     </DataGrid>
     <UpdateAction id="uaQuotaDimension">
