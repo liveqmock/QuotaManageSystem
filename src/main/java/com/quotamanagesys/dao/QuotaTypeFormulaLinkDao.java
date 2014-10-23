@@ -169,14 +169,21 @@ public class QuotaTypeFormulaLinkDao extends HibernateDao {
 			for (QuotaFormula quotaFormula : quotaFormulas) {
 				EntityState state=EntityUtils.getState(quotaFormula);
 				if ((state.equals(EntityState.NEW))||(state.equals(EntityState.NONE))) {
-					QuotaTypeFormulaLink quotaTypeFormulaLink=new QuotaTypeFormulaLink();
-					quotaTypeFormulaLink.setQuotaType(quotaType);
-					QuotaFormula thisQuotaFormula=quotaFormulaDao.getQuotaFormula(quotaFormula.getId());
-					quotaTypeFormulaLink.setQuotaFormula(thisQuotaFormula);
-					
-					session.save(quotaTypeFormulaLink);
-					session.flush();
-					session.clear();
+					String checkIsExsits = "from "+ QuotaTypeFormulaLink.class.getName()
+							+ " where quotaType.id='" + quotaTypeId
+							+ "' and quotaFormula.quotaFormulaResult.id='"
+							+ quotaFormula.getQuotaFormulaResult().getId() + "'";
+					Collection<QuotaTypeFormulaLink> linkedTypeFormulaLinks = this.query(checkIsExsits);
+					if (linkedTypeFormulaLinks.size()==0) {
+						QuotaTypeFormulaLink quotaTypeFormulaLink=new QuotaTypeFormulaLink();
+						quotaTypeFormulaLink.setQuotaType(quotaType);
+						QuotaFormula thisQuotaFormula=quotaFormulaDao.getQuotaFormula(quotaFormula.getId());
+						quotaTypeFormulaLink.setQuotaFormula(thisQuotaFormula);
+						
+						session.save(quotaTypeFormulaLink);
+						session.flush();
+						session.clear();
+					}
 				}else if (state.equals(EntityState.DELETED)) {
 					Collection<QuotaTypeFormulaLink> quotaTypeFormulaLinks=getQuotaTypeFormulaLinksByQuotaType(quotaTypeId);
 					for (QuotaTypeFormulaLink quotaTypeFormulaLink : quotaTypeFormulaLinks) {

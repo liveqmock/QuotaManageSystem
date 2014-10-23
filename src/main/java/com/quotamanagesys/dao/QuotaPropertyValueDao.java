@@ -19,6 +19,7 @@ import com.bstek.bdf2.core.context.ContextHolder;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
+import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.interceptor.CalculateCore;
@@ -29,6 +30,7 @@ import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaProperty;
 import com.quotamanagesys.model.QuotaPropertyValue;
+import com.quotamanagesys.model.QuotaTargetValue;
 import com.quotamanagesys.model.QuotaType;
 import com.quotamanagesys.model.QuotaTypeFormulaLink;
 
@@ -43,6 +45,8 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	CalculateCore calculateCore;
 	@Resource
 	ResultTableCreator resultTableCreator;
+	@Resource
+	QuotaTargetValueDao quotaTargetValueDao;
 	
 	@DataProvider
 	public Collection<QuotaPropertyValue> getAll(){
@@ -52,15 +56,8 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	}
 	
 	@DataProvider
-	public Collection<QuotaPropertyValue> getQuotaPropertyValuesByUserDept() throws Exception{
-		Collection<QuotaItemCreator> quotaItemCreators;
-		IUser loginUser = ContextHolder.getLoginUser();
-		if (loginUser.isAdministrator()) {
-			quotaItemCreators=quotaItemCreatorDao.getAll();
-		}else {
-			List<IDept> iDepts=loginUser.getDepts();
-			quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(iDepts.get(0).getId());
-		}
+	public Collection<QuotaPropertyValue> getQuotaPropertyValuesByManageDept(String manageDeptId) throws Exception{
+		Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(manageDeptId);
 		Collection<QuotaPropertyValue> quotaPropertyValues=new ArrayList<QuotaPropertyValue>();
 		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
 			quotaPropertyValues.addAll(getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId()));
@@ -128,6 +125,18 @@ public class QuotaPropertyValueDao extends HibernateDao {
 						}
 					}
 				}else if (state.equals(EntityState.DELETED)) {
+					QuotaProperty quotaProperty=quotaPropertyValue.getQuotaProperty();
+					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+					if (quotaItems.size()>0) {
+						//删除具体指标相关的月度目标值
+						for (QuotaItem quotaItem : quotaItems) {
+							String hqlString="from "+QuotaTargetValue.class.getName()+" where quotaItem.id='"+quotaItem.getId()
+									+"' and quotaProperty.id='"+quotaProperty.getId()+"'";
+							Collection<QuotaTargetValue> quotaTargetValues=this.query(hqlString);
+							quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
+						}
+					}
+
 					quotaPropertyValue.setQuotaItemCreator(null);
 					quotaPropertyValue.setQuotaProperty(null);
 					session.delete(quotaPropertyValue);
@@ -157,9 +166,24 @@ public class QuotaPropertyValueDao extends HibernateDao {
 		Session session=this.getSessionFactory().openSession();
 		try {
 			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+				QuotaItemCreator quotaItemCreator=quotaPropertyValue.getQuotaItemCreator();
+				QuotaProperty quotaProperty=quotaPropertyValue.getQuotaProperty();
+				Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+				if (quotaItems.size()>0) {
+					//删除具体指标相关的月度目标值
+					for (QuotaItem quotaItem : quotaItems) {
+						String hqlString="from "+QuotaTargetValue.class.getName()+" where quotaItem.id='"+quotaItem.getId()
+								+"' and quotaProperty.id='"+quotaProperty.getId()+"'";
+						Collection<QuotaTargetValue> quotaTargetValues=this.query(hqlString);
+						quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
+					}
+				}
+
 				quotaPropertyValue.setQuotaItemCreator(null);
 				quotaPropertyValue.setQuotaProperty(null);
 				session.delete(quotaPropertyValue);
+				session.flush();
+				session.clear();
 			}
 		} catch (Exception e) {
 			System.out.print(e.toString());

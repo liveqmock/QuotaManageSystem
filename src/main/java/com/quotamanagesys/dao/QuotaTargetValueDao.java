@@ -17,6 +17,7 @@ import com.bstek.bdf2.core.context.ContextHolder;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
+import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.quotamanagesys.interceptor.CalculateCore;
@@ -24,6 +25,7 @@ import com.quotamanagesys.interceptor.ResultTableCreator;
 import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaProperty;
+import com.quotamanagesys.model.QuotaPropertyValue;
 import com.quotamanagesys.model.QuotaTargetValue;
 
 @Component
@@ -39,6 +41,8 @@ public class QuotaTargetValueDao extends HibernateDao {
 	ResultTableCreator resultTableCreator;
 	@Resource
 	QuotaItemCreatorDao quotaItemCreatorDao;
+	@Resource
+	QuotaPropertyValueDao quotaPropertyValueDao;
 	
 	@DataProvider
 	public Collection<QuotaTargetValue> getAll(){
@@ -48,16 +52,8 @@ public class QuotaTargetValueDao extends HibernateDao {
 	}
 	
 	@DataProvider
-	public Collection<QuotaTargetValue> getQuotaTargetValuesByUserDept() throws Exception{
-		Collection<QuotaItemCreator> quotaItemCreators;
-		IUser loginUser = ContextHolder.getLoginUser();
-		if (loginUser.isAdministrator()) {
-			quotaItemCreators=quotaItemCreatorDao.getAll();
-		}else {
-			List<IDept> iDepts=loginUser.getDepts();
-			quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(iDepts.get(0).getId());
-		}
-		
+	public Collection<QuotaTargetValue> getQuotaTargetValuesByManageDept(String manageDeptId) throws Exception{
+		Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(manageDeptId);	
 		Collection<QuotaItem> quotaItems=new ArrayList<QuotaItem>();
 		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
 			quotaItems.addAll(quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId()));
@@ -145,6 +141,73 @@ public class QuotaTargetValueDao extends HibernateDao {
 		}finally{
 			session.flush();
 			session.close();
+		}
+	}
+	
+	//修复月度目标值
+	@Expose
+	public void repairQuotaTargetValues(String quotaItemCreatorId){
+		Session session=this.getSessionFactory().openSession();
+		Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreatorId);
+		Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreatorId);
+		try {
+			for (QuotaItem quotaItem : quotaItems) {
+				Collection<QuotaTargetValue> quotaTargetValues=getQuotaTargetValuesByQuotaItem(quotaItem.getId());
+				Collection<QuotaTargetValue> add=new ArrayList<QuotaTargetValue>();
+				Collection<QuotaTargetValue> delete=new ArrayList<QuotaTargetValue>();
+				
+				for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+					boolean isFinded=false;
+					for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
+						if (quotaTargetValue.getQuotaProperty().equals(quotaPropertyValue.getQuotaProperty())) {
+							isFinded=true;
+							break;
+						}
+					}
+					if (isFinded==false) {
+						QuotaTargetValue quotaTargetValue = new QuotaTargetValue();
+						quotaTargetValue.setQuotaItem(quotaItem);
+						quotaTargetValue.setQuotaProperty(quotaPropertyValue.getQuotaProperty());
+						quotaTargetValue.setParameterName(quotaPropertyValue.getQuotaProperty().getParameterName()+"_M");
+						add.add(quotaTargetValue);
+					}
+				}
+				
+				for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
+					boolean isFind=false;
+					for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+						if (quotaPropertyValue.getQuotaProperty().equals(quotaTargetValue.getQuotaProperty())) {
+							isFind=true;
+							break;
+						}
+					}
+					if (isFind==false) {
+						delete.add(quotaTargetValue);
+					}
+				}
+				
+				for (QuotaTargetValue quotaTargetValue : add) {
+					session.merge(quotaTargetValue);
+					session.flush();
+					session.clear();
+				}
+				
+				deleteQuotaTargetValues(delete);
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}	
+	}
+	
+	//修复指标管理部门所有月度目标值
+	@Expose
+	public void repairQuotaTargetValuesByManageDept(String manageDeptId) throws Exception{
+		Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(manageDeptId);
+		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+			repairQuotaTargetValues(quotaItemCreator.getId());
 		}
 	}
 	

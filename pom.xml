@@ -9,7 +9,7 @@
 		<dependency>
 			<groupId>com.bstek.bdf2</groupId>
 			<artifactId>bdf2-core</artifactId>
-			<version>2.0.6-SNAPSHOT</version>
+			<version>2.0.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -60,6 +60,17 @@
 				<exclusion>
 					<artifactId>javassist</artifactId>
 					<groupId>javassist</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.bstek.dorado</groupId>
+			<artifactId>dorado-xchart</artifactId>
+			<version>0.9.3-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>dorado-core</artifactId>
+					<groupId>com.bstek.dorado</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

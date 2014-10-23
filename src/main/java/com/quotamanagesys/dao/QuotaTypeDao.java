@@ -13,11 +13,16 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
+import com.bstek.bdf2.core.business.IDept;
+import com.bstek.bdf2.core.business.IUser;
+import com.bstek.bdf2.core.context.ContextHolder;
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.DataProvider;
 import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.quotamanagesys.model.QuotaCover;
+import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaLevel;
 import com.quotamanagesys.model.QuotaPropertyValue;
@@ -34,6 +39,12 @@ public class QuotaTypeDao extends HibernateDao {
 	QuotaItemCreatorDao quotaItemCreatorDao;
 	@Resource
 	QuotaPropertyValueDao quotaPropertyValueDao;
+	@Resource
+	QuotaItemDao quotaItemDao;
+	@Resource
+	QuotaCoverDao quotaCoverDao;
+	@Resource
+	DepartmentDao departmentDao;
 	
 	@DataProvider
 	public Collection<QuotaType> getAll() {
@@ -67,6 +78,20 @@ public class QuotaTypeDao extends HibernateDao {
 	@DataProvider
 	public Collection<QuotaType> getQuotaTypesInUsed(){
 		String hqlString = "from " + QuotaType.class.getName()+" where inUsed=true";
+		Collection<QuotaType> quotaTypes = this.query(hqlString);
+		return quotaTypes;
+	}
+	
+	@DataProvider
+	public Collection<QuotaType> getQuotaTypesInUsedByLoginUserDept(){
+		String hqlString = "from " + QuotaType.class.getName()+" where inUsed=true";
+		IUser loginUser = ContextHolder.getLoginUser();
+		if (loginUser.isAdministrator()) {
+			
+		}else {
+			List<IDept> iDepts=loginUser.getDepts();
+			hqlString = "from " + QuotaType.class.getName()+" where inUsed=true and manageDept.id='"+iDepts.get(0).getId()+"'";
+		}
 		Collection<QuotaType> quotaTypes = this.query(hqlString);
 		return quotaTypes;
 	}
@@ -180,6 +205,42 @@ public class QuotaTypeDao extends HibernateDao {
 						quotaType.setFatherQuotaType(quotaTypeDao.getQuotaType(fatherQuotaType.getId()));
 					}
 					session.merge(quotaType);
+					session.flush();
+					session.clear();
+					
+					if (!quotaType.getRate().equals(oldQuotaType.getRate())) {
+						Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByQuotaType(oldQuotaType.getId());
+						if (quotaItemCreators.size()>0) {
+							for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+								Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+								quotaItemDao.deleteQuotaItems(quotaItems);
+							}
+						}
+					}
+					
+					if(!quotaType.getManageDept().equals(oldQuotaType.getManageDept())){
+						Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByQuotaType(oldQuotaType.getId());
+						if (quotaItemCreators.size()>0) {
+							QuotaCover topQuotaCover=quotaCoverDao.getTopQuotaCovers().get(0);
+							for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+								if (quotaItemCreator.getQuotaCover().equals(topQuotaCover)) {
+									quotaItemCreator.setQuotaDutyDept(departmentDao.getDept(quotaType.getManageDept().getId()));
+									session.merge(quotaItemCreator);
+									session.flush();
+									session.clear();
+								} else {
+									continue;
+								}
+							}
+						}
+					}
+					
+					if ((quotaType.isInUsed())==false) {
+						Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByQuotaType(oldQuotaType.getId());
+						if (quotaItemCreators.size()>0) {
+							quotaItemCreatorDao.deleteQuotaItemCreators(quotaItemCreators);
+						}
+					}
 				} else if (state.equals(EntityState.DELETED)) {
 					//将下级指标种类的父级设置为null
 					Collection<QuotaType> childrenQuotaTypes=getChildrenQuotaTypes(quotaType.getId());

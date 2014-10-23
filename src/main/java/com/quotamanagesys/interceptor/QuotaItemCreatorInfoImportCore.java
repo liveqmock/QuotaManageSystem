@@ -38,19 +38,19 @@ public class QuotaItemCreatorInfoImportCore extends HibernateDao{
 		
 		if (isSuccess) {
 			Session session=this.getSessionFactory().openSession();
-			Collection<QuotaPropertyValue> updateQuotaPropertyValues=new ArrayList<QuotaPropertyValue>();
+			//Collection<QuotaPropertyValue> updateQuotaPropertyValues=new ArrayList<QuotaPropertyValue>();
 			
 			while (rs.next()) {
 				String id=rs.getString("id");
 				double targetValue=rs.getDouble("targetValue");
 				
 				QuotaPropertyValue quotaPropertyValue=quotaPropertyValueDao.getQuotaPropertyValue(id);
-				if (!quotaPropertyValue.equals(null)) {
+				if (quotaPropertyValue!=null) {
 					quotaPropertyValue.setValue(targetValue);
 					session.merge(quotaPropertyValue);
 					session.flush();
 					session.clear();
-					updateQuotaPropertyValues.add(quotaPropertyValue);
+					//updateQuotaPropertyValues.add(quotaPropertyValue);
 				}
 				
 				String clearThisRecord="DELETE FROM quota_item_creator_targetvalue_update WHERE id='"+id+"'";

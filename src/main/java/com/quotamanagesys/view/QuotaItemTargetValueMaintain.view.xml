@@ -102,12 +102,19 @@
     </DataSet>
     <DataSet id="dsQuotaTargetValueExport">
       <Property name="dataType">[QuotaTargetValue]</Property>
-      <Property name="dataProvider">quotaTargetValueDao#getQuotaTargetValuesByUserDept</Property>
+      <Property name="dataProvider">quotaTargetValueDao#getQuotaTargetValuesByManageDept</Property>
+      <Property name="cacheable">false</Property>
+      <Property name="loadMode">lazy</Property>
     </DataSet>
     <Container>
       <ToolBar>
         <ToolBarButton>
-          <ClientEvent name="onClick">view.get(&quot;#dlgQuotaTargetValue&quot;).show();</ClientEvent>
+          <ClientEvent name="onClick">var dlgQuotaTargetValue=view.get(&quot;#dlgQuotaTargetValue&quot;);&#xD;
+var dsQuotaTargetValueExport=view.get(&quot;#dsQuotaTargetValueExport&quot;);&#xD;
+dsQuotaTargetValueExport.set(&quot;parameter&quot;,{manageDeptId:manageDeptId});&#xD;
+//必须注意顺序，赋值语句间执行要有时间间隔。&#xD;
+dlgQuotaTargetValue.show();&#xD;
+dsQuotaTargetValueExport.flushAsync();</ClientEvent>
           <Property name="caption">导出月度目标值</Property>
           <Property name="icon">url(>skin>common/icons.gif) -140px -240px</Property>
         </ToolBarButton>
@@ -454,7 +461,7 @@ epQuotaTargetValue.execute({&#xD;
           <DataTree id="dtrDepartment">
             <ClientEvent name="onClick">var dtrDepartment=view.get(&quot;#dtrDepartment&quot;);&#xD;
 var currentDepartment=dtrDepartment.get(&quot;currentEntity&quot;);&#xD;
-var manageDeptId=currentDepartment.get(&quot;id&quot;);&#xD;
+manageDeptId=currentDepartment.get(&quot;id&quot;);&#xD;
 var dsQuotaItem=view.get(&quot;#dsQuotaItem&quot;);&#xD;
 var dsQuotaItem2=view.get(&quot;#dsQuotaItem2&quot;);&#xD;
 &#xD;

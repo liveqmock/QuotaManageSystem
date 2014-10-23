@@ -277,6 +277,34 @@ public class QuotaItemDao extends HibernateDao {
 			session.close();
 		}
 	}
+	
+	//清除未关联目标值的具体指标（按归口管理部门）
+	@Expose
+	public void deleteQuotaItemsWithoutTargetValuesByManageDept(String manageDeptId){
+		Collection<QuotaItem> quotaItems=getQuotaItemsByManageDept_Month(manageDeptId);
+		Collection<QuotaItem> quotaItemsWithoutTargetValues=new ArrayList<QuotaItem>();
+		for (QuotaItem quotaItem : quotaItems) {
+			if ((quotaTargetValueDao.getQuotaTargetValuesByQuotaItem(quotaItem.getId())).size()==0) {
+				quotaItemsWithoutTargetValues.add(quotaItem);
+			}
+		}
+		deleteQuotaItems(quotaItemsWithoutTargetValues);
+	}
+	
+	//清除未关联目标值的具体指标（全部）
+	@Expose
+	public void deleteAllQuotaItemsWithoutTargetValues(){
+		Collection<QuotaItem> quotaItems=getAll();
+		Collection<QuotaItem> quotaItemsWithoutTargetValues=new ArrayList<QuotaItem>();
+		for (QuotaItem quotaItem : quotaItems) {
+			if ((quotaItem.getQuotaItemCreator().getQuotaType().getRate()).equals("月")) {
+				if ((quotaTargetValueDao.getQuotaTargetValuesByQuotaItem(quotaItem.getId())).size()==0) {
+					quotaItemsWithoutTargetValues.add(quotaItem);
+				}
+			}
+		}
+		deleteQuotaItems(quotaItemsWithoutTargetValues);
+	}
 
 	@DataResolver
 	public void excuteHQL(String HQL) {
