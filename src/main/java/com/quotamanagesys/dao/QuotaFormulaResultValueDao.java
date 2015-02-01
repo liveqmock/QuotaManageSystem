@@ -1,5 +1,6 @@
 package com.quotamanagesys.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import javax.annotation.Resource;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.nfunk.jep.JEP;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +20,19 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.quotamanagesys.model.LightItem;
+import com.quotamanagesys.model.QuotaFormulaResult;
 import com.quotamanagesys.model.QuotaFormulaResultValue;
 
 @Component
 public class QuotaFormulaResultValueDao extends HibernateDao {
+	
+	@Resource
+	LightItemDao lightItemDao;
+	@Resource
+	QuotaItemDao quotaItemDao;
+	@Resource
+	QuotaFormulaResultDao quotaFormulaResultDao;
 	
 	@DataProvider
 	public Collection<QuotaFormulaResultValue> getAll(){
@@ -45,6 +57,30 @@ public class QuotaFormulaResultValueDao extends HibernateDao {
 		String hqlString="from "+QuotaFormulaResultValue.class.getName()+" where quotaItem.id='"+quotaItemId+"'";
 		Collection<QuotaFormulaResultValue> quotaFormulaResultValues=this.query(hqlString);
 		return quotaFormulaResultValues;
+	}
+	
+	//获取指标对应的亮灯值
+	@DataProvider
+	public Collection<QuotaFormulaResultValue> getQuotaFormulaResultValuesOfLightTypeByQuotaItem(String quotaItemId){
+		if (quotaItemId==null) {
+			return null;
+		} else {
+			Session session = this.getSessionFactory().openSession();
+			Collection<LightItem> lightItems=lightItemDao.getAll();
+			ArrayList<String> quotaFormulaResultsOfLightType=new ArrayList<>();
+			for (LightItem lightItem : lightItems) {
+				quotaFormulaResultsOfLightType.add(lightItem.getQuotaFormulaResult().getId());
+			}
+			
+			List<QuotaFormulaResultValue> quotaFormulaResultValues=session.createCriteria(QuotaFormulaResultValue.class)
+					.createAlias("quotaFormulaResult", "qf")
+					.createAlias("quotaItem", "qi")
+					.add(Restrictions.and(Restrictions.in("qf.id",quotaFormulaResultsOfLightType),Restrictions.eq("qi.id", quotaItemId)))
+					.addOrder(Order.asc("qf.name"))
+					.list();
+			session.close();
+			return quotaFormulaResultValues;
+		}
 	}
 	
 	@DataResolver

@@ -6,5 +6,6 @@
 	<context:component-scan base-package="com.quotamanagesys.dao"></context:component-scan>
 	<context:component-scan base-package="com.quotamanagesys.interceptor"></context:component-scan>
 	<context:component-scan base-package="com.quotamanagesys.model"></context:component-scan>
+	<context:component-scan base-package="com.quotamanagesys.tools"></context:component-scan>
 	<context:component-scan base-package="com.quotamanagesys.view"></context:component-scan>
 </beans>

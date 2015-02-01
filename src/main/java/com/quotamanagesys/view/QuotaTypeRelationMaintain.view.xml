@@ -138,7 +138,7 @@
       <Property name="dataProvider">quotaDimensionDao#getAll</Property>
     </DataSet>
     <SplitPanel>
-      <Property name="position">200</Property>
+      <Property name="position">140</Property>
       <MainControl>
         <Container>
           <ToolBar>
@@ -193,6 +193,7 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="trigger">dsddFatherQuotaType</Property>
               <Property name="width">150</Property>
               <Property name="caption">上级指标</Property>
+              <Property name="wrappable">true</Property>
             </DataColumn>
             <DataColumn name="quotaProfession">
               <Property name="property">quotaProfession</Property>
@@ -203,8 +204,8 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="property">quotaProfession.name</Property>
               <Property name="name">professionName</Property>
               <Property name="readOnly">true</Property>
-              <Property name="caption">指标专业</Property>
-              <Property name="width">120</Property>
+              <Property name="caption">专业</Property>
+              <Property name="width">70</Property>
               <Property name="align">center</Property>
               <Editor/>
             </DataColumn>
@@ -217,8 +218,8 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="name">levelName</Property>
               <Property name="property">quotaLevel.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="caption">指标级别</Property>
-              <Property name="width">120</Property>
+              <Property name="caption">级别</Property>
+              <Property name="width">70</Property>
               <Property name="align">center</Property>
               <Property name="visible">false</Property>
               <Editor/>
@@ -234,8 +235,8 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="name">dimensionName</Property>
               <Property name="property">quotaDimension.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">120</Property>
-              <Property name="caption">指标维度</Property>
+              <Property name="width">70</Property>
+              <Property name="caption">维度</Property>
               <Editor/>
             </DataColumn>
             <DataColumn name="quotaUnit">
@@ -248,14 +249,14 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="property">quotaUnit.name</Property>
               <Property name="readOnly">true</Property>
               <Property name="caption">计量单位</Property>
-              <Property name="width">90</Property>
+              <Property name="width">60</Property>
               <Property name="align">center</Property>
               <Editor/>
             </DataColumn>
             <DataColumn name="digit">
               <Property name="property">digit</Property>
               <Property name="caption">小数位数</Property>
-              <Property name="width">90</Property>
+              <Property name="width">50</Property>
               <Property name="align">center</Property>
               <Property name="readOnly">true</Property>
               <Editor>
@@ -265,8 +266,8 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
             <DataColumn name="rate">
               <Property name="property">rate</Property>
               <Property name="trigger">lddRate</Property>
-              <Property name="caption">考核频率</Property>
-              <Property name="width">90</Property>
+              <Property name="caption">频率</Property>
+              <Property name="width">50</Property>
               <Property name="align">center</Property>
               <Property name="readOnly">true</Property>
             </DataColumn>
@@ -280,14 +281,14 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
               <Property name="property">manageDept.name</Property>
               <Property name="readOnly">true</Property>
               <Property name="caption">管理部门</Property>
-              <Property name="width">120</Property>
+              <Property name="width">70</Property>
               <Property name="align">center</Property>
               <Editor/>
             </DataColumn>
             <DataColumn name="inUsed">
               <Property name="property">inUsed</Property>
-              <Property name="caption">是否在用</Property>
-              <Property name="width">90</Property>
+              <Property name="caption">在用</Property>
+              <Property name="width">50</Property>
               <Property name="align">center</Property>
               <Property name="readOnly">true</Property>
             </DataColumn>

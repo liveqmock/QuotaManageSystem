@@ -2,13 +2,19 @@ package com.quotamanagesys.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
 import com.bstek.bdf2.core.business.IDept;
@@ -20,6 +26,8 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.bstek.dorado.data.provider.Criteria;
+import com.bstek.dorado.data.provider.Page;
 import com.quotamanagesys.interceptor.CalculateCore;
 import com.quotamanagesys.interceptor.ResultTableCreator;
 import com.quotamanagesys.model.QuotaItem;
@@ -27,6 +35,7 @@ import com.quotamanagesys.model.QuotaItemCreator;
 import com.quotamanagesys.model.QuotaProperty;
 import com.quotamanagesys.model.QuotaPropertyValue;
 import com.quotamanagesys.model.QuotaTargetValue;
+import com.quotamanagesys.tools.CriteriaConvertCore;
 
 @Component
 public class QuotaTargetValueDao extends HibernateDao {
@@ -43,6 +52,8 @@ public class QuotaTargetValueDao extends HibernateDao {
 	QuotaItemCreatorDao quotaItemCreatorDao;
 	@Resource
 	QuotaPropertyValueDao quotaPropertyValueDao;
+	@Resource
+	CriteriaConvertCore criteriaConvertCore;
 	
 	@DataProvider
 	public Collection<QuotaTargetValue> getAll(){
@@ -66,6 +77,23 @@ public class QuotaTargetValueDao extends HibernateDao {
 		return quotaTargetValues;
 	}
 	
+	//分页方式查询
+	@DataProvider
+	public void getQuotaTargetValuesByManageDeptWithPage(Page<QuotaTargetValue> page,Criteria criteria,String manageDeptId) throws Exception{
+		if (manageDeptId!=null) {
+			String filterString=criteriaConvertCore.convertToSQLString(criteria);
+			if (!filterString.equals("")) {
+				filterString=" and ("+filterString+")";
+			}
+			
+			String hqlString = "from " + QuotaTargetValue.class.getName()
+					+ " where quotaItem.quotaItemCreator.quotaType.manageDept.id='"+manageDeptId+"' and quotaItem.month<>0"+filterString;
+			this.pagingQuery(page, hqlString, "select count(*)" + hqlString);
+		} else {
+			System.out.print("参数为空");
+		}
+	}
+	
 	@DataProvider
 	public Collection<QuotaTargetValue> getQuotaTargetValuesByQuotaProperty(String quotaPropertyId){
 		String hqlString="from "+QuotaTargetValue.class.getName()+" where quotaProperty.id='"+quotaPropertyId+"'";
@@ -75,9 +103,13 @@ public class QuotaTargetValueDao extends HibernateDao {
 	
 	@DataProvider
 	public Collection<QuotaTargetValue> getQuotaTargetValuesByQuotaItem(String quotaItemId){
-		String hqlString="from "+QuotaTargetValue.class.getName()+" where quotaItem.id='"+quotaItemId+"'";
-		Collection<QuotaTargetValue> quotaTargetValues=this.query(hqlString);
-		return quotaTargetValues;
+		if (quotaItemId==null) {
+			return null;
+		} else {
+			String hqlString="from "+QuotaTargetValue.class.getName()+" where quotaItem.id='"+quotaItemId+"'  order by quotaProperty.name asc";
+			Collection<QuotaTargetValue> quotaTargetValues=this.query(hqlString);
+			return quotaTargetValues;
+		}
 	}
 	
 	@DataProvider
@@ -94,13 +126,15 @@ public class QuotaTargetValueDao extends HibernateDao {
 	@DataResolver
 	public void saveQuotaTargetValues(Collection<QuotaTargetValue> quotaTargetValues){
 		Session session=this.getSessionFactory().openSession();
-		Collection<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
+		ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
 		
 		try {
 			for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
 				EntityState state=EntityUtils.getState(quotaTargetValue);
 				if (state.equals(EntityState.NEW)) {
+					QuotaItem thisQuotaItem=quotaItemDao.getQuotaItem(quotaTargetValue.getQuotaItem().getId());
 					session.merge(quotaTargetValue);
+					updateQuotaItems.add(thisQuotaItem);
 				}else if (state.equals(EntityState.MODIFIED)) {
 					QuotaItem thisQuotaItem=quotaItemDao.getQuotaItem(quotaTargetValue.getQuotaItem().getId());
 					QuotaProperty thisQuotaProperty=quotaPropertyDao.getQuotaProperty(quotaTargetValue.getQuotaProperty().getId());
@@ -111,13 +145,24 @@ public class QuotaTargetValueDao extends HibernateDao {
 					session.clear();
 					updateQuotaItems.add(thisQuotaItem);
 				}else if (state.equals(EntityState.DELETED)) {
+					QuotaItem thisQuotaItem=quotaItemDao.getQuotaItem(quotaTargetValue.getQuotaItem().getId());
 					quotaTargetValue.setQuotaItem(null);
 					quotaTargetValue.setQuotaProperty(null);
 					session.delete(quotaTargetValue);
+					updateQuotaItems.add(thisQuotaItem);
 				}
 			}
 			
+			for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+			    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+			      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+			    	  updateQuotaItems.remove(j);  
+			      }   
+			    }   
+			}
+
 			calculateCore.calculate(updateQuotaItems);
+			quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
 			resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 		} catch (Exception e) {
 			System.out.print(e.toString());
@@ -131,11 +176,27 @@ public class QuotaTargetValueDao extends HibernateDao {
 	public void deleteQuotaTargetValues(Collection<QuotaTargetValue> quotaTargetValues){
 		Session session=this.getSessionFactory().openSession();
 		try {
+			ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
+			
 			for (QuotaTargetValue quotaTargetValue : quotaTargetValues) {
+				QuotaItem thisQuotaItem=quotaItemDao.getQuotaItem(quotaTargetValue.getQuotaItem().getId());
 				quotaTargetValue.setQuotaItem(null);
 				quotaTargetValue.setQuotaProperty(null);
 				session.delete(quotaTargetValue);
+				updateQuotaItems.add(thisQuotaItem);
 			}
+			
+			for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+			    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+			      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+			    	  updateQuotaItems.remove(j);  
+			      }   
+			    }   
+			}
+			
+			calculateCore.calculate(updateQuotaItems);
+			quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
+			resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 		} catch (Exception e) {
 			System.out.print(e.toString());
 		}finally{
@@ -186,12 +247,29 @@ public class QuotaTargetValueDao extends HibernateDao {
 					}
 				}
 				
-				for (QuotaTargetValue quotaTargetValue : add) {
-					session.merge(quotaTargetValue);
-					session.flush();
-					session.clear();
+				if (add.size()>0) {
+					ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
+					
+					for (QuotaTargetValue quotaTargetValue : add) {
+						session.merge(quotaTargetValue);
+						session.flush();
+						session.clear();
+						updateQuotaItems.add(quotaTargetValue.getQuotaItem());
+					}
+					
+					for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+					    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+					      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+					    	  updateQuotaItems.remove(j);  
+					      }   
+					    }   
+					}
+					
+					calculateCore.calculate(updateQuotaItems);
+					quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
+					resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 				}
-				
+
 				deleteQuotaTargetValues(delete);
 			}
 		} catch (Exception e) {

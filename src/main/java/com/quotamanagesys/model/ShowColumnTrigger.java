@@ -13,34 +13,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Entity
-@Table(name = "QUOTA_HISTORY_BACKUP")
-public class QuotaHistoryBackUp implements Serializable{
-	
+@Table(name = "SHOW_COLUMN_TRIGGER")
+public class ShowColumnTrigger  implements Serializable{
+
 	@Id
 	@GeneratedValue(generator = "systemUUID")
 	@GenericGenerator(name = "systemUUID", strategy = "org.hibernate.id.UUIDGenerator")// 采用uuid的主键生成策略
 	@Column(name = "ID")
 	private String id;
-	@Column(name="YEAR")
-	private int year;
 	@Column(name="NAME")
 	private String name;
-	@Column(name="TABLE_NAME")
-	private String tableName;
-	@Column(name="TABLE_CREATE_SQL")
-	private String tableCreateSQL;
-	
+	@Column(name="REMARK")
+	private String remark;
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public int getYear() {
-		return year;
-	}
-	public void setYear(int year) {
-		this.year = year;
 	}
 	public String getName() {
 		return name;
@@ -48,17 +37,11 @@ public class QuotaHistoryBackUp implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTableName() {
-		return tableName;
+	public String getRemark() {
+		return remark;
 	}
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-	public String getTableCreateSQL() {
-		return tableCreateSQL;
-	}
-	public void setTableCreateSQL(String tableCreateSQL) {
-		this.tableCreateSQL = tableCreateSQL;
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	
 }

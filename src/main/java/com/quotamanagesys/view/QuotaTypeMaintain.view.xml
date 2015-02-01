@@ -106,7 +106,8 @@
   <View>
     <DataSet id="dsQuotaType">
       <Property name="dataType">[QuotaType]</Property>
-      <Property name="dataProvider">quotaTypeDao#getAll</Property>
+      <Property name="dataProvider">quotaTypeDao#getQuotaTypesWithPage</Property>
+      <Property name="pageSize">50</Property>
     </DataSet>
     <DataSet id="dsQuotaProfession">
       <Property name="dataType">[QuotaProfession]</Property>
@@ -162,7 +163,7 @@ switch(arg.code){&#xD;
 	}&#xD;
 }</ClientEvent>
         <Property name="dataSet">dsQuotaType</Property>
-        <Property name="itemCodes">pages,+,-,x</Property>
+        <Property name="itemCodes">pages,pageSize,+,-,x</Property>
       </DataPilot>
       <Separator/>
       <ToolBarButton>
@@ -188,6 +189,9 @@ if(datas.current){&#xD;
       <Property name="readOnly">true</Property>
       <Property name="stretchColumnsMode">off</Property>
       <Property name="dynaRowHeight">true</Property>
+      <Property name="scrollMode">lazyRender</Property>
+      <Property name="filterMode">serverSide</Property>
+      <RowNumColumn/>
       <IndicatorColumn/>
       <RowSelectorColumn/>
       <DataColumn name="id">
@@ -197,20 +201,21 @@ if(datas.current){&#xD;
       <DataColumn name="quotaTypeName">
         <Property name="property">name</Property>
         <Property name="caption">指标种类名称</Property>
-        <Property name="width">300</Property>
+        <Property name="width">160</Property>
         <Property name="wrappable">true</Property>
       </DataColumn>
       <DataColumn name="quotaProfession">
         <Property name="property">quotaProfession</Property>
         <Property name="trigger">dsddQuotaProfession</Property>
         <Property name="visible">false</Property>
+        <Property name="width">100</Property>
       </DataColumn>
       <DataColumn>
         <Property name="property">quotaProfession.name</Property>
         <Property name="name">professionName</Property>
         <Property name="readOnly">true</Property>
-        <Property name="caption">指标专业</Property>
-        <Property name="width">120</Property>
+        <Property name="caption">专业</Property>
+        <Property name="width">70</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
@@ -218,13 +223,14 @@ if(datas.current){&#xD;
         <Property name="property">quotaLevel</Property>
         <Property name="trigger">dsddQuotaLevel</Property>
         <Property name="visible">false</Property>
+        <Property name="width">60</Property>
       </DataColumn>
       <DataColumn>
         <Property name="name">levelName</Property>
         <Property name="property">quotaLevel.name</Property>
         <Property name="readOnly">true</Property>
-        <Property name="caption">指标级别</Property>
-        <Property name="width">120</Property>
+        <Property name="caption">级别</Property>
+        <Property name="width">60</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
@@ -239,8 +245,9 @@ if(datas.current){&#xD;
         <Property name="name">dimensionName</Property>
         <Property name="property">quotaDimension.name</Property>
         <Property name="readOnly">true</Property>
-        <Property name="width">120</Property>
-        <Property name="caption">指标维度</Property>
+        <Property name="width">60</Property>
+        <Property name="caption">维度</Property>
+        <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
       <DataColumn name="quotaUnit">
@@ -253,14 +260,14 @@ if(datas.current){&#xD;
         <Property name="property">quotaUnit.name</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">计量单位</Property>
-        <Property name="width">90</Property>
+        <Property name="width">50</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
       <DataColumn name="digit">
         <Property name="property">digit</Property>
         <Property name="caption">小数位数</Property>
-        <Property name="width">90</Property>
+        <Property name="width">60</Property>
         <Property name="align">center</Property>
         <Editor>
           <NumberSpinner/>
@@ -269,8 +276,8 @@ if(datas.current){&#xD;
       <DataColumn name="rate">
         <Property name="property">rate</Property>
         <Property name="trigger">lddRate</Property>
-        <Property name="caption">考核频率</Property>
-        <Property name="width">90</Property>
+        <Property name="caption">频率</Property>
+        <Property name="width">50</Property>
         <Property name="align">center</Property>
       </DataColumn>
       <DataColumn name="manageDept">
@@ -283,14 +290,14 @@ if(datas.current){&#xD;
         <Property name="property">manageDept.name</Property>
         <Property name="readOnly">true</Property>
         <Property name="caption">管理部门</Property>
-        <Property name="width">120</Property>
+        <Property name="width">60</Property>
         <Property name="align">center</Property>
         <Editor/>
       </DataColumn>
       <DataColumn name="inUsed">
         <Property name="property">inUsed</Property>
-        <Property name="caption">是否在用</Property>
-        <Property name="width">90</Property>
+        <Property name="caption">在用</Property>
+        <Property name="width">50</Property>
         <Property name="align">center</Property>
       </DataColumn>
     </DataGrid>
@@ -472,9 +479,10 @@ dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,funct
       <Property name="template">dgQuotaType</Property>
       <Property name="showTitle">false</Property>
       <Property name="rowSpace">1</Property>
-      <Property name="dataScope">currentPage</Property>
+      <Property name="dataScope">serverAll</Property>
       <Property name="userData"></Property>
       <Property name="extension">xlsx</Property>
+      <Property name="maxSize">10000</Property>
     </Export2ReportAction>
   </View>
 </ViewConfig>

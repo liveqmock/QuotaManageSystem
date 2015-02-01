@@ -22,6 +22,8 @@ import com.bstek.dorado.annotation.DataResolver;
 import com.bstek.dorado.annotation.Expose;
 import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
+import com.bstek.dorado.data.provider.Criteria;
+import com.bstek.dorado.data.provider.Page;
 import com.quotamanagesys.interceptor.CalculateCore;
 import com.quotamanagesys.interceptor.ResultTableCreator;
 import com.quotamanagesys.model.FormulaParameter;
@@ -33,6 +35,7 @@ import com.quotamanagesys.model.QuotaPropertyValue;
 import com.quotamanagesys.model.QuotaTargetValue;
 import com.quotamanagesys.model.QuotaType;
 import com.quotamanagesys.model.QuotaTypeFormulaLink;
+import com.quotamanagesys.tools.CriteriaConvertCore;
 
 @Component
 public class QuotaPropertyValueDao extends HibernateDao {
@@ -47,6 +50,8 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	ResultTableCreator resultTableCreator;
 	@Resource
 	QuotaTargetValueDao quotaTargetValueDao;
+	@Resource
+	CriteriaConvertCore criteriaConvertCore;
 	
 	@DataProvider
 	public Collection<QuotaPropertyValue> getAll(){
@@ -57,12 +62,26 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	
 	@DataProvider
 	public Collection<QuotaPropertyValue> getQuotaPropertyValuesByManageDept(String manageDeptId) throws Exception{
-		Collection<QuotaItemCreator> quotaItemCreators=quotaItemCreatorDao.getQuotaItemCreatorsByManageDept(manageDeptId);
-		Collection<QuotaPropertyValue> quotaPropertyValues=new ArrayList<QuotaPropertyValue>();
-		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
-			quotaPropertyValues.addAll(getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId()));
-		}
+		String hqlString="from "+QuotaPropertyValue.class.getName()+" where quotaItemCreator.quotaType.manageDept.id='"+manageDeptId+"'";
+		Collection<QuotaPropertyValue> quotaPropertyValues=this.query(hqlString);
 		return quotaPropertyValues;
+	}
+	
+	//分页方式查询
+	@DataProvider
+	public void getQuotaPropertyValuesByManageDeptWithPage(Page<QuotaPropertyValue> page,Criteria criteria,String manageDeptId) throws Exception{
+		if (manageDeptId!=null) {
+			String filterString=criteriaConvertCore.convertToSQLString(criteria);
+			if (!filterString.equals("")) {
+				filterString=" and ("+filterString+")";
+			}
+			
+			String hqlString="from "+QuotaPropertyValue.class.getName()+" where quotaItemCreator.quotaType.manageDept.id='"+manageDeptId+"'"
+			+filterString;
+			this.pagingQuery(page, hqlString, "select count(*)" + hqlString);
+		} else {
+			System.out.print("参数为空");
+		}
 	}
 	
 	@DataProvider
@@ -90,12 +109,26 @@ public class QuotaPropertyValueDao extends HibernateDao {
 		return quotaPropertyValues;
 	}
 	
+	//获取quotaitem的年度目标值
+	@DataProvider
+	public Collection<QuotaPropertyValue> getQuotaPropertyValuesByQuotaItem(String quotaItemId){
+		if (quotaItemId==null) {
+			return null;
+		} else {
+			QuotaItem quotaItem=quotaItemDao.getQuotaItem(quotaItemId);
+			String quotaItemCreatorId=quotaItem.getQuotaItemCreator().getId();
+			String hqlString="from "+QuotaPropertyValue.class.getName()+" where quotaItemCreator.id='"+quotaItemCreatorId+"' order by quotaProperty.name asc";
+			Collection<QuotaPropertyValue> quotaPropertyValues=this.query(hqlString);
+			return quotaPropertyValues;
+		}
+	}
+	
 	@DataResolver
 	public void saveQuotaPropertyValues(Collection<QuotaPropertyValue> quotaPropertyValues,String quotaItemCreatorId){
 		Session session=this.getSessionFactory().openSession();
 		QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
 		boolean isFormulaLinkChange=false;
-		Collection<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
+		ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
 		
 		try {
 			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
@@ -106,27 +139,18 @@ public class QuotaPropertyValueDao extends HibernateDao {
 					session.flush();
 					session.clear();
 					isFormulaLinkChange=true;
+					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreatorId);
+					updateQuotaItems.addAll(quotaItems);
 				}else if (state.equals(EntityState.MODIFIED)) {
 					quotaPropertyValue.setQuotaItemCreator(quotaItemCreator);
 					session.merge(quotaPropertyValue);
 					session.flush();
 					session.clear();
 					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreatorId);
-					for (QuotaItem quotaItem : quotaItems) {
-						boolean isAdded=false;
-						for (QuotaItem updateItem : updateQuotaItems) {
-							if ((quotaItem.getId()).equals(updateItem.getId())) {
-								isAdded=true;
-								break;
-							}
-						}
-						if (isAdded==false) {
-							updateQuotaItems.add(quotaItem);
-						}
-					}
+					updateQuotaItems.addAll(quotaItems);
 				}else if (state.equals(EntityState.DELETED)) {
 					QuotaProperty quotaProperty=quotaPropertyValue.getQuotaProperty();
-					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreatorId);
 					if (quotaItems.size()>0) {
 						//删除具体指标相关的月度目标值
 						for (QuotaItem quotaItem : quotaItems) {
@@ -136,17 +160,26 @@ public class QuotaPropertyValueDao extends HibernateDao {
 							quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
 						}
 					}
-
 					quotaPropertyValue.setQuotaItemCreator(null);
 					quotaPropertyValue.setQuotaProperty(null);
 					session.delete(quotaPropertyValue);
 					session.flush();
 					session.clear();
 					isFormulaLinkChange=true;
+					updateQuotaItems.addAll(quotaItems);
 				}
 			}
 
+			for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+			    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+			      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+			    	  updateQuotaItems.remove(j);  
+			      }   
+			    }   
+			}
+			
 			calculateCore.calculate(updateQuotaItems);
+			quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
 			resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 			
 			//属性值做增删变动时，会重新更新该指标的公式关联
@@ -164,6 +197,7 @@ public class QuotaPropertyValueDao extends HibernateDao {
 	@DataResolver
 	public void deleteQuotaPropertyValues(Collection<QuotaPropertyValue> quotaPropertyValues){
 		Session session=this.getSessionFactory().openSession();
+		ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
 		try {
 			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
 				QuotaItemCreator quotaItemCreator=quotaPropertyValue.getQuotaItemCreator();
@@ -178,13 +212,25 @@ public class QuotaPropertyValueDao extends HibernateDao {
 						quotaTargetValueDao.deleteQuotaTargetValues(quotaTargetValues);
 					}
 				}
-
 				quotaPropertyValue.setQuotaItemCreator(null);
 				quotaPropertyValue.setQuotaProperty(null);
 				session.delete(quotaPropertyValue);
 				session.flush();
 				session.clear();
+				updateQuotaItems.addAll(quotaItems);
 			}
+			
+			for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+			    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+			      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+			    	  updateQuotaItems.remove(j);  
+			      }   
+			    }   
+			}
+			
+			calculateCore.calculate(updateQuotaItems);
+			quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
+			resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 		} catch (Exception e) {
 			System.out.print(e.toString());
 		}finally{

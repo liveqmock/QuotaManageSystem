@@ -35,7 +35,7 @@ import com.bstek.dorado.data.entity.EntityState;
 import com.bstek.dorado.data.entity.EntityUtils;
 import com.bstek.dorado.data.provider.Criteria;
 import com.bstek.dorado.data.provider.Page;
-import com.bstek.uflo.process.assign.PageQuery;
+import com.quotamanagesys.interceptor.ResultTableCreator;
 import com.quotamanagesys.model.FormulaParameter;
 import com.quotamanagesys.model.QuotaCover;
 import com.quotamanagesys.model.QuotaFormula;
@@ -46,6 +46,7 @@ import com.quotamanagesys.model.QuotaPropertyValue;
 import com.quotamanagesys.model.QuotaTargetValue;
 import com.quotamanagesys.model.QuotaType;
 import com.quotamanagesys.model.QuotaTypeFormulaLink;
+import com.quotamanagesys.tools.CriteriaConvertCore;
 
 @Component
 public class QuotaItemCreatorDao extends HibernateDao {
@@ -66,6 +67,10 @@ public class QuotaItemCreatorDao extends HibernateDao {
 	QuotaTypeFormulaLinkDao quotaTypeFormulaLinkDao;
 	@Resource
 	DepartmentDao departmentDao;
+	@Resource
+	ResultTableCreator resultTableCreator;
+	@Resource
+	CriteriaConvertCore criteriaConvertCore;
 
 	@DataProvider
 	public Collection<QuotaItemCreator> getAll() {
@@ -106,15 +111,24 @@ public class QuotaItemCreatorDao extends HibernateDao {
 	}
 
 	@DataProvider
+	public Collection<QuotaItemCreator> getQuotaItemCreatorsByDutyDept(String dutyDeptId){
+		String hqlString = "from " + QuotaItemCreator.class.getName()
+				+ " where quotaDutyDept.id='" + dutyDeptId + "'"
+				+" order by quotaType.quotaLevel.level asc,quotaType.name asc,quotaCover.sort asc";
+		Collection<QuotaItemCreator> quotaItemCreators = this.query(hqlString);
+		return quotaItemCreators;
+	}
+	
+	@DataProvider
 	public Collection<QuotaItemCreator> getQuotaItemCreatorsByManageDept(
 			String manageDeptId) throws Exception {
 		String hqlString = "from " + QuotaItemCreator.class.getName()
 				+ " where quotaType.manageDept.id='" + manageDeptId + "'"
 				+" order by quotaType.quotaLevel.level asc,quotaType.name asc,quotaCover.sort asc";
 		Collection<QuotaItemCreator> quotaItemCreators = this.query(hqlString);
+		/*
 		List<QuotaItemCreator> results = new ArrayList<QuotaItemCreator>();
 		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
-			/*
 			Collection<QuotaPropertyValue> quotaPropertyValues = quotaPropertyValueDao
 					.getQuotaPropertyValuesByQuotaItemCreator(quotaItemCreator.getId());
 			String quotaPropertiesNames = "";
@@ -125,17 +139,34 @@ public class QuotaItemCreatorDao extends HibernateDao {
 					quotaPropertiesNames = quotaPropertiesNames + ","+ quotaPropertyValue.getQuotaProperty().getName();
 				}
 			}
-			*/
 			results.add(quotaItemCreator);
-			/*
 			QuotaItemCreator targetQuotaItemCreator = EntityUtils
 					.toEntity(quotaItemCreator);
 			EntityUtils.setValue(targetQuotaItemCreator,
 					"quotaPropertiesNames", quotaPropertiesNames);
 			results.add(targetQuotaItemCreator);
-			*/
 		}
 		return results;
+		*/
+		return quotaItemCreators;
+	}
+	
+	//分页方式查询
+	@DataProvider
+	public void getQuotaItemCreatorsByManageDeptWithPage(Page<QuotaItemCreator> page,Criteria criteria,String manageDeptId) throws Exception{
+		if (manageDeptId!=null) {
+			String filterString=criteriaConvertCore.convertToSQLString(criteria);
+			if (!filterString.equals("")) {
+				filterString=" and ("+filterString+")";
+			}
+			
+			String hqlString = "from " + QuotaItemCreator.class.getName()
+					+ " where quotaType.manageDept.id='" + manageDeptId + "'"+filterString
+					+" order by quotaType.quotaLevel.level asc,quotaType.name asc,quotaCover.sort asc";
+			this.pagingQuery(page, hqlString, "select count(*)" + hqlString);
+		} else {
+			System.out.print("参数为空");
+		}
 	}
 	
 	/*
@@ -324,16 +355,19 @@ public class QuotaItemCreatorDao extends HibernateDao {
 		int year=calendar.get(Calendar.YEAR);
 		int month=calendar.get(Calendar.MONTH)+1;//calendar的真实月份需要+1,因为calendar的月份从0开始
 		
-		Session session=this.getSessionFactory().openSession();
-		try {
-			for (QuotaType quotaTypeInUsed : quotaTypesInUsed) {
-				createQuotaItemCreator(quotaTypeInUsed,topQuotaCover,quotaTypeInUsed.getManageDept(),year,session);
+		//当年从2月开始，才可执行上一年度指标建立操作
+		if (month>1) {
+			Session session=this.getSessionFactory().openSession();
+			try {
+				for (QuotaType quotaTypeInUsed : quotaTypesInUsed) {
+					createQuotaItemCreator(quotaTypeInUsed,topQuotaCover,quotaTypeInUsed.getManageDept(),year,session);
+				}
+			} catch (Exception e) {
+				System.out.print(e.toString());
+			}finally{
+				session.flush();
+				session.close();
 			}
-		} catch (Exception e) {
-			System.out.print(e.toString());
-		}finally{
-			session.flush();
-			session.close();
 		}
 	}
 	
@@ -401,6 +435,8 @@ public class QuotaItemCreatorDao extends HibernateDao {
 						QuotaItem quotaItem = new QuotaItem();
 						quotaItem.setYear(quotaItemCreator.getYear());
 						quotaItem.setQuotaItemCreator(quotaItemCreator);
+						quotaItem.setOverTime(false);
+						quotaItem.setAllowSubmit(false);
 						session.save(quotaItem);
 						session.flush();
 						session.clear();
@@ -414,6 +450,8 @@ public class QuotaItemCreatorDao extends HibernateDao {
 							quotaItem.setYear(quotaItemCreator.getYear());
 							quotaItem.setMonth(i);
 							quotaItem.setQuotaItemCreator(quotaItemCreator);
+							quotaItem.setOverTime(false);
+							quotaItem.setAllowSubmit(false);
 							session.save(quotaItem);
 							session.flush();
 							session.clear();
@@ -510,6 +548,10 @@ public class QuotaItemCreatorDao extends HibernateDao {
 					thisQuotaItemCreator.setQuotaDutyDept(departmentDao.getDept(quotaItemCreator.getQuotaDutyDept().getId()));
 					thisQuotaItemCreator.setYear(quotaItemCreator.getYear());
 					session.merge(thisQuotaItemCreator);
+					session.flush();
+					
+					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+					resultTableCreator.createOrUpdateResultTable(quotaItems);
 				} else if (state.equals(EntityState.DELETED)) {
 					QuotaItemCreator thisQuotaItemCreator=getQuotaItemCreator(quotaItemCreator.getId());
 					if (thisQuotaItemCreator!=null) {
@@ -551,14 +593,29 @@ public class QuotaItemCreatorDao extends HibernateDao {
 					Session session=this.getSessionFactory().openSession();
 					try {
 						for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
-							//级联删除QuotaItem
-							Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
-							quotaItemDao.deleteQuotaItems(quotaItems);
-							
+							//QuotaItemCreator设置year为当前年度
 							quotaItemCreator.setYear(year);
 							session.merge(quotaItemCreator);
 							session.flush();
 							session.clear();
+							
+							//QuotaItem设置year为当前年度
+							Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+							for (QuotaItem quotaItem : quotaItems) {
+								quotaItem.setYear(year);
+								quotaItem.setFinishValue(null);
+								quotaItem.setAccumulateValue(null);
+								quotaItem.setSameTermValue(null);
+								quotaItem.setSameTermAccumulateValue(null);
+								quotaItem.setFirstSubmitTime(null);
+								quotaItem.setLastSubmitTime(null);
+								quotaItem.setRedLightReason(null);
+								quotaItem.setOverTime(false);
+								quotaItem.setAllowSubmit(false);
+								session.merge(quotaItem);
+								session.flush();
+								session.clear();
+							}
 						}
 					} catch (Exception e) {
 						System.out.print(e.toString());
@@ -608,18 +665,6 @@ public class QuotaItemCreatorDao extends HibernateDao {
 		session.clear();
 	}
 	
-	//非级联删除指标生成器
-	@DataResolver
-	public void deleteQuotaItemCreatorWithoutCasecade(QuotaItemCreator quotaItemCreator,Session session){
-		quotaItemCreator.setQuotaCover(null);
-		quotaItemCreator.setQuotaDutyDept(null);
-		quotaItemCreator.setQuotaType(null);
-		quotaItemCreator.setQuotaFormulas(null);
-		session.delete(quotaItemCreator);
-		session.flush();
-		session.clear();
-	}
-	
 	//清除上年度指标生成器（只允许管理员清理）
 	@Expose
 	public void clearQuotaItemCreatorsLastYear(){
@@ -643,13 +688,6 @@ public class QuotaItemCreatorDao extends HibernateDao {
 				System.out.print("非管理员权限不得执行此操作");
 			}
 		}
-	}
-	
-	//清除指标生成器（按指标归口管理部门）
-	@Expose
-	public void clearQuotaItemCreatorsByManageDept(String manageDeptId) throws Exception{		
-		Collection<QuotaItemCreator> quotaItemCreators=getQuotaItemCreatorsByManageDept(manageDeptId);
-		deleteQuotaItemCreators(quotaItemCreators);
 	}
 	
 	//通过指标种类将公式关联到具体指标生成器
@@ -720,6 +758,68 @@ public class QuotaItemCreatorDao extends HibernateDao {
 			}
 		}
 		return deptsNotFinishInitQuotaItemCreators;
+	}
+	
+	//获取未关联公式的指标生成器
+	@DataProvider
+	public Collection<QuotaItemCreator> getQuotaItemCreatorsWithoutFormulas(){
+		Collection<QuotaItemCreator> quotaItemCreatorsWithoutFormulas=new ArrayList<QuotaItemCreator>();
+		Collection<QuotaItemCreator> quotaItemCreators=getAll();
+		for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+			if (quotaItemCreator.getQuotaFormulas().size()==0) {
+				quotaItemCreatorsWithoutFormulas.add(quotaItemCreator);
+			}
+		}
+		return quotaItemCreatorsWithoutFormulas;
+	}
+	
+	//将指标生成器名称更改为与指标种类名称一致
+	@Expose
+	public void repairQuotaItemCreatorsNames(){
+		Session session=this.getSessionFactory().openSession();
+		try {
+			Collection<QuotaItemCreator> quotaItemCreators=getAll();
+			for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+				if (quotaItemCreator.getName().equals(quotaItemCreator.getQuotaType().getName())) {
+					continue;
+				} else {
+					quotaItemCreator.setName(quotaItemCreator.getQuotaType().getName());
+					session.merge(quotaItemCreator);
+					session.flush();
+				}
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}
+		
+	}
+	
+	//如果指标生成器口径为全口径、母公司、县公司，则责任部门=管理部门（临时方法，以后完善代码后撤销）
+	@Expose
+	public void repairQuotaItemDutyDept(){
+		Session session=this.getSessionFactory().openSession();
+		try {
+			String hqlString="from "+QuotaItemCreator.class.getName()+" where quotaCover.name='母公司' or quotaCover.name='县公司'";
+			Collection<QuotaItemCreator> quotaItemCreators=this.query(hqlString);
+			
+			for (QuotaItemCreator quotaItemCreator : quotaItemCreators) {
+				QuotaItemCreator thisQuotaItemCreator=getQuotaItemCreator(quotaItemCreator.getId());
+				thisQuotaItemCreator.setQuotaDutyDept(quotaItemCreator.getQuotaType().getManageDept());
+				session.merge(thisQuotaItemCreator);
+				session.flush();
+				
+				Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaItemCreator.getId());
+				resultTableCreator.createOrUpdateResultTable(quotaItems);
+			}
+		} catch (Exception e) {
+			System.out.print(e.toString());
+		}finally{
+			session.flush();
+			session.close();
+		}
 	}
 	
 	@DataResolver
