@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig listener="spring:resultGridCreator#ViewConfigInit">
+  <Context>
+    <Attribute name="month"/>
+    <Attribute name="year"/>
+    <Attribute name="viewscope"/>
+  </Context>
+  <Model>
+    <DataType listener="spring:resultGridCreator#initQuotaItemStatus" name="QuotaItemStatus"/>
+    <DataType name="DropDownType">
+      <PropertyDef name="value">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <Property name="cache">
+      <Property name="mode">clientSide</Property>
+    </Property>
+    <DataSet id="dsQuotaItemStatus">
+      <Property name="dataType">[QuotaItemStatus]</Property>
+      <Property name="dataProvider">resultGridCreator#getQuotaItemStatusRecord</Property>
+      <Property name="cacheable">false</Property>
+      <Property name="pageSize">50</Property>
+      <Property name="loadMode">lazy</Property>
+    </DataSet>
+    <DataSet id="dsQuotaCover">
+      <ClientEvent name="beforeLoadData">self.set(&quot;parameter&quot;,{columnName:&quot;口径&quot;});</ClientEvent>
+      <Property name="dataProvider">dropDownDataCreator#getDropDownData</Property>
+      <Property name="dataType">[DropDownType]</Property>
+    </DataSet>
+    <DataSet id="dsQuotaLevel">
+      <ClientEvent name="beforeLoadData">self.set(&quot;parameter&quot;,{columnName:&quot;指标级别&quot;});</ClientEvent>
+      <Property name="dataType">[DropDownType]</Property>
+      <Property name="dataProvider">dropDownDataCreator#getDropDownData</Property>
+    </DataSet>
+    <DataSet id="dsQuotaDimension">
+      <ClientEvent name="beforeLoadData">self.set(&quot;parameter&quot;,{columnName:&quot;维度&quot;});</ClientEvent>
+      <Property name="dataType">[DropDownType]</Property>
+      <Property name="dataProvider">dropDownDataCreator#getDropDownData</Property>
+    </DataSet>
+    <DataSet id="dsManageDept">
+      <ClientEvent name="beforeLoadData">self.set(&quot;parameter&quot;,{columnName:&quot;管理部门&quot;});</ClientEvent>
+      <Property name="dataType">[DropDownType]</Property>
+      <Property name="dataProvider">dropDownDataCreator#getDropDownData</Property>
+    </DataSet>
+    <DataSet id="dsDutyDept">
+      <ClientEvent name="beforeLoadData">self.set(&quot;parameter&quot;,{columnName:&quot;责任部门&quot;});</ClientEvent>
+      <Property name="dataType">[DropDownType]</Property>
+      <Property name="dataProvider">dropDownDataCreator#getDropDownData</Property>
+    </DataSet>
+    <ToolBar>
+      <Property name="fixRight">true</Property>
+      <Separator/>
+      <ToolBarLabel>
+        <Property name="text">年度</Property>
+      </ToolBarLabel>
+      <TextEditor id="teYear">
+        <ClientEvent name="onReady">var date=new Date();&#xD;
+var year;&#xD;
+var month=date.getMonth();&#xD;
+&#xD;
+var Sys = {};&#xD;
+var ua = navigator.userAgent.toLowerCase();&#xD;
+window.ActiveXObject ? Sys.ie = ua.match(/msie ([\d.]+)/)[1] :&#xD;
+document.getBoxObjectFor ? Sys.firefox = ua.match(/firefox\/([\d.]+)/)[1] :&#xD;
+window.MessageEvent &amp;&amp; !document.getBoxObjectFor ? Sys.chrome = ua.match(/chrome\/([\d.]+)/)[1] :&#xD;
+window.opera ? Sys.opera = ua.match(/opera.([\d.]+)/)[1] :&#xD;
+window.openDatabase ? Sys.safari = ua.match(/version\/([\d.]+)/)[1] : 0;&#xD;
+&#xD;
+//以下进行测试&#xD;
+if(Sys.ie){&#xD;
+	year=(date.getYear());&#xD;
+}else if(Sys.chrome){&#xD;
+	year=(date.getYear())+1900;&#xD;
+}&#xD;
+&#xD;
+if(month==0){&#xD;
+	year=year-1;&#xD;
+}&#xD;
+self.set(&quot;text&quot;,year);&#xD;
+view.set(&quot;context.year&quot;,year);</ClientEvent>
+        <Property name="trigger">yddYear</Property>
+        <Property name="width">70</Property>
+      </TextEditor>
+      <ToolBarLabel>
+        <Property name="text">月度</Property>
+      </ToolBarLabel>
+      <TextEditor id="teMonth">
+        <ClientEvent name="onReady">var date=new Date();&#xD;
+var year;&#xD;
+var month=date.getMonth();&#xD;
+&#xD;
+if(month==0){&#xD;
+	month=12;&#xD;
+}&#xD;
+self.set(&quot;text&quot;,month);&#xD;
+view.set(&quot;context.month&quot;,month);</ClientEvent>
+        <Property name="trigger">lddMonth</Property>
+        <Property name="width">70</Property>
+      </TextEditor>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var teYear=view.get(&quot;#teYear&quot;);&#xD;
+var year=parseInt(teYear.get(&quot;text&quot;));&#xD;
+var teMonth=view.get(&quot;#teMonth&quot;);&#xD;
+var month=teMonth.get(&quot;text&quot;);&#xD;
+switch(month){&#xD;
+	case &quot;月度&quot;:&#xD;
+		month=13;&#xD;
+		break;&#xD;
+	case &quot;年度&quot;:&#xD;
+		month=14;&#xD;
+		break;&#xD;
+	case &quot;全部&quot;:&#xD;
+		month=15;&#xD;
+		break;&#xD;
+	default:&#xD;
+		month=parseInt(teMonth.get(&quot;text&quot;));&#xD;
+		break;&#xD;
+}&#xD;
+&#xD;
+view.set(&quot;context.year&quot;,year);&#xD;
+view.set(&quot;context.month&quot;,month);&#xD;
+view.set(&quot;context.viewscope&quot;,&quot;can&quot;);&#xD;
+&#xD;
+var dsQuotaItemStatus=view.get(&quot;#dsQuotaItemStatus&quot;);&#xD;
+dsQuotaItemStatus.flushAsync();&#xD;
+&#xD;
+//刷新下拉列表的数据&#xD;
+var dsQuotaCover=view.get(&quot;#dsQuotaCover&quot;);&#xD;
+dsQuotaCover.set(&quot;parameter&quot;,{columnName:&quot;口径&quot;}).flushAsync();&#xD;
+var dsQuotaLevel=view.get(&quot;#dsQuotaLevel&quot;);&#xD;
+dsQuotaLevel.set(&quot;parameter&quot;,{columnName:&quot;指标级别&quot;}).flushAsync();&#xD;
+var dsQuotaDimension=view.get(&quot;#dsQuotaDimension&quot;);&#xD;
+dsQuotaDimension.set(&quot;parameter&quot;,{columnName:&quot;维度&quot;}).flushAsync();&#xD;
+var dsManageDept=view.get(&quot;#dsManageDept&quot;);&#xD;
+dsManageDept.set(&quot;parameter&quot;,{columnName:&quot;管理部门&quot;}).flushAsync();&#xD;
+var dsDutyDept=view.get(&quot;#dsDutyDept&quot;);&#xD;
+dsDutyDept.set(&quot;parameter&quot;,{columnName:&quot;责任部门&quot;}).flushAsync();</ClientEvent>
+        <Property name="caption">可见指标</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -60px -100px</Property>
+      </ToolBarButton>
+      <ToolBarButton>
+        <ClientEvent name="onClick">var teYear=view.get(&quot;#teYear&quot;);&#xD;
+var year=parseInt(teYear.get(&quot;text&quot;));&#xD;
+var teMonth=view.get(&quot;#teMonth&quot;);&#xD;
+var month=teMonth.get(&quot;text&quot;);&#xD;
+switch(month){&#xD;
+	case &quot;月度&quot;:&#xD;
+		month=13;&#xD;
+		break;&#xD;
+	case &quot;年度&quot;:&#xD;
+		month=14;&#xD;
+		break;&#xD;
+	case &quot;全部&quot;:&#xD;
+		month=15;&#xD;
+		break;&#xD;
+	default:&#xD;
+		month=parseInt(teMonth.get(&quot;text&quot;));&#xD;
+		break;&#xD;
+}&#xD;
+&#xD;
+&#xD;
+view.set(&quot;context.year&quot;,year);&#xD;
+view.set(&quot;context.month&quot;,month);&#xD;
+view.set(&quot;context.viewscope&quot;,&quot;default&quot;);&#xD;
+&#xD;
+var dsQuotaItemStatus=view.get(&quot;#dsQuotaItemStatus&quot;);&#xD;
+dsQuotaItemStatus.flushAsync();&#xD;
+&#xD;
+//刷新下拉列表的数据&#xD;
+var dsQuotaCover=view.get(&quot;#dsQuotaCover&quot;);&#xD;
+dsQuotaCover.set(&quot;parameter&quot;,{columnName:&quot;口径&quot;}).flushAsync();&#xD;
+var dsQuotaLevel=view.get(&quot;#dsQuotaLevel&quot;);&#xD;
+dsQuotaLevel.set(&quot;parameter&quot;,{columnName:&quot;指标级别&quot;}).flushAsync();&#xD;
+var dsQuotaDimension=view.get(&quot;#dsQuotaDimension&quot;);&#xD;
+dsQuotaDimension.set(&quot;parameter&quot;,{columnName:&quot;维度&quot;}).flushAsync();&#xD;
+var dsManageDept=view.get(&quot;#dsManageDept&quot;);&#xD;
+dsManageDept.set(&quot;parameter&quot;,{columnName:&quot;管理部门&quot;}).flushAsync();&#xD;
+var dsDutyDept=view.get(&quot;#dsDutyDept&quot;);&#xD;
+dsDutyDept.set(&quot;parameter&quot;,{columnName:&quot;责任部门&quot;}).flushAsync();</ClientEvent>
+        <Property name="caption">默认指标</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -80px -100px</Property>
+      </ToolBarButton>
+      <Separator/>
+      <ToolBarButton>
+        <ClientEvent name="onClick">window.location.reload();</ClientEvent>
+        <Property name="caption">刷新页面</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -40px -240px</Property>
+      </ToolBarButton>
+      <MenuButton>
+        <Property name="caption">重置</Property>
+        <Property name="icon">url(>skin>common/icons.gif) -280px -220px</Property>
+        <MenuItem>
+          <ClientEvent name="onClick">var aaCalculateAll=view.get(&quot;#aaCalculateAll&quot;);&#xD;
+var aaCreateOrUpdateAll=view.get(&quot;#aaCreateOrUpdateAll&quot;);&#xD;
+&#xD;
+aaCalculateAll.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			aaCreateOrUpdateAll.execute({&#xD;
+				callback : function(success, obj){&#xD;
+					if (success) {&#xD;
+						&#xD;
+			        }&#xD;
+					else{alert(&quot;执行失败！发生异常：&quot; + obj);}&#xD;
+				}&#xD;
+			});&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">重置全部</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -280px -220px</Property>
+        </MenuItem>
+        <MenuItem>
+          <ClientEvent name="onClick">var aaCalculateAll=view.get(&quot;#aaCalculateAll&quot;);&#xD;
+&#xD;
+aaCalculateAll.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">重置计算结果</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -280px -220px</Property>
+        </MenuItem>
+        <MenuItem>
+          <ClientEvent name="onClick">var aaCreateOrUpdateAll=view.get(&quot;#aaCreateOrUpdateAll&quot;);&#xD;
+&#xD;
+aaCreateOrUpdateAll.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">重置数据表</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -280px -220px</Property>
+        </MenuItem>
+      </MenuButton>
+      <Fill/>
+      <DataPilot>
+        <Property name="itemCodes">pages,pageSize</Property>
+        <Property name="dataSet">dsQuotaItemStatus</Property>
+      </DataPilot>
+      <Separator/>
+    </ToolBar>
+    <DataGrid id="dgQuotaItemStatus" listener="spring:resultGridCreator#DataGridInit">
+      <Property name="readOnly">true</Property>
+      <Property name="supportsPaging">false</Property>
+      <Property name="showFilterBar">true</Property>
+      <Property name="scrollMode">lazyRender</Property>
+      <Property name="filterMode">serverSide</Property>
+    </DataGrid>
+    <AjaxAction id="aaCalculateAll">
+      <Property name="service">calculateCore#calculateAll</Property>
+      <Property name="executingMessage">正在生成计算结果...</Property>
+      <Property name="successMessage">计算完成！</Property>
+    </AjaxAction>
+    <AjaxAction id="aaCreateOrUpdateAll">
+      <Property name="service">resultTableCreator#createOrUpdateAll</Property>
+      <Property name="executingMessage">正在更新统计表...</Property>
+      <Property name="successMessage">更新完成！</Property>
+    </AjaxAction>
+    <YearDropDown id="yddYear"/>
+    <DataSetDropDown id="dsddQuotaCover">
+      <Property name="dataSet">dsQuotaCover</Property>
+      <Property name="property">value</Property>
+      <DataColumn>
+        <Property name="name">value</Property>
+        <Property name="property">value</Property>
+        <Property name="caption">口径</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddQuotaLevel">
+      <Property name="dataSet">dsQuotaLevel</Property>
+      <Property name="property">value</Property>
+      <DataColumn>
+        <Property name="name">value</Property>
+        <Property name="property">value</Property>
+        <Property name="caption">级别</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddQuotaDimension">
+      <Property name="dataSet">dsQuotaDimension</Property>
+      <Property name="property">value</Property>
+      <DataColumn>
+        <Property name="name">value</Property>
+        <Property name="property">value</Property>
+        <Property name="caption">维度</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddManageDept">
+      <Property name="dataSet">dsManageDept</Property>
+      <Property name="property">value</Property>
+      <DataColumn>
+        <Property name="name">value</Property>
+        <Property name="property">value</Property>
+        <Property name="caption">管理部门</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <DataSetDropDown id="dsddDutyDept">
+      <Property name="dataSet">dsDutyDept</Property>
+      <Property name="property">value</Property>
+      <DataColumn>
+        <Property name="name">value</Property>
+        <Property name="property">value</Property>
+        <Property name="caption">责任部门</Property>
+        <Editor/>
+      </DataColumn>
+    </DataSetDropDown>
+    <ListDropDown id="lddOverTime">
+      <Property name="items">
+        <Collection>
+          <Entity>
+            <Property name="label">超时</Property>
+            <Property name="key">true</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">未超时</Property>
+            <Property name="key">false</Property>
+          </Entity>
+        </Collection>
+      </Property>
+      <Property name="displayProperty">label</Property>
+      <Property name="property">key</Property>
+    </ListDropDown>
+    <ListDropDown id="lddLight">
+      <Property name="items">
+        <Collection>
+          <Entity>
+            <Property name="label">红灯</Property>
+            <Property name="key">0.0</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">绿灯</Property>
+            <Property name="key">1.0</Property>
+          </Entity>
+        </Collection>
+      </Property>
+      <Property name="displayProperty">label</Property>
+      <Property name="property">key</Property>
+    </ListDropDown>
+    <ListDropDown id="lddMonth">
+      <Property name="items">
+        <Collection>
+          <Entity>
+            <Property name="label">一月</Property>
+            <Property name="key">1</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">二月</Property>
+            <Property name="key">2</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">三月</Property>
+            <Property name="key">3</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">四月</Property>
+            <Property name="key">4</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">五月</Property>
+            <Property name="key">5</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">六月</Property>
+            <Property name="key">6</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">七月</Property>
+            <Property name="key">7</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">八月</Property>
+            <Property name="key">8</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">九月</Property>
+            <Property name="key">9</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">十月</Property>
+            <Property name="key">10</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">十一月</Property>
+            <Property name="key">11</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">十二月</Property>
+            <Property name="key">12</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">月度</Property>
+            <Property name="key">月度</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">年度</Property>
+            <Property name="key">年度</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">全部</Property>
+            <Property name="key">全部</Property>
+          </Entity>
+        </Collection>
+      </Property>
+      <Property name="property">key</Property>
+      <Property name="displayProperty">label</Property>
+    </ListDropDown>
+    <ListDropDown id="lddRate">
+      <Property name="items">
+        <Collection>
+          <Value>年</Value>
+          <Value>月</Value>
+        </Collection>
+      </Property>
+    </ListDropDown>
+    <ListDropDown id="lddSubmitStatus">
+      <Property name="items">
+        <Collection>
+          <Entity>
+            <Property name="label">已提交</Property>
+            <Property name="key">true</Property>
+          </Entity>
+          <Entity>
+            <Property name="label">未提交</Property>
+            <Property name="key">false</Property>
+          </Entity>
+        </Collection>
+      </Property>
+      <Property name="displayProperty">label</Property>
+      <Property name="property">key</Property>
+    </ListDropDown>
+  </View>
+</ViewConfig>

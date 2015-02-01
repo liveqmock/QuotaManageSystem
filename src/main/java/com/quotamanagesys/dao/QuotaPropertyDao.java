@@ -67,24 +67,28 @@ public class QuotaPropertyDao extends HibernateDao {
 	//下一级口径的指标属性只能是上级口径指标属性的子集
 	@DataProvider
 	public Collection<QuotaProperty> getQuotaPropertiesByQuotaItemCreator(String quotaItemCreatorId){
-		QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
-		QuotaCover quotaCover=quotaItemCreator.getQuotaCover();
-		QuotaType quotaType=quotaItemCreator.getQuotaType();
-		int year=quotaItemCreator.getYear();
-		if ((quotaCover.getFatherQuotaCover())==null) {
-			return getAll();
-		}else{
-			String hqlString="from "+QuotaItemCreator.class.getName()+" where year="+year
-					+" and quotaType.id='"+quotaType.getId()+"'"
-					+" and quotaCover.id='"+quotaCover.getFatherQuotaCover().getId()+"'";
-			List<QuotaItemCreator> quotaItemCreators=this.query(hqlString);
-			QuotaItemCreator fatherCoverQuotaItemCreator=quotaItemCreators.get(0);
-			ArrayList<QuotaProperty> quotaProperties=new ArrayList<QuotaProperty>();
-			Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(fatherCoverQuotaItemCreator.getId());
-			for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
-				quotaProperties.add(quotaPropertyValue.getQuotaProperty());
+		if (quotaItemCreatorId!=null) {
+			QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
+			QuotaCover quotaCover=quotaItemCreator.getQuotaCover();
+			QuotaType quotaType=quotaItemCreator.getQuotaType();
+			int year=quotaItemCreator.getYear();
+			if ((quotaCover.getFatherQuotaCover())==null) {
+				return getAll();
+			}else{
+				String hqlString="from "+QuotaItemCreator.class.getName()+" where year="+year
+						+" and quotaType.id='"+quotaType.getId()+"'"
+						+" and quotaCover.id='"+quotaCover.getFatherQuotaCover().getId()+"'";
+				List<QuotaItemCreator> quotaItemCreators=this.query(hqlString);
+				QuotaItemCreator fatherCoverQuotaItemCreator=quotaItemCreators.get(0);
+				ArrayList<QuotaProperty> quotaProperties=new ArrayList<QuotaProperty>();
+				Collection<QuotaPropertyValue> quotaPropertyValues=quotaPropertyValueDao.getQuotaPropertyValuesByQuotaItemCreator(fatherCoverQuotaItemCreator.getId());
+				for (QuotaPropertyValue quotaPropertyValue : quotaPropertyValues) {
+					quotaProperties.add(quotaPropertyValue.getQuotaProperty());
+				}
+				return quotaProperties;
 			}
-			return quotaProperties;
+		} else {
+			return null;
 		}
 	}
 

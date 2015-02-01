@@ -27,11 +27,17 @@
       <PropertyDef name="visible">
         <Property name="dataType">boolean</Property>
       </PropertyDef>
+      <PropertyDef name="align">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
       <PropertyDef name="sort">
         <Property name="dataType">int</Property>
       </PropertyDef>
       <PropertyDef name="render">
         <Property name="dataType">Render</Property>
+      </PropertyDef>
+      <PropertyDef name="showColumnTrigger">
+        <Property name="dataType">ShowColumnTrigger</Property>
       </PropertyDef>
     </DataType>
     <DataType name="ShowColumnGroup">
@@ -66,46 +72,104 @@
         <Property name="dataType">String</Property>
       </PropertyDef>
     </DataType>
+    <DataType name="ShowColumnTrigger">
+      <Property name="creationType">com.quotamanagesys.model.ShowColumnTrigger</Property>
+      <Property name="defaultDisplayProperty">remark</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="remark">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaItemViewTableManage">
+      <Property name="creationType">com.quotamanagesys.model.QuotaItemViewTableManage</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="tableName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="showName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="year">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+    </DataType>
   </Model>
   <View>
     <DataSet id="dsShowColumn">
       <Property name="dataType">[ShowColumn]</Property>
-      <Property name="dataProvider">showColumnDao#getAll</Property>
+      <Property name="dataProvider">showColumnDao#getShowColumnsByQuotaItemViewTableManage</Property>
     </DataSet>
     <DataSet id="dsRender">
       <Property name="dataType">[Render]</Property>
       <Property name="dataProvider">renderDao#getAll</Property>
     </DataSet>
+    <DataSet id="dsShowColumnTrigger">
+      <Property name="dataType">[ShowColumnTrigger]</Property>
+      <Property name="dataProvider">showColumnTriggerDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaItemViewTableManage">
+      <Property name="dataType">[QuotaItemViewTableManage]</Property>
+      <Property name="dataProvider">quotaItemViewTableManageDao#getAll</Property>
+    </DataSet>
     <Container>
-      <ToolBar>
-        <DataPilot>
-          <Property name="dataSet">dsShowColumn</Property>
-        </DataPilot>
-        <Separator/>
-        <ToolBarButton>
-          <ClientEvent name="onClick">var aaInitShowColumn=view.get(&quot;#aaInitShowColumn&quot;);&#xD;
+      <SplitPanel>
+        <Property name="position">180</Property>
+        <MainControl>
+          <Container>
+            <ToolBar>
+              <DataPilot>
+                <Property name="dataSet">dsShowColumn</Property>
+              </DataPilot>
+              <Separator/>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemViewTableManageId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var aaInitShowColumn=view.get(&quot;#aaInitShowColumn&quot;);&#xD;
 var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
 var dgShowColumn=view.get(&quot;#dgShowColumn&quot;);&#xD;
 &#xD;
+aaInitShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 aaInitShowColumn.execute({&#xD;
 	callback : function(success, obj){&#xD;
 		if (success) {&#xD;
+			dsShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 			dsShowColumn.flush();&#xD;
 			dgShowColumn.refresh();&#xD;
         }&#xD;
 		else{alert(&quot;抽取数据表字段失败！发生异常：&quot; + obj);}}&#xD;
 });</ClientEvent>
-          <Property name="icon">url(>skin>common/icons.gif) -280px -240px</Property>
-          <Property name="caption">抽取表格字段</Property>
-          <Property name="action">aaInitShowColumn</Property>
-        </ToolBarButton>
-        <ToolBarButton>
-          <ClientEvent name="onClick">var uaShowColumn=view.get(&quot;#uaShowColumn&quot;);&#xD;
+                <Property name="icon">url(>skin>common/icons.gif) -280px -240px</Property>
+                <Property name="caption">抽取表格字段</Property>
+                <Property name="action">aaInitShowColumn</Property>
+              </ToolBarButton>
+              <ToolBarButton>
+                <ClientEvent name="onClick">view.get(&quot;#dlgQuotaItemViewTableManage&quot;).show();</ClientEvent>
+                <Property name="caption">以复制的方式生成列配置</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -80px -60px</Property>
+              </ToolBarButton>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemViewTableManageId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var uaShowColumn=view.get(&quot;#uaShowColumn&quot;);&#xD;
 var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
 var dgShowColumn=view.get(&quot;#dgShowColumn&quot;);&#xD;
+&#xD;
+uaShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 uaShowColumn.execute({&#xD;
 	callback : function(success, obj){&#xD;
 		if (success) {&#xD;
+			dsShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 			dsShowColumn.flush();&#xD;
 			dgShowColumn.refresh();&#xD;
         }&#xD;
@@ -113,149 +177,287 @@ uaShowColumn.execute({&#xD;
 });&#xD;
 &#xD;
 </ClientEvent>
-          <Property name="caption">保存</Property>
-          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        </ToolBarButton>
-        <ToolBarButton>
-          <Property name="action">aa</Property>
-          <Property name="caption">导出</Property>
-        </ToolBarButton>
-      </ToolBar>
-      <DataGrid id="dgShowColumn">
-        <Property name="dataType">ShowColumn</Property>
-        <Property name="dataSet">dsShowColumn</Property>
-        <Property name="stretchColumnsMode">off</Property>
-        <Property name="dynaRowHeight">true</Property>
-        <IndicatorColumn/>
-        <RowNumColumn/>
-        <DataColumn name="id">
-          <Property name="property">id</Property>
-          <Property name="visible">false</Property>
-        </DataColumn>
-        <DataColumn name="name">
-          <Property name="property">name</Property>
-          <Property name="width">180</Property>
-          <Property name="wrappable">true</Property>
-          <Property name="readOnly">true</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">列名</Property>
-        </DataColumn>
-        <DataColumn name="alias">
-          <Property name="property">alias</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">别名</Property>
-          <Property name="width">180</Property>
-          <Property name="wrappable">true</Property>
-        </DataColumn>
-        <DataColumn name="showColumnGroup">
-          <Property name="property">showColumnGroup</Property>
-          <Property name="width">160</Property>
-          <Property name="align">center</Property>
-          <Property name="readOnly">true</Property>
-          <Property name="visible">false</Property>
-        </DataColumn>
-        <DataColumn>
-          <Property name="property">showColumnGroup.name</Property>
-          <Property name="name">showColumnGroupName</Property>
-          <Property name="width">160</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">所属分组</Property>
-          <Property name="readOnly">true</Property>
-          <Editor/>
-        </DataColumn>
-        <DataColumn name="width">
-          <Property name="property">width</Property>
-          <Property name="width">90</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">列宽度</Property>
-          <Editor>
-            <NumberSpinner>
-              <Property name="min">70</Property>
-              <Property name="max">500</Property>
-            </NumberSpinner>
-          </Editor>
-        </DataColumn>
-        <DataColumn>
-          <Property name="property">wrappable</Property>
-          <Property name="width">70</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">自动换行</Property>
-          <Property name="name">wrappable</Property>
-        </DataColumn>
-        <DataColumn>
-          <Property name="property">visible</Property>
-          <Property name="width">80</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">是否可见</Property>
-          <Property name="name">visible</Property>
-        </DataColumn>
-        <DataColumn name="sort">
-          <Property name="property">sort</Property>
-          <Property name="width">80</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">序号</Property>
-          <Editor>
-            <NumberSpinner>
-              <Property name="min">1</Property>
-              <Property name="max">100</Property>
-            </NumberSpinner>
-          </Editor>
-        </DataColumn>
-        <DataColumn>
-          <Property name="property">render</Property>
-          <Property name="caption">渲染器</Property>
-          <Property name="align">center</Property>
-          <Property name="name">render</Property>
-          <Property name="trigger">dsddRender</Property>
-          <Property name="width">200</Property>
-          <Property name="wrappable">true</Property>
-          <Editor/>
-        </DataColumn>
-      </DataGrid>
-      <AjaxAction id="aaInitShowColumn">
-        <Property name="executingMessage">正在获取数据表字段...</Property>
-        <Property name="successMessage">获取完毕！</Property>
-        <Property name="service">showColumnDao#initShowColumnsFromTable</Property>
-      </AjaxAction>
-      <UpdateAction id="uaShowColumn">
-        <Property name="dataResolver">showColumnDao#updateShowColumns</Property>
-        <Property name="executingMessage">正在保存...</Property>
-        <Property name="successMessage">保存成功！</Property>
-        <UpdateItem>
-          <Property name="dataSet">dsShowColumn</Property>
-        </UpdateItem>
-      </UpdateAction>
-      <DataSetDropDown id="dsddRender">
-        <Property name="dataSet">dsRender</Property>
-        <Property name="displayProperty">name</Property>
-        <Property name="width">500</Property>
-        <DataColumn>
-          <Property name="name">renderName</Property>
-          <Property name="property">name</Property>
-          <Property name="readOnly">true</Property>
-          <Property name="caption">渲染器名称</Property>
-          <Property name="width">200</Property>
-          <Editor/>
-        </DataColumn>
-        <DataColumn>
-          <Property name="name">renderType</Property>
-          <Property name="caption">渲染器类型</Property>
-          <Property name="readOnly">true</Property>
-          <Property name="property">type</Property>
-          <Property name="width">90</Property>
-          <Editor/>
-        </DataColumn>
-        <DataColumn>
-          <Property name="caption">备注</Property>
-          <Property name="property">remark</Property>
-          <Property name="name">renderRemark</Property>
-          <Property name="width">200</Property>
-          <Editor/>
-        </DataColumn>
-      </DataSetDropDown>
-      <Export2ReportAction id="aa">
-        <Property name="template">dgShowColumn</Property>
-      </Export2ReportAction>
+                <Property name="caption">保存</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+              </ToolBarButton>
+              <ToolBarButton>
+                <Property name="action">aa</Property>
+                <Property name="caption">导出</Property>
+              </ToolBarButton>
+            </ToolBar>
+            <DataGrid id="dgShowColumn">
+              <Property name="dataType">ShowColumn</Property>
+              <Property name="dataSet">dsShowColumn</Property>
+              <Property name="stretchColumnsMode">off</Property>
+              <Property name="dynaRowHeight">true</Property>
+              <IndicatorColumn/>
+              <RowNumColumn/>
+              <DataColumn name="id">
+                <Property name="property">id</Property>
+                <Property name="visible">false</Property>
+              </DataColumn>
+              <DataColumn name="name">
+                <Property name="property">name</Property>
+                <Property name="width">130</Property>
+                <Property name="wrappable">true</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">列名</Property>
+              </DataColumn>
+              <DataColumn name="alias">
+                <Property name="property">alias</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">别名</Property>
+                <Property name="width">130</Property>
+                <Property name="wrappable">true</Property>
+              </DataColumn>
+              <DataColumn name="showColumnGroup">
+                <Property name="property">showColumnGroup</Property>
+                <Property name="width">100</Property>
+                <Property name="align">center</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="visible">false</Property>
+                <Property name="wrappable">true</Property>
+              </DataColumn>
+              <DataColumn>
+                <Property name="property">showColumnGroup.name</Property>
+                <Property name="name">showColumnGroupName</Property>
+                <Property name="width">100</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">所属分组</Property>
+                <Property name="readOnly">true</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn name="width">
+                <Property name="property">width</Property>
+                <Property name="width">50</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">列宽</Property>
+                <Editor>
+                  <NumberSpinner>
+                    <Property name="min">0</Property>
+                    <Property name="max">500</Property>
+                  </NumberSpinner>
+                </Editor>
+              </DataColumn>
+              <DataColumn>
+                <Property name="property">wrappable</Property>
+                <Property name="width">50</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">换行</Property>
+                <Property name="name">wrappable</Property>
+              </DataColumn>
+              <DataColumn>
+                <Property name="property">visible</Property>
+                <Property name="width">50</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">可见</Property>
+                <Property name="name">visible</Property>
+              </DataColumn>
+              <DataColumn name="align">
+                <Property name="property">align</Property>
+                <Property name="width">60</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">对齐方式</Property>
+                <Property name="trigger">lddAlign</Property>
+              </DataColumn>
+              <DataColumn name="sort">
+                <Property name="property">sort</Property>
+                <Property name="width">50</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">序号</Property>
+                <Editor>
+                  <NumberSpinner>
+                    <Property name="min">1</Property>
+                    <Property name="max">100</Property>
+                  </NumberSpinner>
+                </Editor>
+              </DataColumn>
+              <DataColumn>
+                <Property name="property">render</Property>
+                <Property name="caption">渲染器</Property>
+                <Property name="align">center</Property>
+                <Property name="name">render</Property>
+                <Property name="trigger">dsddRender</Property>
+                <Property name="width">120</Property>
+                <Property name="wrappable">true</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">showColumnTrigger</Property>
+                <Property name="property">showColumnTrigger</Property>
+                <Property name="align">center</Property>
+                <Property name="width">120</Property>
+                <Property name="caption">下拉框</Property>
+                <Property name="trigger">dsddShowColumnTrigger</Property>
+                <Property name="wrappable">true</Property>
+                <Editor/>
+              </DataColumn>
+            </DataGrid>
+            <AjaxAction id="aaInitShowColumn">
+              <Property name="executingMessage">正在获取数据表字段...</Property>
+              <Property name="successMessage">获取完毕！</Property>
+              <Property name="service">showColumnDao#initShowColumnsFromTable</Property>
+            </AjaxAction>
+            <UpdateAction id="uaShowColumn">
+              <Property name="dataResolver">showColumnDao#saveShowColumns</Property>
+              <Property name="executingMessage">正在保存...</Property>
+              <Property name="successMessage">保存成功！</Property>
+              <UpdateItem>
+                <Property name="dataSet">dsShowColumn</Property>
+              </UpdateItem>
+            </UpdateAction>
+            <DataSetDropDown id="dsddRender">
+              <Property name="dataSet">dsRender</Property>
+              <Property name="displayProperty">name</Property>
+              <Property name="width">310</Property>
+              <DataColumn>
+                <Property name="name">renderName</Property>
+                <Property name="property">name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="caption">渲染器名称</Property>
+                <Property name="width">140</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">renderType</Property>
+                <Property name="caption">类型</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="property">type</Property>
+                <Property name="width">60</Property>
+                <Property name="align">center</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="caption">备注</Property>
+                <Property name="property">remark</Property>
+                <Property name="name">renderRemark</Property>
+                <Property name="width">100</Property>
+                <Editor/>
+              </DataColumn>
+            </DataSetDropDown>
+            <DataSetDropDown id="dsddShowColumnTrigger">
+              <Property name="dataSet">dsShowColumnTrigger</Property>
+              <Property name="displayProperty">name</Property>
+              <Property name="width">250</Property>
+              <DataColumn>
+                <Property name="name">triggerName</Property>
+                <Property name="property">name</Property>
+                <Property name="width">150</Property>
+                <Property name="caption">下拉列表</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">triggerRemark</Property>
+                <Property name="property">remark</Property>
+                <Property name="width">100</Property>
+                <Property name="wrappable">true</Property>
+                <Property name="caption">备注</Property>
+                <Editor/>
+              </DataColumn>
+            </DataSetDropDown>
+            <ListDropDown id="lddAlign">
+              <Property name="items">
+                <Collection>
+                  <Value>left</Value>
+                  <Value>center</Value>
+                  <Value>right</Value>
+                </Collection>
+              </Property>
+            </ListDropDown>
+            <Export2ReportAction id="aa">
+              <Property name="template">dgShowColumn</Property>
+            </Export2ReportAction>
+            <Dialog id="dlgQuotaItemViewTableManage">
+              <Property name="width">350</Property>
+              <Property name="height">400</Property>
+              <Property name="caption">请从下边选择生成列配置的模板</Property>
+              <Buttons/>
+              <Children>
+                <ToolBar>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var toId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var dgQuotaItemViewTableManage=view.get(&quot;#dgQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dgQuotaItemViewTableManage.getCurrentItem();&#xD;
+var fromId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var aaCopyShowColumn=view.get(&quot;#aaCopyShowColumn&quot;);&#xD;
+&#xD;
+aaCopyShowColumn.set(&quot;parameter&quot;,{toId:toId,fromId:fromId});&#xD;
+aaCopyShowColumn.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
+			dsShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:toId}).flushAsync();&#xD;
+			view.get(&quot;#dlgQuotaItemViewTableManage&quot;).hide();&#xD;
+        }&#xD;
+		else{alert(&quot; 复制列配置失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+</ClientEvent>
+                    <Property name="caption">确定</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                  </ToolBarButton>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">view.get(&quot;#dlgQuotaItemViewTableManage&quot;).hide();</ClientEvent>
+                    <Property name="caption">取消</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                  </ToolBarButton>
+                </ToolBar>
+                <DataGrid id="dgQuotaItemViewTableManage">
+                  <Property name="dataSet">dsQuotaItemViewTableManage</Property>
+                  <Property name="dataType">QuotaItemViewTableManage</Property>
+                  <Property name="readOnly">true</Property>
+                  <DataColumn name="id">
+                    <Property name="property">id</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="tableName">
+                    <Property name="property">tableName</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="showName">
+                    <Property name="property">showName</Property>
+                    <Property name="caption">模板</Property>
+                  </DataColumn>
+                  <DataColumn name="year">
+                    <Property name="property">year</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                </DataGrid>
+                <AjaxAction id="aaCopyShowColumn">
+                  <Property name="service">showColumnDao#copyShowColumnsByQuotaItemViewTableManage</Property>
+                </AjaxAction>
+              </Children>
+              <Tools/>
+            </Dialog>
+          </Container>
+        </MainControl>
+        <SideControl>
+          <Container>
+            <DataTree id="dtrQuotaItemViewTableManage">
+              <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemViewTableManageId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+var dsShowColumn=view.get(&quot;#dsShowColumn&quot;);&#xD;
+&#xD;
+dsShowColumn.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId}).flushAsync();</ClientEvent>
+              <Property name="dataSet">dsQuotaItemViewTableManage</Property>
+              <Property name="allowNoCurrent">true</Property>
+              <BindingConfigs>
+                <BindingConfig>
+                  <Property name="labelProperty">showName</Property>
+                  <Property name="name">quotaItemViewTableManageName</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -280px -60px</Property>
+                </BindingConfig>
+              </BindingConfigs>
+            </DataTree>
+          </Container>
+        </SideControl>
+      </SplitPanel>
     </Container>
   </View>
 </ViewConfig>

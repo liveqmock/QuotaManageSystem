@@ -85,7 +85,7 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
         <Property name="dataType">Render</Property>
         <Property name="stretchColumnsMode">off</Property>
         <Property name="selectionMode">multiRows</Property>
-        <Property name="dynaRowHeight">true</Property>
+        <Property name="dynaRowHeight">false</Property>
         <IndicatorColumn/>
         <RowSelectorColumn/>
         <DataColumn name="id">
@@ -96,17 +96,17 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
         <DataColumn name="name">
           <Property name="property">name</Property>
           <Property name="width">200</Property>
-          <Property name="wrappable">true</Property>
+          <Property name="wrappable">false</Property>
           <Property name="caption">渲染器名</Property>
         </DataColumn>
         <DataColumn name="renderCode">
           <Property name="property">renderCode</Property>
           <Property name="caption">渲染代码</Property>
-          <Property name="wrappable">true</Property>
-          <Property name="width">300</Property>
+          <Property name="wrappable">false</Property>
+          <Property name="width">400</Property>
           <Editor>
             <TextArea>
-              <Property name="height">200</Property>
+              <Property name="height">300</Property>
             </TextArea>
           </Editor>
         </DataColumn>
@@ -120,8 +120,9 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
         <DataColumn name="remark">
           <Property name="property">remark</Property>
           <Property name="caption">备注</Property>
-          <Property name="wrappable">true</Property>
+          <Property name="wrappable">false</Property>
           <Property name="width">220</Property>
+          <Property name="supportsOptionMenu">false</Property>
           <Editor>
             <TextArea>
               <Property name="height">200</Property>

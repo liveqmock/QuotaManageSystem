@@ -182,6 +182,27 @@
     <PropertyDef name="sameTermValue">
       <Property name="dataType">String</Property>
     </PropertyDef>
+    <PropertyDef name="sameTermAccumulateValue">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="firstSubmitTime">
+      <Property name="dataType">Date</Property>
+    </PropertyDef>
+    <PropertyDef name="lastSubmitTime">
+      <Property name="dataType">Date</Property>
+    </PropertyDef>
+    <PropertyDef name="usernameOfLastSubmit">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="overTime">
+      <Property name="dataType">boolean</Property>
+    </PropertyDef>
+    <PropertyDef name="redLightReason">
+      <Property name="dataType">String</Property>
+    </PropertyDef>
+    <PropertyDef name="allowSubmit">
+      <Property name="dataType">boolean</Property>
+    </PropertyDef>
   </DataType>
   <DataType name="QuotaTargetValue" meta="x:634;y:360">
     <Property name="creationType">com.quotamanagesys.model.QuotaTargetValue</Property>

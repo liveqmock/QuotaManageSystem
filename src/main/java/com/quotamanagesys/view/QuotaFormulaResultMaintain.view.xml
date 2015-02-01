@@ -5,11 +5,21 @@
   <Model>
     <DataType name="QuotaFormulaResult">
       <Property name="creationType">com.quotamanagesys.model.QuotaFormulaResult</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
       <PropertyDef name="name">
         <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="LightItem">
+      <Property name="creationType">com.quotamanagesys.model.LightItem</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaFormulaResult">
+        <Property name="dataType">QuotaFormulaResult</Property>
       </PropertyDef>
     </DataType>
   </Model>
@@ -18,9 +28,18 @@
       <Property name="dataType">[QuotaFormulaResult]</Property>
       <Property name="dataProvider">quotaFormulaResultDao#getAll</Property>
     </DataSet>
-    <ToolBar>
-      <DataPilot>
-        <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormulaResult.data&quot;);&#xD;
+    <DataSet id="dsLightItem">
+      <Property name="dataType">[LightItem]</Property>
+      <Property name="dataProvider">lightItemDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsQuotaFormulaResultForSelect">
+      <Property name="dataType">[QuotaFormulaResult]</Property>
+      <Property name="dataProvider">quotaFormulaResultDao#getAll</Property>
+    </DataSet>
+    <Container>
+      <ToolBar>
+        <DataPilot>
+          <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsQuotaFormulaResult.data&quot;);&#xD;
 var action = view.get(&quot;#uaQuotaFormulaResult&quot;);&#xD;
 switch(arg.code){&#xD;
 	case &quot;+&quot;:{&#xD;
@@ -47,12 +66,12 @@ switch(arg.code){&#xD;
 	}&#xD;
 }&#xD;
 </ClientEvent>
-        <Property name="dataSet">dsQuotaFormulaResult</Property>
-        <Property name="itemCodes">pages,+,-,x</Property>
-      </DataPilot>
-      <Separator/>
-      <ToolBarButton>
-        <ClientEvent name="onClick">var dgQuotaFormulaResult=view.get(&quot;#dgQuotaFormulaResult&quot;);&#xD;
+          <Property name="dataSet">dsQuotaFormulaResult</Property>
+          <Property name="itemCodes">pages,+,-,x</Property>
+        </DataPilot>
+        <Separator/>
+        <ToolBarButton>
+          <ClientEvent name="onClick">var dgQuotaFormulaResult=view.get(&quot;#dgQuotaFormulaResult&quot;);&#xD;
 var dsQuotaFormulaResult=view.get(&quot;#dsQuotaFormulaResult&quot;);&#xD;
 var uaQuotaFormulaResult=view.get(&quot;#uaQuotaFormulaResult&quot;);&#xD;
 &#xD;
@@ -67,36 +86,190 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
 });&#xD;
 &#xD;
 });</ClientEvent>
-        <Property name="caption">保存</Property>
-        <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-      </ToolBarButton>
-    </ToolBar>
-    <DataGrid id="dgQuotaFormulaResult">
-      <Property name="dataSet">dsQuotaFormulaResult</Property>
-      <Property name="dataType">QuotaFormulaResult</Property>
-      <Property name="stretchColumnsMode">off</Property>
-      <Property name="selectionMode">multiRows</Property>
-      <IndicatorColumn/>
-      <RowSelectorColumn/>
-      <DataColumn name="id">
-        <Property name="property">id</Property>
-        <Property name="visible">false</Property>
-        <Property name="readOnly">true</Property>
-      </DataColumn>
-      <DataColumn name="name">
-        <Property name="property">name</Property>
-        <Property name="width">200</Property>
-        <Property name="align">center</Property>
-        <Property name="caption">公式种类</Property>
-      </DataColumn>
-    </DataGrid>
-    <UpdateAction id="uaQuotaFormulaResult">
-      <Property name="dataResolver">quotaFormulaResultDao#saveQuotaFormulaResults</Property>
-      <Property name="executingMessage">正在保存...</Property>
-      <Property name="successMessage">保存成功!</Property>
-      <UpdateItem>
+          <Property name="caption">保存</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </ToolBarButton>
+        <ToolBarButton>
+          <ClientEvent name="onClick">view.get(&quot;#dlgLightItem&quot;).show();</ClientEvent>
+          <Property name="caption">标记为亮灯公式种类</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -120px -100px</Property>
+        </ToolBarButton>
+      </ToolBar>
+      <DataGrid id="dgQuotaFormulaResult">
         <Property name="dataSet">dsQuotaFormulaResult</Property>
-      </UpdateItem>
-    </UpdateAction>
+        <Property name="dataType">QuotaFormulaResult</Property>
+        <Property name="stretchColumnsMode">off</Property>
+        <Property name="selectionMode">multiRows</Property>
+        <IndicatorColumn/>
+        <RowSelectorColumn/>
+        <DataColumn name="id">
+          <Property name="property">id</Property>
+          <Property name="visible">false</Property>
+          <Property name="readOnly">true</Property>
+        </DataColumn>
+        <DataColumn name="name">
+          <Property name="property">name</Property>
+          <Property name="width">200</Property>
+          <Property name="align">center</Property>
+          <Property name="caption">公式种类</Property>
+        </DataColumn>
+      </DataGrid>
+      <UpdateAction id="uaQuotaFormulaResult">
+        <Property name="dataResolver">quotaFormulaResultDao#saveQuotaFormulaResults</Property>
+        <Property name="executingMessage">正在保存...</Property>
+        <Property name="successMessage">保存成功!</Property>
+        <UpdateItem>
+          <Property name="dataSet">dsQuotaFormulaResult</Property>
+        </UpdateItem>
+      </UpdateAction>
+      <Dialog id="dlgLightItem">
+        <Property name="width">280</Property>
+        <Property name="height">400</Property>
+        <Buttons/>
+        <Children>
+          <Container>
+            <ToolBar>
+              <DataPilot>
+                <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsLightItem.data&quot;);&#xD;
+var action = view.get(&quot;#uaLightItem&quot;);&#xD;
+&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		view.get(&quot;#dlgQuotaFormulaResultForSelect&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgLightItem = view.get(&quot;#dgLightItem&quot;);&#xD;
+		var selection = dgLightItem.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                <Property name="itemCodes">+,-</Property>
+                <Property name="dataSet">dsLightItem</Property>
+              </DataPilot>
+              <Separator/>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var dgLightItem=view.get(&quot;#dgLightItem&quot;);&#xD;
+var dsLightItem=view.get(&quot;#dsLightItem&quot;);&#xD;
+var uaLightItem=view.get(&quot;#uaLightItem&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaLightItem.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsLightItem.flush();&#xD;
+			dgLightItem.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
+                <Property name="caption">保存</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+              </ToolBarButton>
+            </ToolBar>
+            <DataGrid id="dgLightItem">
+              <Property name="dataSet">dsLightItem</Property>
+              <Property name="dataType">LightItem</Property>
+              <Property name="readOnly">true</Property>
+              <Property name="selectionMode">multiRows</Property>
+              <IndicatorColumn/>
+              <RowSelectorColumn/>
+              <DataColumn name="id">
+                <Property name="property">id</Property>
+                <Property name="visible">false</Property>
+              </DataColumn>
+              <DataColumn name="quotaFormulaResult">
+                <Property name="property">quotaFormulaResult</Property>
+              </DataColumn>
+            </DataGrid>
+            <Dialog id="dlgQuotaFormulaResultForSelect">
+              <Property name="width">280</Property>
+              <Property name="height">400</Property>
+              <Buttons/>
+              <Children>
+                <ToolBar>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">var dgQuotaFormulaResultForSelect=view.get(&quot;#dgQuotaFormulaResultForSelect&quot;);&#xD;
+var dgLightItem=view.get(&quot;#dgLightItem&quot;);&#xD;
+var datas = view.get(&quot;#dsLightItem&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgQuotaFormulaResultForSelect.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	selection.each(function(data){&#xD;
+		var isAdded=false;&#xD;
+		datas.each(function(dataAdded){&#xD;
+			if(dataAdded.get(&quot;quotaFormulaResult&quot;).get(&quot;id&quot;)==data.get(&quot;id&quot;)){&#xD;
+				isAdded=true;&#xD;
+			}&#xD;
+		});&#xD;
+		if(isAdded==false){&#xD;
+			var entity={quotaFormulaResult:data.toJSON()};&#xD;
+			datas.insert(entity);&#xD;
+		}&#xD;
+	});&#xD;
+	dgLightItem.refresh();&#xD;
+	view.get(&quot;#dlgQuotaFormulaResultForSelect&quot;).hide();&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中指标属性！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                    <Property name="caption">确定</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                  </ToolBarButton>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">var data=view.get(&quot;#dsLightItem&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgQuotaFormulaResultForSelect&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+                    <Property name="caption">取消</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                  </ToolBarButton>
+                </ToolBar>
+                <DataGrid id="dgQuotaFormulaResultForSelect">
+                  <Property name="dataSet">dsQuotaFormulaResultForSelect</Property>
+                  <Property name="dataType">QuotaFormulaResult</Property>
+                  <Property name="selectionMode">multiRows</Property>
+                  <Property name="readOnly">true</Property>
+                  <RowSelectorColumn/>
+                  <DataColumn name="id">
+                    <Property name="property">id</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="name">
+                    <Property name="property">name</Property>
+                  </DataColumn>
+                </DataGrid>
+              </Children>
+              <Tools/>
+            </Dialog>
+            <UpdateAction id="uaLightItem">
+              <Property name="dataResolver">lightItemDao#saveLightItems</Property>
+              <UpdateItem>
+                <Property name="dataSet">dsLightItem</Property>
+              </UpdateItem>
+            </UpdateAction>
+          </Container>
+        </Children>
+        <Tools/>
+      </Dialog>
+    </Container>
   </View>
 </ViewConfig>

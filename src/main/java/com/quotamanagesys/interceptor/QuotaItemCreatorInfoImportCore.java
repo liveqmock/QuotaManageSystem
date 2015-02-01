@@ -15,7 +15,10 @@ import org.springframework.stereotype.Component;
 
 import com.bstek.bdf2.core.orm.hibernate.HibernateDao;
 import com.bstek.dorado.annotation.Expose;
+import com.quotamanagesys.dao.QuotaItemDao;
 import com.quotamanagesys.dao.QuotaPropertyValueDao;
+import com.quotamanagesys.dao.QuotaTargetValueDao;
+import com.quotamanagesys.model.QuotaItem;
 import com.quotamanagesys.model.QuotaPropertyValue;
 
 @Component
@@ -23,6 +26,14 @@ public class QuotaItemCreatorInfoImportCore extends HibernateDao{
 	
 	@Resource
 	QuotaPropertyValueDao quotaPropertyValueDao;
+	@Resource
+	QuotaItemDao quotaItemDao;
+	@Resource
+	CalculateCore calculateCore;
+	@Resource
+	ResultTableCreator resultTableCreator;
+	@Resource
+	QuotaTargetValueDao quotaTargetValueDao;
 
 	@Expose
 	public void updateTargetValue() throws SQLException{
@@ -38,7 +49,7 @@ public class QuotaItemCreatorInfoImportCore extends HibernateDao{
 		
 		if (isSuccess) {
 			Session session=this.getSessionFactory().openSession();
-			//Collection<QuotaPropertyValue> updateQuotaPropertyValues=new ArrayList<QuotaPropertyValue>();
+			ArrayList<QuotaItem> updateQuotaItems=new ArrayList<QuotaItem>();
 			
 			while (rs.next()) {
 				String id=rs.getString("id");
@@ -46,11 +57,12 @@ public class QuotaItemCreatorInfoImportCore extends HibernateDao{
 				
 				QuotaPropertyValue quotaPropertyValue=quotaPropertyValueDao.getQuotaPropertyValue(id);
 				if (quotaPropertyValue!=null) {
+					Collection<QuotaItem> quotaItems=quotaItemDao.getQuotaItemsByQuotaItemCreator(quotaPropertyValue.getQuotaItemCreator().getId());
 					quotaPropertyValue.setValue(targetValue);
 					session.merge(quotaPropertyValue);
 					session.flush();
 					session.clear();
-					//updateQuotaPropertyValues.add(quotaPropertyValue);
+					updateQuotaItems.addAll(quotaItems);
 				}
 				
 				String clearThisRecord="DELETE FROM quota_item_creator_targetvalue_update WHERE id='"+id+"'";
@@ -58,6 +70,18 @@ public class QuotaItemCreatorInfoImportCore extends HibernateDao{
 			}
 			session.flush();
 			session.close();
+
+			for ( int i = 0 ; i < updateQuotaItems.size() - 1 ; i ++ ) {  
+			    for ( int j = updateQuotaItems.size() - 1 ; j > i; j -- ) {  
+			      if (updateQuotaItems.get(j).getId().equals(updateQuotaItems.get(i).getId())) {  
+			    	  updateQuotaItems.remove(j);  
+			      }   
+			    }   
+			}
+			
+			calculateCore.calculate(updateQuotaItems);
+			quotaItemDao.setAllowSubmitStatus(updateQuotaItems);
+			resultTableCreator.createOrUpdateResultTable(updateQuotaItems);
 		}
 		conn.close();
 	}

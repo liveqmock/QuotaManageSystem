@@ -51,27 +51,38 @@ public class QuotaTypeFormulaImportCore extends HibernateDao {
 		if (isSuccess) {
 			while (rs.next()) {
 				String quotaTypeName=rs.getString("quotaTypeName");
+				//System.out.print(quotaTypeName+'\n');
 				String formulaTypeName=rs.getString("formulaTypeName");
 				String formula=rs.getString("formula");
 				String formulaParametersString=rs.getString("formulaParameters");
 				
-				String[] formulaParametersStringList=formulaParametersString.split(";");
 				Collection<FormulaParameter> formulaParameters=new ArrayList<FormulaParameter>();
-				for (String formulaParameterString: formulaParametersStringList) {
-					FormulaParameter formulaParameter=formulaParameterDao.getFormulaParameterByParameterName(formulaParameterString);
-					formulaParameters.add(formulaParameter);
+				if (formulaParametersString!=null) {
+					String[] formulaParametersStringList=formulaParametersString.split(";");
+					for (String formulaParameterString: formulaParametersStringList) {
+						FormulaParameter formulaParameter=formulaParameterDao.getFormulaParameterByParameterName(formulaParameterString);
+						formulaParameters.add(formulaParameter);
+					}
 				}
+				
 				
 				QuotaType quotaType=quotaTypeDao.getQuotaTypeByName(quotaTypeName);
 				
-				String hqlString="from "+QuotaFormula.class.getName()+" where quotaFormulaResult.name='"+formulaTypeName+"'"
-						+" and formula='"+formula+"'";
-				List<QuotaFormula> quotaFormulas=this.query(hqlString);
-				if (quotaFormulas.size()>0) {
-					QuotaFormula quotaFormula=quotaFormulas.get(0);
-					quotaTypeFormulaLinkDao.saveQuotaTypeFormulaLink(quotaType.getId(), quotaFormulas);
-					quotaTypeFormulaLinkDao.saveQuotaFormulaLinkParameters(formulaParameters, quotaType.getId(), quotaFormula.getId());
-				}	
+				if (quotaType!=null) {
+					String hqlString="from "+QuotaFormula.class.getName()+" where quotaFormulaResult.name='"+formulaTypeName+"'"
+							+" and formula='"+formula+"'";
+					List<QuotaFormula> quotaFormulas=this.query(hqlString);
+					if (quotaFormulas.size()>0) {
+						QuotaFormula quotaFormula=quotaFormulas.get(0);
+						quotaTypeFormulaLinkDao.saveQuotaTypeFormulaLink(quotaType.getId(), quotaFormulas);
+						if (formulaParameters.size()>0) {
+							quotaTypeFormulaLinkDao.saveQuotaFormulaLinkParameters(formulaParameters, quotaType.getId(), quotaFormula.getId());
+						}
+					}
+				}else {
+					System.out.print(quotaTypeName+"£º²»´æÔÚ"+'\n');
+				}
+					
 				
 				String clearThisRecord="DELETE FROM quota_type_formula_update WHERE quotaTypeName='"+quotaTypeName
 						+"' AND formulaTypeName='"+formulaTypeName+"' AND formula='"+formula+"'";

@@ -32,6 +32,7 @@
           <Property name="labelProperty">name</Property>
           <Property name="recursive">true</Property>
           <Property name="expandLevel">0</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -60px -40px</Property>
         </BindingConfig>
       </BindingConfigs>
       <Columns>

@@ -34,10 +34,10 @@
     </DataSet>
     <DataSet id="dsQuotaItem">
       <Property name="dataType">[QuotaItem]</Property>
-      <Property name="dataProvider">quotaItemDao#getQuotaItemsByManageDept</Property>
+      <Property name="dataProvider">quotaItemDao#getQuotaItemsByManageDept_Year</Property>
     </DataSet>
     <SplitPanel>
-      <Property name="position">200</Property>
+      <Property name="position">140</Property>
       <MainControl>
         <Container>
           <ToolBar>
@@ -91,6 +91,7 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
             <Property name="dataType">QuotaItem</Property>
             <Property name="stretchColumnsMode">off</Property>
             <Property name="dynaRowHeight">true</Property>
+            <RowNumColumn/>
             <IndicatorColumn/>
             <DataColumn name="id">
               <Property name="property">id</Property>
@@ -113,22 +114,23 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
             <DataColumn name="year">
               <Property name="property">year</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">70</Property>
+              <Property name="width">40</Property>
               <Property name="align">center</Property>
               <Property name="caption">年度</Property>
             </DataColumn>
             <DataColumn name="month">
               <Property name="property">month</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">70</Property>
+              <Property name="width">40</Property>
               <Property name="align">center</Property>
               <Property name="caption">月度</Property>
+              <Property name="visible">true</Property>
             </DataColumn>
             <DataColumn>
               <Property name="name">quotaCover</Property>
               <Property name="property">quotaItemCreator.quotaCover.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">90</Property>
+              <Property name="width">60</Property>
               <Property name="align">center</Property>
               <Property name="caption">口径</Property>
               <Editor/>
@@ -137,7 +139,7 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
               <Property name="name">quotaLevel</Property>
               <Property name="property">quotaItemCreator.quotaType.quotaLevel.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">90</Property>
+              <Property name="width">40</Property>
               <Property name="align">center</Property>
               <Property name="caption">级别</Property>
               <Editor/>
@@ -146,16 +148,16 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
               <Property name="name">quotaRate</Property>
               <Property name="property">quotaItemCreator.quotaType.rate</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">60</Property>
+              <Property name="width">40</Property>
               <Property name="align">center</Property>
-              <Property name="caption">考核频率</Property>
+              <Property name="caption">频率</Property>
               <Editor/>
             </DataColumn>
             <DataColumn>
               <Property name="name">dutyDept</Property>
               <Property name="property">quotaItemCreator.quotaDutyDept.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">80</Property>
+              <Property name="width">60</Property>
               <Property name="align">center</Property>
               <Property name="caption">责任部门</Property>
               <Editor/>
@@ -164,7 +166,7 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
               <Property name="name">manageDept</Property>
               <Property name="property">quotaItemCreator.quotaType.manageDept.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">80</Property>
+              <Property name="width">60</Property>
               <Property name="align">center</Property>
               <Property name="caption">管理部门</Property>
               <Editor/>
@@ -173,14 +175,15 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
               <Property name="name">quotaUnit</Property>
               <Property name="property">quotaItemCreator.quotaType.quotaUnit.name</Property>
               <Property name="readOnly">true</Property>
-              <Property name="width">70</Property>
+              <Property name="width">60</Property>
               <Property name="align">center</Property>
               <Property name="caption">计量单位</Property>
+              <Property name="wrappable">true</Property>
               <Editor/>
             </DataColumn>
             <DataColumn name="finishValue">
               <Property name="property">finishValue</Property>
-              <Property name="width">90</Property>
+              <Property name="width">70</Property>
               <Property name="caption">完成值</Property>
               <Property name="readOnly">false</Property>
               <Property name="visible">true</Property>
@@ -188,19 +191,48 @@ arg.dom.style.background = (targetValue==null||targetValue==&quot;&quot;) ? &quo
               <Property name="align">center</Property>
               <Editor/>
             </DataColumn>
-            <DataColumn name="accumulateValue">
-              <Property name="property">accumulateValue</Property>
-              <Property name="visible">true</Property>
-              <Property name="align">center</Property>
-              <Property name="caption">累计值</Property>
-              <Property name="width">90</Property>
-            </DataColumn>
             <DataColumn name="sameTermValue">
               <Property name="property">sameTermValue</Property>
               <Property name="visible">true</Property>
               <Property name="align">center</Property>
               <Property name="caption">去年同期值</Property>
-              <Property name="width">90</Property>
+              <Property name="width">70</Property>
+            </DataColumn>
+            <DataColumn name="accumulateValue">
+              <Property name="property">accumulateValue</Property>
+              <Property name="visible">true</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">累计值</Property>
+              <Property name="width">70</Property>
+            </DataColumn>
+            <DataColumn name="sameTermAccumulateValue">
+              <Property name="property">sameTermAccumulateValue</Property>
+              <Property name="width">70</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">同期累计值</Property>
+            </DataColumn>
+            <DataColumn name="firstSubmitTime">
+              <Property name="property">firstSubmitTime</Property>
+              <Property name="caption">初次填报时间</Property>
+              <Property name="readOnly">true</Property>
+            </DataColumn>
+            <DataColumn name="lastSubmitTime">
+              <Property name="property">lastSubmitTime</Property>
+              <Property name="caption">最后更新时间</Property>
+              <Property name="readOnly">true</Property>
+            </DataColumn>
+            <DataColumn name="usernameOfLastSubmit">
+              <Property name="property">usernameOfLastSubmit</Property>
+              <Property name="caption">填报人</Property>
+              <Property name="readOnly">true</Property>
+            </DataColumn>
+            <DataColumn name="overTime">
+              <Property name="property">overTime</Property>
+              <Property name="align">center</Property>
+              <Property name="caption">超时监控</Property>
+              <Property name="width">55</Property>
+              <Property name="readOnly">true</Property>
+              <Property name="visible">false</Property>
             </DataColumn>
           </DataGrid>
           <Export2ReportAction id="epDgQuotaItem">

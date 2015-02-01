@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="dataTypeUrl" parent="global:$dataTypeUrl">
+      <PropertyDef name="children">
+        <Property name="dataType">[SELF]</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <ClientEvent name="onCreate">window.openUrlInFrameTab=function(url,caption,icon,double){&#xD;
+	if(!url){&#xD;
+		dorado.MessageBox.alert(&quot;Url不能空&quot;);&#xD;
+		return;&#xD;
+	}&#xD;
+	if(!caption){&#xD;
+		dorado.MessageBox.alert(&quot;caption不能空&quot;);&#xD;
+		return;&#xD;
+	}&#xD;
+	if(!icon){&#xD;
+		icon=&quot;url(skin>common/icons.gif) -40px -120px&quot;;&#xD;
+	}&#xD;
+	var tabControl=view.id(&quot;tabControlWorkarea&quot;);&#xD;
+	var tab=tabControl.getTab(url);&#xD;
+	if(!tab){&#xD;
+		tab=new dorado.widget.tab.IFrameTab({&#xD;
+			name:url,&#xD;
+			path:url,&#xD;
+			caption:caption,&#xD;
+			icon:icon,&#xD;
+			closeable:true&#xD;
+		});&#xD;
+		tabControl.addTab(tab);&#xD;
+	}else if(double){&#xD;
+		tab.set(&quot;path&quot;,url);&#xD;
+		if(caption){&#xD;
+			tab.set(&quot;caption&quot;,caption);&#xD;
+		}&#xD;
+	}&#xD;
+	tabControl.set(&quot;currentTab&quot;,tab);&#xD;
+}&#xD;
+</ClientEvent>
+    <Property name="packages">tree</Property>
+    <Property name="pageUri">/WEB-INF/jsp/MainFrame.jsp</Property>
+    <Property name="renderOn">#place1</Property>
+    <SubViewHolder id="subViewHolderTop" layoutConstraint="top">
+      <Property name="subView">${configure.getString(&quot;bdf2.mainFrameTopView&quot;)}</Property>
+    </SubViewHolder>
+    <Menu id="menuForTab">
+      <MenuItem>
+        <ClientEvent name="onClick">setTimeout(function(){&#xD;
+	var panelWorkarea=view.id(&quot;panelWorkarea&quot;);&#xD;
+	var maximized=panelWorkarea.get(&quot;maximized&quot;);&#xD;
+	var maxIcon=&quot;>dorado/res/icons/max.png&quot;;&#xD;
+	var normalIcon=&quot;>dorado/res/icons/min.png&quot;;&#xD;
+	if(maximized){&#xD;
+		self.set(&quot;icon&quot;,maxIcon);&#xD;
+		self.set(&quot;caption&quot;,&quot;${res['core.main/menuItemCaptionMaximize']}&quot;);&#xD;
+		panelWorkarea.maximizeRestore();&#xD;
+	}else{&#xD;
+		self.set(&quot;icon&quot;,normalIcon);&#xD;
+		self.set(&quot;caption&quot;,&quot;${res['core.main/menuItemCaptionRestore']}&quot;);&#xD;
+		panelWorkarea.maximize();&#xD;
+	}&#xD;
+}, 600);&#xD;
+</ClientEvent>
+        <Property name="caption">${res[&quot;bdf2.core/menuItemCaptionMaximize&quot;]}</Property>
+        <Property name="icon">>dorado/res/icons/max.png</Property>
+      </MenuItem>
+    </Menu>
+    <PlaceHolder id="workspace"/>
+    <Container layout="hbox regionPadding:0;padding:0" listener="spring:bdf2.frameBottomListener#onInit" layoutConstraint="bottom ">
+      <Property name="height">19</Property>
+      <Property name="style">
+        <Property name="background">#FDFDFD</Property>
+        <Property name="margin-left">2px</Property>
+      </Property>
+    </Container>
+  </View>
+</ViewConfig>

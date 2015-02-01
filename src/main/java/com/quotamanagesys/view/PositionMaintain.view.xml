@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="Position" meta="x:135;y:180">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultPosition</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="Department" parent="$dataTypeDept" meta="x:360;y:120">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="parentId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <Reference name="children">
+        <Property name="dataProvider">bdf2.deptSelect#loadDepts</Property>
+        <Property name="dataType">[Department]</Property>
+        <Property name="parameter">$${this.id}</Property>
+      </Reference>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsDepartment">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">bdf2.deptMaintain#loadDepts</Property>
+    </DataSet>
+    <DataSet id="dsPosition">
+      <Property name="dataType">[Position]</Property>
+      <Property name="dataProvider">positionDeptDao#getPositionsByDept</Property>
+    </DataSet>
+    <SplitPanel>
+      <Property name="position">180</Property>
+      <MainControl>
+        <Container>
+          <ToolBar>
+            <DataPilot>
+              <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsPosition.data&quot;);&#xD;
+var dgPosition=view.get(&quot;#dgPosition&quot;);&#xD;
+var selection=dgPosition.get(&quot;selection&quot;);&#xD;
+var action = view.get(&quot;#uaPosition&quot;);&#xD;
+var messge;&#xD;
+switch(arg.code){&#xD;
+	case &quot;+&quot;:{&#xD;
+		//datas.insert();&#xD;
+		//view.get(&quot;#dialogCertificateOrganization&quot;).show();&#xD;
+		//arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+	case &quot;-&quot;:{&#xD;
+		dgPosition.refresh();&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){&#xD;
+			if (selection &amp;&amp; selection.length) {&#xD;
+				selection.each(function(data){&#xD;
+					datas.remove(data);&#xD;
+				});&#xD;
+			}else {message = &quot;未选中任何证书类型！&quot;;}&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}&#xD;
+</ClientEvent>
+              <Property name="itemCodes">pages,+,-,x</Property>
+              <Property name="dataSet">dsPosition</Property>
+            </DataPilot>
+            <ToolBarButton>
+              <ClientEvent name="onClick">var DepartmentTree=view.get(&quot;#DepartmentTree&quot;);&#xD;
+var dgPosition=view.get(&quot;#dgPosition&quot;);&#xD;
+var currentDepartmentEntity=DepartmentTree.get(&quot;currentEntity&quot;);&#xD;
+var departmentId=currentDepartmentEntity.get(&quot;id&quot;);&#xD;
+var uaPosition=view.get(&quot;#uaPosition&quot;);&#xD;
+&#xD;
+uaPosition.set(&quot;parameter&quot;, {id:departmentId});&#xD;
+uaPosition.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dgPosition.refresh();&#xD;
+        }&#xD;
+		else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj);&#xD;
+		}&#xD;
+	}&#xD;
+});</ClientEvent>
+              <Property name="caption">保存</Property>
+              <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+            </ToolBarButton>
+          </ToolBar>
+          <DataGrid id="dgPosition">
+            <Property name="dataSet">dsPosition</Property>
+            <Property name="selectionMode">multiRows</Property>
+            <Property name="stretchColumnsMode">off</Property>
+            <IndicatorColumn/>
+            <RowSelectorColumn/>
+            <RowNumColumn/>
+            <DataColumn name="name">
+              <Property name="property">name</Property>
+              <Property name="caption">岗位名称</Property>
+              <Property name="width">360</Property>
+            </DataColumn>
+            <DataColumn name="desc">
+              <Property name="property">desc</Property>
+              <Property name="caption">描述</Property>
+              <Property name="width">360</Property>
+            </DataColumn>
+          </DataGrid>
+        </Container>
+      </MainControl>
+      <SideControl>
+        <DataTree id="DepartmentTree" layoutConstraint="left">
+          <ClientEvent name="onContextMenu">view.id(&quot;menuDepts&quot;).show({
+	position:{
+		left:arg.event.pageX,
+		top:arg.event.pageY
+	}
+});</ClientEvent>
+          <ClientEvent name="onDraggingSourceDrop">var draggingInfo=arg.draggingInfo;
+if(!draggingInfo){
+	return true;
+}
+var parentNode=draggingInfo.get(&quot;targetObject&quot;);
+if(!parentNode){
+	return true;
+}
+var parentId=parentNode.get(&quot;data.id&quot;);
+parentNode.get(&quot;nodes&quot;).each(function(node){
+	var data=node.get(&quot;data&quot;);
+	data.set(&quot;parentId&quot;,parentId);
+});
+view.id(&quot;updateActionSaveDepts&quot;).execute();</ClientEvent>
+          <ClientEvent name="beforeCurrentChange">var node=arg.oldCurrent;
+if(node){
+	var data=node.get(&quot;data&quot;);
+	if(data &amp;&amp; data.state!=dorado.Entity.STATE_NONE){
+		view.id(&quot;updateActionSaveDepts&quot;).execute();
+		if(data.validate()!=&quot;ok&quot;){
+			arg.processDefault=false;
+		}
+	}
+}</ClientEvent>
+          <ClientEvent name="onClick">var DepartmentTree=view.get(&quot;#DepartmentTree&quot;);
+var currentDepartmentEntity=DepartmentTree.get(&quot;currentEntity&quot;);
+var departmentId=currentDepartmentEntity.get(&quot;id&quot;);
+var dsPosition=view.get(&quot;#dsPosition&quot;);
+
+dsPosition.set(&quot;parameter&quot;, {id:departmentId}).flushAsync();</ClientEvent>
+          <Property name="dataSet">dsDepartment</Property>
+          <Property name="defaultIcon"> url(>skin>common/icons.gif) -260px -40px</Property>
+          <Property name="currentNodeDataPath">CurrentDept</Property>
+          <Property name="draggable">true</Property>
+          <Property name="dragTags">dept</Property>
+          <Property name="droppableTags">dept</Property>
+          <Property name="droppable">true</Property>
+          <Property name="dropMode">onOrInsertItems</Property>
+          <Property name="allowNoCurrent">true</Property>
+          <BindingConfigs>
+            <BindingConfig>
+              <Property name="recursive">true</Property>
+              <Property name="expandLevel">1</Property>
+              <Property name="labelProperty">name</Property>
+              <Property name="icon">url(>skin>common/icons.gif) 0px -20px</Property>
+              <Property name="childrenProperty">children</Property>
+            </BindingConfig>
+          </BindingConfigs>
+        </DataTree>
+      </SideControl>
+    </SplitPanel>
+    <UpdateAction id="uaPosition">
+      <Property name="dataResolver">positionDao#savePositions</Property>
+      <UpdateItem>
+        <Property name="dataSet">dsPosition</Property>
+      </UpdateItem>
+    </UpdateAction>
+  </View>
+</ViewConfig>

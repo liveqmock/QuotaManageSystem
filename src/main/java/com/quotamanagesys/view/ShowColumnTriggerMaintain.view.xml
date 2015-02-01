@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="ShowColumnTrigger">
+      <Property name="creationType">com.quotamanagesys.model.ShowColumnTrigger</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="remark">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsShowColumnTrigger">
+      <Property name="dataType">[ShowColumnTrigger]</Property>
+      <Property name="dataProvider">showColumnTriggerDao#getAll</Property>
+    </DataSet>
+    <Container>
+      <ToolBar>
+        <DataPilot>
+          <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsShowColumnTrigger.data&quot;);&#xD;
+var action = view.get(&quot;#uaShowColumnTrigger&quot;);&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		var dgShowColumnTrigger = view.get(&quot;#dgShowColumnTrigger&quot;);&#xD;
+		var selection = dgShowColumnTrigger.get(&quot;selection&quot;);&#xD;
+		if (selection &amp;&amp; selection.length) {&#xD;
+			dorado.MessageBox.confirm(&quot;请确认是否删除&quot;,function(){&#xD;
+				selection.each(function(entity){&#xD;
+					entity.remove();&#xD;
+				});&#xD;
+				//datas.remove(selection);&#xD;
+				action.execute();&#xD;
+			});&#xD;
+			&#xD;
+			arg.processDefault = false;&#xD;
+		}		else {&#xD;
+			message = &quot;未选中任何记录！&quot;;&#xD;
+			dorado.MessageBox.alert(message);&#xD;
+		}		&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+          <Property name="dataSet">dsShowColumnTrigger</Property>
+          <Property name="itemCodes">pages,+,-,x</Property>
+        </DataPilot>
+        <Separator/>
+        <ToolBarButton>
+          <ClientEvent name="onClick">var dgShowColumnTrigger=view.get(&quot;#dgShowColumnTrigger&quot;);&#xD;
+var dsShowColumnTrigger=view.get(&quot;#dsShowColumnTrigger&quot;);&#xD;
+var uaShowColumnTrigger=view.get(&quot;#uaShowColumnTrigger&quot;);&#xD;
+&#xD;
+dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaShowColumnTrigger.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			dsShowColumnTrigger.flush();&#xD;
+			dgShowColumnTrigger.refresh();&#xD;
+        }&#xD;
+		else{alert(&quot;执行失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+});</ClientEvent>
+          <Property name="caption">保存</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+        </ToolBarButton>
+      </ToolBar>
+      <DataGrid id="dgShowColumnTrigger">
+        <Property name="dataSet">dsShowColumnTrigger</Property>
+        <Property name="dataType">ShowColumnTrigger</Property>
+        <Property name="stretchColumnsMode">off</Property>
+        <Property name="selectionMode">multiRows</Property>
+        <IndicatorColumn/>
+        <RowSelectorColumn/>
+        <DataColumn name="id">
+          <Property name="property">id</Property>
+          <Property name="visible">false</Property>
+        </DataColumn>
+        <DataColumn name="name">
+          <Property name="property">name</Property>
+          <Property name="width">100</Property>
+          <Property name="caption">名称</Property>
+        </DataColumn>
+        <DataColumn name="remark">
+          <Property name="property">remark</Property>
+          <Property name="width">150</Property>
+          <Property name="caption">备注</Property>
+        </DataColumn>
+      </DataGrid>
+      <UpdateAction id="uaShowColumnTrigger">
+        <Property name="executingMessage">正在保存...</Property>
+        <Property name="successMessage">保存成功！</Property>
+        <Property name="dataResolver">showColumnTriggerDao#saveShowColumnTriggers</Property>
+        <UpdateItem>
+          <Property name="dataSet">dsShowColumnTrigger</Property>
+        </UpdateItem>
+      </UpdateAction>
+    </Container>
+  </View>
+</ViewConfig>

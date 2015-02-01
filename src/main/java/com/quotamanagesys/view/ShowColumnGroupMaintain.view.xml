@@ -5,6 +5,7 @@
   <Model>
     <DataType name="ShowColumnGroup">
       <Property name="creationType">com.quotamanagesys.model.ShowColumnGroup</Property>
+      <Property name="defaultDisplayProperty">name</Property>
       <PropertyDef name="id">
         <Property name="dataType">String</Property>
       </PropertyDef>
@@ -14,17 +15,49 @@
       <PropertyDef name="sort">
         <Property name="dataType">int</Property>
       </PropertyDef>
+      <Reference name="fatherShowColumnGroup">
+        <Property name="parameter">$${this.id}</Property>
+        <Property name="dataProvider">showColumnGroupDao#getFatherShowColumnGroup</Property>
+        <Property name="dataType">ShowColumnGroup</Property>
+      </Reference>
+    </DataType>
+    <DataType name="QuotaItemViewTableManage">
+      <Property name="creationType">com.quotamanagesys.model.QuotaItemViewTableManage</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="tableName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="showName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="year">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
     </DataType>
   </Model>
   <View>
     <DataSet id="dsShowColumnGroup">
       <Property name="dataType">[ShowColumnGroup]</Property>
-      <Property name="dataProvider">showColumnGroupDao#getAll</Property>
+      <Property name="dataProvider">showColumnGroupDao#getShowColumnGroupsByQuotaItemViewTableManage</Property>
+    </DataSet>
+    <DataSet id="dsQuotaItemViewTableManage">
+      <Property name="dataType">[QuotaItemViewTableManage]</Property>
+      <Property name="dataProvider">quotaItemViewTableManageDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsFatherShowColumnGroup">
+      <Property name="dataProvider">showColumnGroupDao#getShowColumnGroupsByQuotaItemViewTableManage</Property>
+      <Property name="dataType">[ShowColumnGroup]</Property>
     </DataSet>
     <Container>
-      <ToolBar>
-        <DataPilot>
-          <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsShowColumnGroup.data&quot;);&#xD;
+      <SplitPanel>
+        <Property name="position">180</Property>
+        <MainControl>
+          <Container>
+            <ToolBar>
+              <DataPilot>
+                <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsShowColumnGroup.data&quot;);&#xD;
 var action = view.get(&quot;#uaShowColumnGroup&quot;);&#xD;
 switch (arg.code) {&#xD;
 	case &quot;+&quot;:{&#xD;
@@ -49,19 +82,30 @@ switch (arg.code) {&#xD;
 		break;&#xD;
 	}&#xD;
 }</ClientEvent>
-          <Property name="dataSet">dsShowColumnGroup</Property>
-          <Property name="itemCodes">pages,+,-,x</Property>
-        </DataPilot>
-        <Separator/>
-        <ToolBarButton>
-          <ClientEvent name="onClick">var dgShowColumnGroup=view.get(&quot;#dgShowColumnGroup&quot;);&#xD;
+                <Property name="dataSet">dsShowColumnGroup</Property>
+                <Property name="itemCodes">pages,+,-,x</Property>
+              </DataPilot>
+              <Separator/>
+              <ToolBarButton>
+                <ClientEvent name="onClick">view.get(&quot;#dlgQuotaItemViewTableManage&quot;).show();</ClientEvent>
+                <Property name="caption">以复制的方式生成列分组</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -80px -60px</Property>
+              </ToolBarButton>
+              <ToolBarButton>
+                <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemViewTableManageId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var dgShowColumnGroup=view.get(&quot;#dgShowColumnGroup&quot;);&#xD;
 var dsShowColumnGroup=view.get(&quot;#dsShowColumnGroup&quot;);&#xD;
 var uaShowColumnGroup=view.get(&quot;#uaShowColumnGroup&quot;);&#xD;
 &#xD;
 dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
+	uaShowColumnGroup.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 	uaShowColumnGroup.execute({&#xD;
 	callback : function(success, obj){&#xD;
 		if (success) {&#xD;
+			dsShowColumnGroup.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId});&#xD;
 			dsShowColumnGroup.flush();&#xD;
 			dgShowColumnGroup.refresh();&#xD;
         }&#xD;
@@ -69,47 +113,159 @@ dorado.MessageBox.confirm(&quot;您真的要保存吗?&quot;,function(){&#xD;
 });&#xD;
 &#xD;
 });</ClientEvent>
-          <Property name="caption">保存</Property>
-          <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
-        </ToolBarButton>
-      </ToolBar>
-      <DataGrid id="dgShowColumnGroup">
-        <Property name="dataSet">dsShowColumnGroup</Property>
-        <Property name="dataType">ShowColumnGroup</Property>
-        <Property name="stretchColumnsMode">off</Property>
-        <Property name="selectionMode">multiRows</Property>
-        <IndicatorColumn/>
-        <RowSelectorColumn/>
-        <DataColumn name="id">
-          <Property name="property">id</Property>
-          <Property name="visible">false</Property>
-          <Property name="readOnly">true</Property>
-        </DataColumn>
-        <DataColumn name="name">
-          <Property name="property">name</Property>
-          <Property name="width">200</Property>
-          <Property name="caption">列分组名称</Property>
-          <Property name="align">center</Property>
-        </DataColumn>
-        <DataColumn name="sort">
-          <Property name="property">sort</Property>
-          <Property name="width">150</Property>
-          <Property name="align">center</Property>
-          <Property name="caption">序号</Property>
-          <Editor>
-            <NumberSpinner>
-              <Property name="min">0</Property>
-              <Property name="max">100</Property>
-            </NumberSpinner>
-          </Editor>
-        </DataColumn>
-      </DataGrid>
-      <UpdateAction id="uaShowColumnGroup">
-        <Property name="dataResolver">showColumnGroupDao#saveShowColumnGroups</Property>
-        <UpdateItem>
-          <Property name="dataSet">dsShowColumnGroup</Property>
-        </UpdateItem>
-      </UpdateAction>
+                <Property name="caption">保存</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+              </ToolBarButton>
+            </ToolBar>
+            <DataGrid id="dgShowColumnGroup">
+              <Property name="dataSet">dsShowColumnGroup</Property>
+              <Property name="dataType">ShowColumnGroup</Property>
+              <Property name="stretchColumnsMode">off</Property>
+              <Property name="selectionMode">multiRows</Property>
+              <Property name="readOnly">false</Property>
+              <IndicatorColumn/>
+              <RowSelectorColumn/>
+              <DataColumn name="id">
+                <Property name="property">id</Property>
+                <Property name="visible">false</Property>
+                <Property name="readOnly">true</Property>
+              </DataColumn>
+              <DataColumn name="name">
+                <Property name="property">name</Property>
+                <Property name="width">200</Property>
+                <Property name="caption">列分组名称</Property>
+                <Property name="align">center</Property>
+              </DataColumn>
+              <DataColumn name="fatherShowColumnGroup">
+                <Property name="property">fatherShowColumnGroup</Property>
+                <Property name="trigger">dsddFatherShowColumnGroup</Property>
+                <Property name="caption">上级分组</Property>
+                <Property name="align">center</Property>
+                <Property name="width">200</Property>
+              </DataColumn>
+              <DataColumn name="sort">
+                <Property name="property">sort</Property>
+                <Property name="width">150</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">序号</Property>
+                <Editor>
+                  <NumberSpinner>
+                    <Property name="min">0</Property>
+                    <Property name="max">100</Property>
+                  </NumberSpinner>
+                </Editor>
+              </DataColumn>
+            </DataGrid>
+            <UpdateAction id="uaShowColumnGroup">
+              <Property name="dataResolver">showColumnGroupDao#saveShowColumnGroups</Property>
+              <UpdateItem>
+                <Property name="dataSet">dsShowColumnGroup</Property>
+                <Property name="alias">showColumnGroups</Property>
+              </UpdateItem>
+            </UpdateAction>
+            <Dialog id="dlgQuotaItemViewTableManage">
+              <Property name="width">350</Property>
+              <Property name="height">400</Property>
+              <Property name="caption">请从下边选择生成列分组的模板</Property>
+              <Buttons/>
+              <Children>
+                <ToolBar>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var toId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var dgQuotaItemViewTableManage=view.get(&quot;#dgQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dgQuotaItemViewTableManage.getCurrentItem();&#xD;
+var fromId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+&#xD;
+var aaCopyShowColumnGroup=view.get(&quot;#aaCopyShowColumnGroup&quot;);&#xD;
+&#xD;
+aaCopyShowColumnGroup.set(&quot;parameter&quot;,{toId:toId,fromId:fromId});&#xD;
+aaCopyShowColumnGroup.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			var dsShowColumnGroup=view.get(&quot;#dsShowColumnGroup&quot;);&#xD;
+			dsShowColumnGroup.set(&quot;parameter&quot;,{quotaItemViewTableManageId:toId}).flushAsync();&#xD;
+			view.get(&quot;#dlgQuotaItemViewTableManage&quot;).hide();&#xD;
+        }&#xD;
+		else{alert(&quot; 复制列分组失败！发生异常：&quot; + obj);}}&#xD;
+});&#xD;
+&#xD;
+</ClientEvent>
+                    <Property name="caption">确定</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                  </ToolBarButton>
+                  <ToolBarButton>
+                    <ClientEvent name="onClick">view.get(&quot;#dlgQuotaItemViewTableManage&quot;).hide();</ClientEvent>
+                    <Property name="caption">取消</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                  </ToolBarButton>
+                </ToolBar>
+                <DataGrid id="dgQuotaItemViewTableManage">
+                  <Property name="dataSet">dsQuotaItemViewTableManage</Property>
+                  <Property name="dataType">QuotaItemViewTableManage</Property>
+                  <Property name="readOnly">true</Property>
+                  <DataColumn name="id">
+                    <Property name="property">id</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="tableName">
+                    <Property name="property">tableName</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="showName">
+                    <Property name="property">showName</Property>
+                    <Property name="caption">模板</Property>
+                  </DataColumn>
+                  <DataColumn name="year">
+                    <Property name="property">year</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                </DataGrid>
+                <AjaxAction id="aaCopyShowColumnGroup">
+                  <Property name="service">showColumnGroupDao#copyShowColumnGroupsByQuotaItemViewTableManage</Property>
+                </AjaxAction>
+              </Children>
+              <Tools/>
+            </Dialog>
+            <DataSetDropDown id="dsddFatherShowColumnGroup">
+              <Property name="dataSet">dsFatherShowColumnGroup</Property>
+              <Property name="width">230</Property>
+              <DataColumn>
+                <Property name="name">name</Property>
+                <Property name="property">name</Property>
+                <Property name="caption">上级分组</Property>
+                <Property name="align">center</Property>
+                <Editor/>
+              </DataColumn>
+            </DataSetDropDown>
+          </Container>
+        </MainControl>
+        <SideControl>
+          <Container>
+            <DataTree id="dtrQuotaItemViewTableManage">
+              <ClientEvent name="onClick">var dtrQuotaItemViewTableManage=view.get(&quot;#dtrQuotaItemViewTableManage&quot;);&#xD;
+var currentQuotaItemViewTableManage=dtrQuotaItemViewTableManage.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemViewTableManageId=currentQuotaItemViewTableManage.get(&quot;id&quot;);&#xD;
+var dsShowColumnGroup=view.get(&quot;#dsShowColumnGroup&quot;);&#xD;
+var dsFatherShowColumnGroup=view.get(&quot;#dsFatherShowColumnGroup&quot;);&#xD;
+&#xD;
+dsShowColumnGroup.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId}).flushAsync();&#xD;
+dsFatherShowColumnGroup.set(&quot;parameter&quot;,{quotaItemViewTableManageId:quotaItemViewTableManageId}).flushAsync();</ClientEvent>
+              <Property name="dataSet">dsQuotaItemViewTableManage</Property>
+              <Property name="allowNoCurrent">true</Property>
+              <BindingConfigs>
+                <BindingConfig>
+                  <Property name="labelProperty">showName</Property>
+                  <Property name="name">quotaItemViewTableManageName</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -280px -60px</Property>
+                </BindingConfig>
+              </BindingConfigs>
+            </DataTree>
+          </Container>
+        </SideControl>
+      </SplitPanel>
     </Container>
   </View>
 </ViewConfig>

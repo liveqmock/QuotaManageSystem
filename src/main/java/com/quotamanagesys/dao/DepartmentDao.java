@@ -44,6 +44,18 @@ public class DepartmentDao extends HibernateDao {
 		}
 	}
 	
+	//建立在部门名称不重复的基础之上
+	@DataProvider
+	public DefaultDept getDeptByName(String deptName){
+		String hqlString="from "+DefaultDept.class.getName()+" where name='"+deptName+"'";
+		List<DefaultDept> depts=this.query(hqlString);
+		if (depts.size()>0) {
+			return depts.get(0);
+		}else {
+			return null;
+		}
+	}
+	
 	@DataProvider
 	public Collection<DefaultDept> getDutyDeptsByQuotaCover(String quotaCoverId){
 		QuotaCover quotaCover=quotaCoverDao.getQuotaCover(quotaCoverId);

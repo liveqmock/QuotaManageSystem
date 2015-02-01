@@ -2,10 +2,14 @@ package com.quotamanagesys.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -25,6 +29,12 @@ public class ShowColumnGroup implements Serializable{
 	private String name;//列分组名称
 	@Column(name="SORT")
 	private int sort;//排序
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="QUOTA_ITEM_VIEW_TABLE_MANAGE_ID")
+	private QuotaItemViewTableManage quotaItemViewTableManage;//所属指标信息总表
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="FATHER_SHOW_COLUMN_GROUP_ID")
+	private ShowColumnGroup fatherShowColumnGroup;//上级分组
 	public String getId() {
 		return id;
 	}
@@ -42,6 +52,19 @@ public class ShowColumnGroup implements Serializable{
 	}
 	public void setSort(int sort) {
 		this.sort = sort;
+	}
+	public QuotaItemViewTableManage getQuotaItemViewTableManage() {
+		return quotaItemViewTableManage;
+	}
+	public void setQuotaItemViewTableManage(
+			QuotaItemViewTableManage quotaItemViewTableManage) {
+		this.quotaItemViewTableManage = quotaItemViewTableManage;
+	}
+	public ShowColumnGroup getFatherShowColumnGroup() {
+		return fatherShowColumnGroup;
+	}
+	public void setFatherShowColumnGroup(ShowColumnGroup fatherShowColumnGroup) {
+		this.fatherShowColumnGroup = fatherShowColumnGroup;
 	}
 	
 }

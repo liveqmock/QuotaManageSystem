@@ -35,14 +35,22 @@ public class ShowColumn implements Serializable{
 	private boolean wrappable;//是否可换行
 	@Column(name="IS_VISIBLE")
 	private boolean visible;//是否显示
+	@Column(name="ALIGN")
+	private String align;//对齐方式
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="SHOW_COLUMN_GROUP_ID")
 	private ShowColumnGroup showColumnGroup;//所属列分组
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="QUOTA_ITEM_VIEW_TABLE_MANAGE_ID")
+	private QuotaItemViewTableManage quotaItemViewTableManage;//所属指标信息总表
 	@Column(name="SORT")
 	private int sort;//排序
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="RENDER_ID")
 	private Render render;//渲染器
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name="SHOW_COLUMN_TRIGGER_ID")
+	private ShowColumnTrigger showColumnTrigger;
 	public String getId() {
 		return id;
 	}
@@ -96,6 +104,25 @@ public class ShowColumn implements Serializable{
 	}
 	public void setRender(Render render) {
 		this.render = render;
+	}
+	public String getAlign() {
+		return align;
+	}
+	public void setAlign(String align) {
+		this.align = align;
+	}
+	public ShowColumnTrigger getShowColumnTrigger() {
+		return showColumnTrigger;
+	}
+	public void setShowColumnTrigger(ShowColumnTrigger showColumnTrigger) {
+		this.showColumnTrigger = showColumnTrigger;
+	}
+	public QuotaItemViewTableManage getQuotaItemViewTableManage() {
+		return quotaItemViewTableManage;
+	}
+	public void setQuotaItemViewTableManage(
+			QuotaItemViewTableManage quotaItemViewTableManage) {
+		this.quotaItemViewTableManage = quotaItemViewTableManage;
 	}
 	
 }

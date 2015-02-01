@@ -79,8 +79,12 @@ public class QuotaFormulaDao extends HibernateDao {
 
 	@DataProvider
 	public Collection<QuotaFormula> getQuotaFormulasByQuotaItemCreator(String quotaItemCreatorId){
-		QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
-		return quotaItemCreator.getQuotaFormulas();
+		if (quotaItemCreatorId!=null) {
+			QuotaItemCreator quotaItemCreator=quotaItemCreatorDao.getQuotaItemCreator(quotaItemCreatorId);
+			return quotaItemCreator.getQuotaFormulas();
+		} else {
+			return null;
+		}
 	}
 	
 	@DataResolver

@@ -1,0 +1,935 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="Department" meta="x:300;y:165">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="parentId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="User">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultUser</Property>
+      <Property name="defaultDisplayProperty">cname</Property>
+      <PropertyDef name="username">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="password">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="salt">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="cname">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="ename">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="male">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+      <PropertyDef name="enabled">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+      <PropertyDef name="administrator">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+      <PropertyDef name="birthday">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="mobile">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="address">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="email">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaType" meta="x:825;y:165">
+      <Property name="creationType">com.quotamanagesys.model.QuotaType</Property>
+      <Property name="autoCreatePropertyDefs">false</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaProfession">
+        <Property name="dataType">QuotaProfession</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaLevel">
+        <Property name="dataType">QuotaLevel</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaDimension">
+        <Property name="dataType">QuotaDimension</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaUnit">
+        <Property name="dataType">QuotaUnit</Property>
+      </PropertyDef>
+      <PropertyDef name="digit">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="rate">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="manageDept">
+        <Property name="dataType">Department</Property>
+      </PropertyDef>
+      <PropertyDef name="inUsed">
+        <Property name="dataType">boolean</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaProfession" meta="x:375;y:30">
+      <Property name="creationType">com.quotamanagesys.model.QuotaProfession</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaUnit" meta="x:630;y:60">
+      <Property name="creationType">com.quotamanagesys.model.QuotaUnit</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaLevel" meta="x:120;y:360">
+      <Property name="creationType">com.quotamanagesys.model.QuotaLevel</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="level">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaDimension" meta="x:570;y:180">
+      <Property name="creationType">com.quotamanagesys.model.QuotaDimension</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaCover" meta="x:945;y:44">
+      <Property name="creationType">com.quotamanagesys.model.QuotaCover</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsDepartment">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">departmentDao#getAll</Property>
+    </DataSet>
+    <DataSet id="dsUser">
+      <Property name="dataType">[User]</Property>
+      <Property name="dataProvider">userDao#getUsersByDept</Property>
+    </DataSet>
+    <DataSet id="dsCanViewQuotaType">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeViewMapDao#getCanViewQuotaTypes</Property>
+    </DataSet>
+    <DataSet id="dsDefaultViewQuotaType">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeViewMapDao#getDefaultViewQuotaTypes</Property>
+    </DataSet>
+    <DataSet id="dsQuotaTypeForSelect">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeViewMapDao#getQuotaTypeInUsedNotYetMapByUser</Property>
+    </DataSet>
+    <DataSet id="dsCanViewQuotaTypeForSelect">
+      <Property name="dataType">[QuotaType]</Property>
+      <Property name="dataProvider">quotaTypeViewMapDao#getCanViewQuotaTypesNotYetMapByUser</Property>
+    </DataSet>
+    <Container>
+      <SplitPanel>
+        <Property name="position">340</Property>
+        <MainControl>
+          <Container>
+            <TabControl>
+              <ControlTab>
+                <Property name="caption">可查看的指标</Property>
+                <Container>
+                  <ToolBar>
+                    <DataPilot>
+                      <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsCanViewQuotaType.data&quot;);&#xD;
+var action = view.get(&quot;#uaCanViewQuotaType&quot;);&#xD;
+var dgCanViewQuotaType=view.get(&quot;#dgCanViewQuotaType&quot;);&#xD;
+var selection=dgCanViewQuotaType.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		view.get(&quot;#dlgQuotaTypeForSelect&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){	&#xD;
+			if (selection &amp;&amp; selection.length) {&#xD;
+				selection.each(function(data){&#xD;
+					datas.remove(data);&#xD;
+				});&#xD;
+			}else {message = &quot;未选中任何公式！&quot;;}&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                      <Property name="dataSet">dsCanViewQuotaType</Property>
+                      <Property name="itemCodes">pages,+,-</Property>
+                    </DataPilot>
+                    <Separator/>
+                    <ToolBarButton>
+                      <ClientEvent name="onClick">var dgUser=view.get(&quot;#dgUser&quot;);&#xD;
+var currentUser=dgUser.getCurrentItem();&#xD;
+userId=currentUser.get(&quot;username&quot;);&#xD;
+&#xD;
+var dgCanViewQuotaType=view.get(&quot;#dgCanViewQuotaType&quot;);&#xD;
+var dsCanViewQuotaType=view.get(&quot;#dsCanViewQuotaType&quot;);&#xD;
+var dsQuotaTypeForSelect=view.get(&quot;#dsQuotaTypeForSelect&quot;);&#xD;
+var dsCanViewQuotaTypeForSelect=view.get(&quot;#dsCanViewQuotaTypeForSelect&quot;);&#xD;
+var dgDefaultViewQuotaType=view.get(&quot;#dgDefaultViewQuotaType&quot;);&#xD;
+var dsDefaultViewQuotaType=view.get(&quot;#dsDefaultViewQuotaType&quot;);&#xD;
+var uaCanViewQuotaType=view.get(&quot;#uaCanViewQuotaType&quot;);&#xD;
+&#xD;
+uaCanViewQuotaType.set(&quot;parameter&quot;,{userId:userId});&#xD;
+uaCanViewQuotaType.execute({&#xD;
+	callback:function(success,obj){&#xD;
+		if (success) {&#xD;
+			dsCanViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dsQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dsCanViewQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dgCanViewQuotaType.refresh();&#xD;
+			dsDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dgDefaultViewQuotaType.refresh();&#xD;
+		}else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj)&#xD;
+		}&#xD;
+	}&#xD;
+})</ClientEvent>
+                      <Property name="caption">保存</Property>
+                      <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                    </ToolBarButton>
+                  </ToolBar>
+                  <DataGrid id="dgCanViewQuotaType">
+                    <Property name="dataSet">dsCanViewQuotaType</Property>
+                    <Property name="dataType">QuotaType</Property>
+                    <Property name="selectionMode">multiRows</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="dynaRowHeight">true</Property>
+                    <Property name="stretchColumnsMode">off</Property>
+                    <IndicatorColumn/>
+                    <RowSelectorColumn/>
+                    <DataColumn name="id">
+                      <Property name="property">id</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="name">
+                      <Property name="property">name</Property>
+                      <Property name="width">180</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="caption">指标种类</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaProfession">
+                      <Property name="property">quotaProfession</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaLevel">
+                      <Property name="property">quotaLevel.name</Property>
+                      <Property name="caption">级别</Property>
+                      <Property name="align">center</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="width">60</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaDimension">
+                      <Property name="property">quotaDimension.name</Property>
+                      <Property name="caption">维度</Property>
+                      <Property name="align">center</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="width">60</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaUnit">
+                      <Property name="property">quotaUnit.name</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="caption">单位</Property>
+                      <Property name="align">center</Property>
+                      <Property name="width">60</Property>
+                      <Property name="wrappable">true</Property>
+                    </DataColumn>
+                    <DataColumn name="digit">
+                      <Property name="property">digit</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="align">center</Property>
+                      <Property name="caption">小数位数</Property>
+                      <Property name="width">50</Property>
+                    </DataColumn>
+                    <DataColumn name="rate">
+                      <Property name="property">rate</Property>
+                      <Property name="width">50</Property>
+                      <Property name="caption">频率</Property>
+                      <Property name="align">center</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="manageDept">
+                      <Property name="property">manageDept.name</Property>
+                      <Property name="align">center</Property>
+                      <Property name="caption">管理部门</Property>
+                      <Property name="width">70</Property>
+                      <Property name="wrappable">true</Property>
+                    </DataColumn>
+                    <DataColumn name="inUsed">
+                      <Property name="property">inUsed</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="align">center</Property>
+                    </DataColumn>
+                  </DataGrid>
+                  <Dialog id="dlgQuotaTypeForSelect">
+                    <Property name="width">600</Property>
+                    <Property name="height">400</Property>
+                    <Property name="caption">添加指标</Property>
+                    <Buttons/>
+                    <Children>
+                      <ToolBar>
+                        <DataPilot>
+                          <Property name="dataSet">dsQuotaTypeForSelect</Property>
+                          <Property name="itemCodes">info</Property>
+                        </DataPilot>
+                        <ToolBarButton>
+                          <ClientEvent name="onClick">var dgQuotaTypeForSelect=view.get(&quot;#dgQuotaTypeForSelect&quot;);&#xD;
+var dgCanViewQuotaType=view.get(&quot;#dgCanViewQuotaType&quot;);&#xD;
+var datas = view.get(&quot;#dsCanViewQuotaType&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgQuotaTypeForSelect.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	selection.each(function(data){&#xD;
+		var isAdded=false;&#xD;
+		datas.each(function(dataAdded){&#xD;
+			if(dataAdded.get(&quot;id&quot;)==data.get(&quot;id&quot;)){&#xD;
+				isAdded=true;&#xD;
+			}&#xD;
+		});&#xD;
+		if(isAdded==false){&#xD;
+			datas.insert(data.toJSON());&#xD;
+		}&#xD;
+	});&#xD;
+	dgCanViewQuotaType.refresh();&#xD;
+	view.get(&quot;#dlgQuotaTypeForSelect&quot;).hide();&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中要关联指标！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                          <Property name="caption">确定</Property>
+                          <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                        </ToolBarButton>
+                        <ToolBarButton>
+                          <ClientEvent name="onClick">var data=view.get(&quot;#dsCanViewQuotaType&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgQuotaTypeForSelect&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+                          <Property name="caption">取消</Property>
+                          <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                        </ToolBarButton>
+                      </ToolBar>
+                      <DataGrid id="dgQuotaTypeForSelect">
+                        <Property name="dataSet">dsQuotaTypeForSelect</Property>
+                        <Property name="readOnly">true</Property>
+                        <Property name="selectionMode">multiRows</Property>
+                        <Property name="stretchColumnsMode">allColumns</Property>
+                        <Property name="showFilterBar">false</Property>
+                        <IndicatorColumn/>
+                        <RowSelectorColumn/>
+                        <DataColumn name="id">
+                          <Property name="property">id</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="name">
+                          <Property name="property">name</Property>
+                          <Property name="width">180</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="caption">指标种类</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaProfession">
+                          <Property name="property">quotaProfession</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaLevel">
+                          <Property name="property">quotaLevel.name</Property>
+                          <Property name="caption">级别</Property>
+                          <Property name="align">center</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="width">60</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaDimension">
+                          <Property name="property">quotaDimension.name</Property>
+                          <Property name="caption">维度</Property>
+                          <Property name="align">center</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="width">60</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaUnit">
+                          <Property name="property">quotaUnit.name</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="caption">单位</Property>
+                          <Property name="align">center</Property>
+                          <Property name="width">60</Property>
+                          <Property name="wrappable">true</Property>
+                        </DataColumn>
+                        <DataColumn name="digit">
+                          <Property name="property">digit</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="align">center</Property>
+                          <Property name="caption">小数位数</Property>
+                          <Property name="width">50</Property>
+                        </DataColumn>
+                        <DataColumn name="rate">
+                          <Property name="property">rate</Property>
+                          <Property name="width">50</Property>
+                          <Property name="caption">频率</Property>
+                          <Property name="align">center</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="manageDept">
+                          <Property name="property">manageDept.name</Property>
+                          <Property name="align">center</Property>
+                          <Property name="caption">管理部门</Property>
+                          <Property name="width">70</Property>
+                          <Property name="wrappable">true</Property>
+                        </DataColumn>
+                        <DataColumn name="inUsed">
+                          <Property name="property">inUsed</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="align">center</Property>
+                        </DataColumn>
+                      </DataGrid>
+                    </Children>
+                    <Tools/>
+                  </Dialog>
+                  <UpdateAction id="uaCanViewQuotaType">
+                    <Property name="dataResolver">quotaTypeViewMapDao#saveCanViewQuotaTypes</Property>
+                    <UpdateItem>
+                      <Property name="dataSet">dsCanViewQuotaType</Property>
+                      <Property name="alias">quotaTypes</Property>
+                    </UpdateItem>
+                  </UpdateAction>
+                </Container>
+              </ControlTab>
+              <ControlTab>
+                <Property name="caption">默认显示的指标</Property>
+                <Container>
+                  <ToolBar>
+                    <DataPilot>
+                      <ClientEvent name="onSubControlAction">var datas = view.get(&quot;#dsDefaultViewQuotaType.data&quot;);&#xD;
+var action = view.get(&quot;#uaDefaultViewQuotaType&quot;);&#xD;
+var dgDefaultViewQuotaType=view.get(&quot;#dgDefaultViewQuotaType&quot;);&#xD;
+var selection=dgDefaultViewQuotaType.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+switch (arg.code) {&#xD;
+	case &quot;+&quot;:{&#xD;
+		view.get(&quot;#dlgCanViewQuotaTypeForSelect&quot;).show();&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}case &quot;-&quot;:{&#xD;
+		dorado.MessageBox.confirm(&quot;您真的想删除当前数据吗?&quot;,function(){	&#xD;
+			if (selection &amp;&amp; selection.length) {&#xD;
+				selection.each(function(data){&#xD;
+					datas.remove(data);&#xD;
+				});&#xD;
+			}else {message = &quot;未选中任何公式！&quot;;}&#xD;
+		});&#xD;
+		arg.processDefault=false;&#xD;
+		break;&#xD;
+	}&#xD;
+}</ClientEvent>
+                      <Property name="dataSet">dsDefaultViewQuotaType</Property>
+                      <Property name="itemCodes">pages,+,-</Property>
+                    </DataPilot>
+                    <Separator/>
+                    <ToolBarButton>
+                      <ClientEvent name="onClick">var dgUser=view.get(&quot;#dgUser&quot;);&#xD;
+var currentUser=dgUser.getCurrentItem();&#xD;
+userId=currentUser.get(&quot;username&quot;);&#xD;
+&#xD;
+var dgDefaultViewQuotaType=view.get(&quot;#dgDefaultViewQuotaType&quot;);&#xD;
+var dsDefaultViewQuotaType=view.get(&quot;#dsDefaultViewQuotaType&quot;);&#xD;
+var dsCanViewQuotaTypeForSelect=view.get(&quot;#dsCanViewQuotaTypeForSelect&quot;);&#xD;
+var uaDefaultViewQuotaType=view.get(&quot;#uaDefaultViewQuotaType&quot;);&#xD;
+&#xD;
+uaDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:userId});&#xD;
+uaDefaultViewQuotaType.execute({&#xD;
+	callback:function(success,obj){&#xD;
+		if (success) {&#xD;
+			dsDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dgDefaultViewQuotaType.refresh();&#xD;
+			dsCanViewQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+		}else{&#xD;
+			alert(&quot;执行失败！发生异常：&quot; + obj)&#xD;
+		}&#xD;
+	}&#xD;
+})</ClientEvent>
+                      <Property name="caption">保存</Property>
+                      <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                    </ToolBarButton>
+                  </ToolBar>
+                  <DataGrid id="dgDefaultViewQuotaType">
+                    <Property name="dataSet">dsDefaultViewQuotaType</Property>
+                    <Property name="dataType">QuotaType</Property>
+                    <Property name="selectionMode">multiRows</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="stretchColumnsMode">off</Property>
+                    <Property name="dynaRowHeight">true</Property>
+                    <IndicatorColumn/>
+                    <RowSelectorColumn/>
+                    <DataColumn name="id">
+                      <Property name="property">id</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="name">
+                      <Property name="property">name</Property>
+                      <Property name="width">180</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="caption">指标种类</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaProfession">
+                      <Property name="property">quotaProfession</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaLevel">
+                      <Property name="property">quotaLevel.name</Property>
+                      <Property name="caption">级别</Property>
+                      <Property name="align">center</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="width">60</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaDimension">
+                      <Property name="property">quotaDimension.name</Property>
+                      <Property name="caption">维度</Property>
+                      <Property name="align">center</Property>
+                      <Property name="wrappable">true</Property>
+                      <Property name="width">60</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaUnit">
+                      <Property name="property">quotaUnit.name</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="caption">单位</Property>
+                      <Property name="align">center</Property>
+                      <Property name="width">60</Property>
+                      <Property name="wrappable">true</Property>
+                    </DataColumn>
+                    <DataColumn name="digit">
+                      <Property name="property">digit</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="align">center</Property>
+                      <Property name="caption">小数位数</Property>
+                      <Property name="width">50</Property>
+                    </DataColumn>
+                    <DataColumn name="rate">
+                      <Property name="property">rate</Property>
+                      <Property name="width">50</Property>
+                      <Property name="caption">频率</Property>
+                      <Property name="align">center</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="manageDept">
+                      <Property name="property">manageDept.name</Property>
+                      <Property name="align">center</Property>
+                      <Property name="caption">管理部门</Property>
+                      <Property name="width">70</Property>
+                      <Property name="wrappable">true</Property>
+                    </DataColumn>
+                    <DataColumn name="inUsed">
+                      <Property name="property">inUsed</Property>
+                      <Property name="visible">false</Property>
+                      <Property name="align">center</Property>
+                    </DataColumn>
+                  </DataGrid>
+                  <Dialog id="dlgCanViewQuotaTypeForSelect">
+                    <Property name="width">600</Property>
+                    <Property name="height">400</Property>
+                    <Property name="caption">添加指标</Property>
+                    <Buttons/>
+                    <Children>
+                      <ToolBar>
+                        <DataPilot>
+                          <Property name="dataSet">dsCanViewQuotaTypeForSelect</Property>
+                          <Property name="itemCodes">info</Property>
+                        </DataPilot>
+                        <ToolBarButton>
+                          <ClientEvent name="onClick">var dgCanViewQuotaTypeForSelect=view.get(&quot;#dgCanViewQuotaTypeForSelect&quot;);&#xD;
+var dgDefaultViewQuotaType=view.get(&quot;#dgDefaultViewQuotaType&quot;);&#xD;
+var datas = view.get(&quot;#dsDefaultViewQuotaType&quot;).get(&quot;data&quot;);&#xD;
+var selection=dgCanViewQuotaTypeForSelect.get(&quot;selection&quot;);&#xD;
+var messge;&#xD;
+&#xD;
+if (selection &amp;&amp; selection.length){&#xD;
+	selection.each(function(data){&#xD;
+		var isAdded=false;&#xD;
+		datas.each(function(dataAdded){&#xD;
+			if(dataAdded.get(&quot;id&quot;)==data.get(&quot;id&quot;)){&#xD;
+				isAdded=true;&#xD;
+			}&#xD;
+		});&#xD;
+		if(isAdded==false){&#xD;
+			datas.insert(data.toJSON());&#xD;
+		}&#xD;
+	});&#xD;
+	dgDefaultViewQuotaType.refresh();&#xD;
+	view.get(&quot;#dlgCanViewQuotaTypeForSelect&quot;).hide();&#xD;
+}&#xD;
+else {&#xD;
+	message = &quot;未选中要关联指标！&quot;;&#xD;
+	dorado.MessageBox.alert(message);&#xD;
+}</ClientEvent>
+                          <Property name="caption">确定</Property>
+                          <Property name="icon">url(>skin>common/icons.gif) -20px 0px</Property>
+                        </ToolBarButton>
+                        <ToolBarButton>
+                          <ClientEvent name="onClick">var data=view.get(&quot;#dsDefaultViewQuotaType&quot;).getData();&#xD;
+var dialog=view.get(&quot;#dlgCanViewQuotaTypeForSelect&quot;);&#xD;
+dorado.MessageBox.confirm(&quot;您真的要取消当前操作吗？&quot;,function(){&#xD;
+	data.cancel();&#xD;
+	dialog.hide();&#xD;
+});</ClientEvent>
+                          <Property name="caption">取消</Property>
+                          <Property name="icon">url(>skin>common/icons.gif) -40px 0px</Property>
+                        </ToolBarButton>
+                      </ToolBar>
+                      <DataGrid id="dgCanViewQuotaTypeForSelect">
+                        <Property name="dataSet">dsCanViewQuotaTypeForSelect</Property>
+                        <Property name="dataType">QuotaType</Property>
+                        <Property name="selectionMode">multiRows</Property>
+                        <Property name="readOnly">true</Property>
+                        <Property name="dynaRowHeight">true</Property>
+                        <Property name="stretchColumnsMode">allColumns</Property>
+                        <Property name="showFilterBar">false</Property>
+                        <IndicatorColumn/>
+                        <RowSelectorColumn/>
+                        <DataColumn name="id">
+                          <Property name="property">id</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="name">
+                          <Property name="property">name</Property>
+                          <Property name="width">180</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="caption">指标种类</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaProfession">
+                          <Property name="property">quotaProfession</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaLevel">
+                          <Property name="property">quotaLevel.name</Property>
+                          <Property name="caption">级别</Property>
+                          <Property name="align">center</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="width">60</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaDimension">
+                          <Property name="property">quotaDimension.name</Property>
+                          <Property name="caption">维度</Property>
+                          <Property name="align">center</Property>
+                          <Property name="wrappable">true</Property>
+                          <Property name="width">60</Property>
+                        </DataColumn>
+                        <DataColumn name="quotaUnit">
+                          <Property name="property">quotaUnit.name</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="caption">单位</Property>
+                          <Property name="align">center</Property>
+                          <Property name="width">60</Property>
+                          <Property name="wrappable">true</Property>
+                        </DataColumn>
+                        <DataColumn name="digit">
+                          <Property name="property">digit</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="align">center</Property>
+                          <Property name="caption">小数位数</Property>
+                          <Property name="width">50</Property>
+                        </DataColumn>
+                        <DataColumn name="rate">
+                          <Property name="property">rate</Property>
+                          <Property name="width">50</Property>
+                          <Property name="caption">频率</Property>
+                          <Property name="align">center</Property>
+                          <Property name="visible">false</Property>
+                        </DataColumn>
+                        <DataColumn name="manageDept">
+                          <Property name="property">manageDept.name</Property>
+                          <Property name="align">center</Property>
+                          <Property name="caption">管理部门</Property>
+                          <Property name="width">70</Property>
+                          <Property name="wrappable">true</Property>
+                        </DataColumn>
+                        <DataColumn name="inUsed">
+                          <Property name="property">inUsed</Property>
+                          <Property name="visible">false</Property>
+                          <Property name="align">center</Property>
+                        </DataColumn>
+                      </DataGrid>
+                    </Children>
+                    <Tools/>
+                  </Dialog>
+                  <UpdateAction id="uaDefaultViewQuotaType">
+                    <Property name="dataResolver">quotaTypeViewMapDao#saveDefaultViewQuotaTypes</Property>
+                    <UpdateItem>
+                      <Property name="dataSet">dsDefaultViewQuotaType</Property>
+                      <Property name="alias">quotaTypes</Property>
+                    </UpdateItem>
+                  </UpdateAction>
+                </Container>
+              </ControlTab>
+            </TabControl>
+          </Container>
+        </MainControl>
+        <SideControl>
+          <Container>
+            <SplitPanel>
+              <Property name="position">50%</Property>
+              <MainControl>
+                <DataGrid id="dgUser">
+                  <ClientEvent name="onClick">var dgUser=view.get(&quot;#dgUser&quot;);&#xD;
+var currentUser=dgUser.getCurrentItem();&#xD;
+userId=currentUser.get(&quot;username&quot;);&#xD;
+var dsDefaultViewQuotaType=view.get(&quot;#dsDefaultViewQuotaType&quot;);&#xD;
+var dsCanViewQuotaType=view.get(&quot;#dsCanViewQuotaType&quot;);&#xD;
+var dsQuotaTypeForSelect=view.get(&quot;#dsQuotaTypeForSelect&quot;);&#xD;
+var dsCanViewQuotaTypeForSelect=view.get(&quot;#dsCanViewQuotaTypeForSelect&quot;);&#xD;
+&#xD;
+dsDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+dsCanViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+dsQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+dsCanViewQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();</ClientEvent>
+                  <ClientEvent name="onContextMenu">var muInitViewMap2=view.get(&quot;#muInitViewMap2&quot;);&#xD;
+muInitViewMap2.show(&#xD;
+	{&#xD;
+		position:{&#xD;
+			left:arg.event.pageX,&#xD;
+			top:arg.event.pageY&#xD;
+		}&#xD;
+	}&#xD;
+);</ClientEvent>
+                  <Property name="dataSet">dsUser</Property>
+                  <Property name="allowNoCurrent">false</Property>
+                  <Property name="dataType">User</Property>
+                  <Property name="readOnly">true</Property>
+                  <Property name="showHeader">true</Property>
+                  <Property name="showFilterBar">false</Property>
+                  <DataColumn name="username">
+                    <Property name="property">username</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="password">
+                    <Property name="property">password</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="salt">
+                    <Property name="property">salt</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn>
+                    <Property name="property">cname</Property>
+                    <Property name="name">cname</Property>
+                    <Property name="caption">人员</Property>
+                    <Property name="align">center</Property>
+                    <Editor/>
+                  </DataColumn>
+                  <DataColumn name="ename">
+                    <Property name="property">ename</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="male">
+                    <Property name="property">male</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="enabled">
+                    <Property name="property">enabled</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="administrator">
+                    <Property name="property">administrator</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="birthday">
+                    <Property name="property">birthday</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="mobile">
+                    <Property name="property">mobile</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="address">
+                    <Property name="property">address</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="email">
+                    <Property name="property">email</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="companyId">
+                    <Property name="property">companyId</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="createDate">
+                    <Property name="property">createDate</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                </DataGrid>
+              </MainControl>
+              <SideControl>
+                <DataTree id="dtrDepartment">
+                  <ClientEvent name="onClick">var dtrDepartment=view.get(&quot;#dtrDepartment&quot;);&#xD;
+var currentDepartment=dtrDepartment.get(&quot;currentEntity&quot;);&#xD;
+deptId=currentDepartment.get(&quot;id&quot;);&#xD;
+var dsUser=view.get(&quot;#dsUser&quot;);&#xD;
+&#xD;
+dsUser.set(&quot;parameter&quot;,{deptId:deptId}).flushAsync();&#xD;
+&#xD;
+var dsCanViewQuotaType=view.get(&quot;#dsCanViewQuotaType&quot;);&#xD;
+var dsDefaultViewQuotaType=view.get(&quot;#dsDefaultViewQuotaType&quot;);&#xD;
+&#xD;
+dsCanViewQuotaType.set(&quot;parameter&quot;,{userId:null}).flushAsync();&#xD;
+dsDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:null}).flushAsync();</ClientEvent>
+                  <ClientEvent name="onContextMenu">var muInitViewMap1=view.get(&quot;#muInitViewMap1&quot;);&#xD;
+muInitViewMap1.show(&#xD;
+	{&#xD;
+		position:{&#xD;
+			left:arg.event.pageX,&#xD;
+			top:arg.event.pageY&#xD;
+		}&#xD;
+	}&#xD;
+);&#xD;
+</ClientEvent>
+                  <Property name="allowNoCurrent">true</Property>
+                  <Property name="dataSet">dsDepartment</Property>
+                  <BindingConfigs>
+                    <BindingConfig>
+                      <Property name="icon">url(>skin>common/icons.gif) -0px -20px</Property>
+                      <Property name="name">department</Property>
+                      <Property name="labelProperty">name</Property>
+                    </BindingConfig>
+                  </BindingConfigs>
+                </DataTree>
+              </SideControl>
+            </SplitPanel>
+          </Container>
+        </SideControl>
+      </SplitPanel>
+      <Menu id="muInitViewMap1">
+        <MenuItem>
+          <ClientEvent name="onClick">var aaInitQuotaTypeViewMaps=view.get(&quot;#aaInitQuotaTypeViewMaps&quot;);&#xD;
+&#xD;
+aaInitQuotaTypeViewMaps.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">初始化查看范围（全部）</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -180px -100px</Property>
+        </MenuItem>
+        <MenuItem>
+          <ClientEvent name="onClick">var aaInitQuotaTypeViewMapsByDept=view.get(&quot;#aaInitQuotaTypeViewMapsByDept&quot;);&#xD;
+var dtrDepartment=view.get(&quot;#dtrDepartment&quot;);&#xD;
+var currentDepartment=dtrDepartment.get(&quot;currentEntity&quot;);&#xD;
+deptId=currentDepartment.get(&quot;id&quot;);&#xD;
+&#xD;
+aaInitQuotaTypeViewMapsByDept.set(&quot;parameter&quot;,{deptId:deptId});&#xD;
+aaInitQuotaTypeViewMapsByDept.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			&#xD;
+        }&#xD;
+		else{alert(&quot;发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">初始化查看范围（按部门）</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -180px -100px</Property>
+        </MenuItem>
+      </Menu>
+      <Menu id="muInitViewMap2">
+        <MenuItem>
+          <ClientEvent name="onClick">var aaInitQuotaTypeViewMapsByUser=view.get(&quot;#aaInitQuotaTypeViewMapsByUser&quot;);&#xD;
+var dgUser=view.get(&quot;#dgUser&quot;);&#xD;
+var currentUser=dgUser.getCurrentItem();&#xD;
+userId=currentUser.get(&quot;username&quot;);&#xD;
+&#xD;
+aaInitQuotaTypeViewMapsByUser.set(&quot;parameter&quot;,{userId:userId});&#xD;
+aaInitQuotaTypeViewMapsByUser.execute({&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			var dsDefaultViewQuotaType=view.get(&quot;#dsDefaultViewQuotaType&quot;);&#xD;
+			var dsCanViewQuotaType=view.get(&quot;#dsCanViewQuotaType&quot;);&#xD;
+			var dsQuotaTypeForSelect=view.get(&quot;#dsQuotaTypeForSelect&quot;);&#xD;
+			var dsCanViewQuotaTypeForSelect=view.get(&quot;#dsCanViewQuotaTypeForSelect&quot;);&#xD;
+			&#xD;
+			dsDefaultViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dsCanViewQuotaType.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dsQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+			dsCanViewQuotaTypeForSelect.set(&quot;parameter&quot;,{userId:userId}).flushAsync();&#xD;
+        }&#xD;
+		else{alert(&quot;发生异常：&quot; + obj);}}&#xD;
+});</ClientEvent>
+          <Property name="caption">初始化查看范围（按用户）</Property>
+          <Property name="icon">url(>skin>common/icons.gif) -180px -100px</Property>
+        </MenuItem>
+      </Menu>
+    </Container>
+    <AjaxAction id="aaInitQuotaTypeViewMaps">
+      <Property name="service">quotaTypeViewMapDao#initQuotaTypeViewMaps</Property>
+    </AjaxAction>
+    <AjaxAction id="aaInitQuotaTypeViewMapsByDept">
+      <Property name="service">quotaTypeViewMapDao#initQuotaTypeViewMapsByDept</Property>
+    </AjaxAction>
+    <AjaxAction id="aaInitQuotaTypeViewMapsByUser">
+      <Property name="service">quotaTypeViewMapDao#initQuotaTypeViewMapsByUser</Property>
+    </AjaxAction>
+  </View>
+</ViewConfig>

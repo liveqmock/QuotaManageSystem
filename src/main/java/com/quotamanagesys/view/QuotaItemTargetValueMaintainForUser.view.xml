@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <Arguments/>
+  <Context/>
+  <Model>
+    <DataType name="QuotaItem" parent="global:QuotaItem"/>
+    <DataType name="Department">
+      <Property name="creationType">com.bstek.bdf2.core.model.DefaultDept</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="desc">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="companyId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="createDate">
+        <Property name="dataType">Date</Property>
+      </PropertyDef>
+      <PropertyDef name="parentId">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaTargetValue" meta="x:634;y:360">
+      <Property name="creationType">com.quotamanagesys.model.QuotaTargetValue</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="value">
+        <Property name="dataType">double</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaProperty">
+        <Property name="dataType">QuotaProperty</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaItem">
+        <Property name="dataType">QuotaItem</Property>
+      </PropertyDef>
+      <PropertyDef name="parameterName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaItemCreator">
+      <Property name="creationType">com.quotamanagesys.model.QuotaItemCreator</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+        <Property name="submittable">true</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaDutyDept">
+        <Property name="dataType">Department</Property>
+      </PropertyDef>
+      <PropertyDef name="year">
+        <Property name="dataType">int</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaType">
+        <Property name="dataType">QuotaType</Property>
+      </PropertyDef>
+      <PropertyDef name="quotaCover">
+        <Property name="dataType">QuotaCover</Property>
+      </PropertyDef>
+    </DataType>
+    <DataType name="QuotaProperty">
+      <Property name="creationType">com.quotamanagesys.model.QuotaProperty</Property>
+      <Property name="defaultDisplayProperty">name</Property>
+      <PropertyDef name="id">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="name">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="parameterName">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+      <PropertyDef name="symbol">
+        <Property name="dataType">String</Property>
+      </PropertyDef>
+    </DataType>
+  </Model>
+  <View>
+    <DataSet id="dsDepartment">
+      <Property name="dataType">[Department]</Property>
+      <Property name="dataProvider">departmentDao#getDeptsByLoginUser</Property>
+    </DataSet>
+    <DataSet id="dsQuotaItem">
+      <ClientEvent name="beforeLoadData">var dsDepartment=view.get(&quot;#dsDepartment&quot;);&#xD;
+var manageDeptId=dsDepartment.getData().first().get(&quot;id&quot;);&#xD;
+var dsQuotaItem=view.get(&quot;#dsQuotaItem&quot;);&#xD;
+&#xD;
+dsQuotaItem.set(&quot;parameter&quot;,{manageDeptId:manageDeptId});</ClientEvent>
+      <Property name="dataType">[QuotaItem]</Property>
+      <Property name="dataProvider">quotaItemDao#getQuotaItemsByManageDept_MonthWithPage</Property>
+      <Property name="pageSize">50</Property>
+    </DataSet>
+    <DataSet id="dsQuotaTargetValue">
+      <Property name="dataType">[QuotaTargetValue]</Property>
+      <Property name="dataProvider">quotaTargetValueDao#getQuotaTargetValuesByQuotaItem</Property>
+      <Property name="loadMode">manual</Property>
+    </DataSet>
+    <DataSet id="dsQuotaTargetValueExport">
+      <ClientEvent name="beforeLoadData">var dsDepartment=view.get(&quot;#dsDepartment&quot;);&#xD;
+var manageDeptId=dsDepartment.getData().first().get(&quot;id&quot;);&#xD;
+&#xD;
+self.set(&quot;parameter&quot;,{manageDeptId:manageDeptId});</ClientEvent>
+      <Property name="dataType">[QuotaTargetValue]</Property>
+      <Property name="dataProvider">quotaTargetValueDao#getQuotaTargetValuesByManageDeptWithPage</Property>
+      <Property name="cacheable">false</Property>
+      <Property name="loadMode">manual</Property>
+      <Property name="pageSize">50</Property>
+    </DataSet>
+    <Container>
+      <SplitPanel>
+        <Property name="direction">bottom</Property>
+        <Property name="position">35%</Property>
+        <MainControl>
+          <Container>
+            <ToolBar>
+              <DataPilot>
+                <Property name="itemCodes">pages,pageSize</Property>
+                <Property name="dataSet">dsQuotaItem</Property>
+              </DataPilot>
+              <MenuButton>
+                <Property name="caption">导入导出</Property>
+                <Property name="icon">url(>skin>common/icons.gif) -160px -160px</Property>
+                <MenuItem>
+                  <ClientEvent name="onClick">var dlgQuotaTargetValue=view.get(&quot;#dlgQuotaTargetValue&quot;);&#xD;
+var dsQuotaTargetValueExport=view.get(&quot;#dsQuotaTargetValueExport&quot;);&#xD;
+&#xD;
+//必须注意顺序，赋值语句间执行要有时间间隔。&#xD;
+dlgQuotaTargetValue.show();&#xD;
+dsQuotaTargetValueExport.flushAsync();</ClientEvent>
+                  <Property name="caption">导出月度目标值</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -140px -240px</Property>
+                </MenuItem>
+                <MenuItem>
+                  <ClientEvent name="onClick">var ipMonthTargetValue=view.get(&quot;#ipMonthTargetValue&quot;);&#xD;
+ipMonthTargetValue.execute(&#xD;
+{&#xD;
+	callback : function(success, obj){&#xD;
+		if (success) {&#xD;
+			var aaUpdateTargetValue=view.get(&quot;#aaUpdateTargetValue&quot;);&#xD;
+			aaUpdateTargetValue.execute({&#xD;
+				callback:function(success,obj){&#xD;
+					if(success){&#xD;
+						&#xD;
+					}&#xD;
+				}&#xD;
+			});&#xD;
+        }&#xD;
+		else{alert(&quot;导入数据失败！发生异常：&quot; + obj);}}&#xD;
+}&#xD;
+);&#xD;
+</ClientEvent>
+                  <Property name="caption">导入月度目标值</Property>
+                  <Property name="icon">url(>skin>common/icons.gif) -120px -240px</Property>
+                </MenuItem>
+              </MenuButton>
+            </ToolBar>
+            <DataGrid id="dgQuotaItem">
+              <ClientEvent name="onClick">var dsQuotaTargetValue=view.get(&quot;#dsQuotaTargetValue&quot;);&#xD;
+var dgQuotaItem=view.get(&quot;#dgQuotaItem&quot;);&#xD;
+var dgQuotaItemTargetValue=view.get(&quot;#dgQuotaItemTargetValue&quot;);&#xD;
+var currentQuotaItem=dgQuotaItem.get(&quot;currentEntity&quot;);&#xD;
+var quotaItemId=currentQuotaItem.get(&quot;id&quot;);&#xD;
+&#xD;
+dsQuotaTargetValue.set(&quot;parameter&quot;,{quotaItemId:quotaItemId}).flushAsync();&#xD;
+dgQuotaItemTargetValue.refresh();</ClientEvent>
+              <Property name="dataSet">dsQuotaItem</Property>
+              <Property name="dataType">QuotaItem</Property>
+              <Property name="stretchColumnsMode">off</Property>
+              <Property name="dynaRowHeight">true</Property>
+              <Property name="filterMode">serverSide</Property>
+              <IndicatorColumn/>
+              <DataColumn name="id">
+                <Property name="property">id</Property>
+                <Property name="visible">false</Property>
+              </DataColumn>
+              <DataColumn name="quotaItemCreator">
+                <Property name="property">quotaItemCreator</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="visible">false</Property>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">quotaItemCreatorName</Property>
+                <Property name="property">quotaItemCreator.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">200</Property>
+                <Property name="caption">指标名称</Property>
+                <Property name="wrappable">true</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn name="year">
+                <Property name="property">year</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">40</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">年度</Property>
+              </DataColumn>
+              <DataColumn name="month">
+                <Property name="property">month</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">40</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">月度</Property>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">quotaCover</Property>
+                <Property name="property">quotaItemCreator.quotaCover.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">60</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">口径</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">quotaLevel</Property>
+                <Property name="property">quotaItemCreator.quotaType.quotaLevel.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">40</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">级别</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">quotaRate</Property>
+                <Property name="property">quotaItemCreator.quotaType.rate</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">40</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">频率</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">dutyDept</Property>
+                <Property name="property">quotaItemCreator.quotaDutyDept.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">60</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">责任部门</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">manageDept</Property>
+                <Property name="property">quotaItemCreator.quotaType.manageDept.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">60</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">管理部门</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn>
+                <Property name="name">quotaUnit</Property>
+                <Property name="property">quotaItemCreator.quotaType.quotaUnit.name</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="width">80</Property>
+                <Property name="align">center</Property>
+                <Property name="caption">计量单位</Property>
+                <Property name="wrappable">true</Property>
+                <Editor/>
+              </DataColumn>
+              <DataColumn name="finishValue">
+                <Property name="property">finishValue</Property>
+                <Property name="width">90</Property>
+                <Property name="caption">完成值</Property>
+                <Property name="readOnly">true</Property>
+                <Property name="visible">false</Property>
+                <Property name="wrappable">false</Property>
+                <Editor/>
+              </DataColumn>
+            </DataGrid>
+            <Dialog id="dlgQuotaTargetValue">
+              <Property name="width">900</Property>
+              <Property name="height">550</Property>
+              <Property name="maximizeable">true</Property>
+              <Buttons/>
+              <Children>
+                <Container>
+                  <ToolBar>
+                    <DataPilot>
+                      <Property name="itemCodes">pages,pageSize</Property>
+                      <Property name="dataSet">dsQuotaTargetValueExport</Property>
+                    </DataPilot>
+                    <ToolBarButton>
+                      <ClientEvent name="onClick">var epQuotaTargetValue=view.get(&quot;#epQuotaTargetValue&quot;);&#xD;
+epQuotaTargetValue.execute({&#xD;
+	callback: function(success,obj){&#xD;
+		if (success) {&#xD;
+			view.get(&quot;#dlgQuotaTargetValue&quot;).hide();&#xD;
+		}	&#xD;
+	}&#xD;
+});&#xD;
+</ClientEvent>
+                      <Property name="caption">导出</Property>
+                      <Property name="icon">url(>skin>common/icons.gif) -140px -240px</Property>
+                    </ToolBarButton>
+                  </ToolBar>
+                  <DataGrid id="dgQuotaTargetValueExport">
+                    <Property name="dataSet">dsQuotaTargetValueExport</Property>
+                    <Property name="dataType">QuotaTargetValue</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="scrollMode">viewport</Property>
+                    <Property name="stretchColumnsMode">allColumns</Property>
+                    <Property name="filterMode">serverSide</Property>
+                    <DataColumn name="id">
+                      <Property name="property">id</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaItem">
+                      <Property name="property">quotaItem</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="year">
+                      <Property name="property">quotaItem.quotaItemCreator.year</Property>
+                      <Property name="caption">年度</Property>
+                      <Property name="width">60</Property>
+                      <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.month</Property>
+                      <Property name="caption">月度</Property>
+                      <Property name="width">60</Property>
+                      <Property name="align">center</Property>
+                      <Property name="name">month</Property>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.name</Property>
+                      <Property name="name">quotaTypeName</Property>
+                      <Property name="caption">指标种类名称</Property>
+                      <Property name="width">160</Property>
+                      <Property name="visible">true</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="name">quotaDimension</Property>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.quotaDimension.name</Property>
+                      <Property name="caption">指标维度</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.rate</Property>
+                      <Property name="name">quotaTypeRate</Property>
+                      <Property name="caption">考核频率</Property>
+                      <Property name="width">60</Property>
+                      <Property name="align">center</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.quotaLevel.name</Property>
+                      <Property name="name">quotaLevel</Property>
+                      <Property name="caption">指标级别</Property>
+                      <Property name="width">80</Property>
+                      <Property name="align">center</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.quotaUnit.name</Property>
+                      <Property name="name">quotaUnit</Property>
+                      <Property name="caption">计量单位</Property>
+                      <Property name="width">60</Property>
+                      <Property name="align">center</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn name="quotaDutyDept">
+                      <Property name="property">quotaItem.quotaItemCreator.quotaDutyDept.name</Property>
+                      <Property name="visible">true</Property>
+                      <Property name="caption">责任部门</Property>
+                      <Property name="width">80</Property>
+                      <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn>
+                      <Property name="property">quotaItem.quotaItemCreator.quotaType.manageDept.name</Property>
+                      <Property name="name">manageDept</Property>
+                      <Property name="caption">管理部门</Property>
+                      <Property name="width">80</Property>
+                      <Editor/>
+                    </DataColumn>
+                    <DataColumn name="quotaCover">
+                      <Property name="property">quotaItem.quotaItemCreator.quotaCover.name</Property>
+                      <Property name="caption">口径</Property>
+                      <Property name="width">90</Property>
+                      <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="parameterName">
+                      <Property name="property">parameterName</Property>
+                      <Property name="visible">false</Property>
+                    </DataColumn>
+                    <DataColumn name="quotaProperty">
+                      <Property name="property">quotaProperty</Property>
+                      <Property name="caption">指标属性</Property>
+                    </DataColumn>
+                    <DataColumn name="value">
+                      <Property name="property">value</Property>
+                      <Property name="caption">月度目标值</Property>
+                    </DataColumn>
+                  </DataGrid>
+                  <Export2ReportAction id="epQuotaTargetValue">
+                    <Property name="extension">xlsx</Property>
+                    <Property name="template">dgQuotaTargetValueExport</Property>
+                    <Property name="dataScope">serverAll</Property>
+                    <Property name="maxSize">100000</Property>
+                  </Export2ReportAction>
+                </Container>
+              </Children>
+              <Tools/>
+            </Dialog>
+            <ImportExcelAction id="ipMonthTargetValue">
+              <Property name="excelModelId">78a44ead04</Property>
+              <Property name="startRow">2</Property>
+            </ImportExcelAction>
+            <AjaxAction id="aaUpdateTargetValue">
+              <Property name="executingMessage">正在更新数据...</Property>
+              <Property name="successMessage">更新成功！</Property>
+              <Property name="service">quotaItemInfoImportCore#updateMonthTargetValue</Property>
+            </AjaxAction>
+          </Container>
+        </MainControl>
+        <SideControl>
+          <TabControl>
+            <Property name="tabPlacement">bottom</Property>
+            <ControlTab>
+              <Property name="caption">目标值填写</Property>
+              <Container>
+                <ToolBar>
+                  <ToolBarButton>
+                    <Property name="caption">保存</Property>
+                    <Property name="icon">url(>skin>common/icons.gif) -140px -20px</Property>
+                    <Property name="action">uaQuotaTargetValue</Property>
+                  </ToolBarButton>
+                </ToolBar>
+                <DataGrid id="dgQuotaTargetValue">
+                  <Property name="dataSet">dsQuotaTargetValue</Property>
+                  <Property name="dataType">QuotaTargetValue</Property>
+                  <Property name="stretchColumnsMode">off</Property>
+                  <IndicatorColumn/>
+                  <DataColumn name="id">
+                    <Property name="property">id</Property>
+                    <Property name="visible">false</Property>
+                    <Property name="readOnly">true</Property>
+                  </DataColumn>
+                  <DataColumn name="quotaItem">
+                    <Property name="property">quotaItem</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="quotaProperty">
+                    <Property name="property">quotaProperty</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="width">190</Property>
+                    <Property name="align">center</Property>
+                    <Property name="caption">指标属性</Property>
+                  </DataColumn>
+                  <DataColumn name="parameterName">
+                    <Property name="property">parameterName</Property>
+                    <Property name="visible">false</Property>
+                  </DataColumn>
+                  <DataColumn name="value">
+                    <Property name="property">value</Property>
+                    <Property name="width">190</Property>
+                    <Property name="caption">目标值</Property>
+                  </DataColumn>
+                </DataGrid>
+                <UpdateAction id="uaQuotaTargetValue">
+                  <Property name="dataResolver">quotaTargetValueDao#saveQuotaTargetValues</Property>
+                  <Property name="executingMessage">正在保存...</Property>
+                  <Property name="successMessage">保存成功!</Property>
+                  <UpdateItem>
+                    <Property name="dataSet">dsQuotaTargetValue</Property>
+                  </UpdateItem>
+                </UpdateAction>
+              </Container>
+            </ControlTab>
+          </TabControl>
+        </SideControl>
+      </SplitPanel>
+    </Container>
+  </View>
+</ViewConfig>

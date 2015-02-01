@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+  <View pageUri="/WEB-INF/jsp/JspTemplate.jsp" title="JSP Template">
+    <Button caption="按钮1" renderTo="#place1"/>
+    <Button caption="按钮2" renderTo="#place1"/>
+    <ListBox items="One,Two,Three" renderOn="#place2"/>
+    <Panel layout="padding:20" caption="一个面板控件" collapseable="true" renderOn="#place3">
+      <Property name="width">640</Property>
+      <Property name="height">260</Property>
+    </Panel>
+  </View>
+</ViewConfig>
